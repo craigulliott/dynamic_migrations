@@ -1,0 +1,24 @@
+/.bundle/
+/.yardoc
+/_yardoc/
+/coverage/
+/doc/
+/pkg/
+/spec/reports/
+/tmp/
+
+.DS_Store
+
+# rspec failure tracking
+.rspec_status
+
+# vscode
+dynamic_migrations.code-workspace
+
+.byebug_history
+
+.gem_rbs_collection
+
+.ruby-version
+
+/local_notes.md

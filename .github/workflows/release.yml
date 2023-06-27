@@ -1,0 +1,67 @@
+name: release-please
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  release-please:
+    runs-on: ubuntu-latest
+    steps:
+
+      # Execute "release please" action
+      - uses: GoogleCloudPlatform/release-please-action@v3
+        id: release
+        with:
+          # The release type
+          release-type: ruby
+          # A name for the artifact releases are being created for
+          # which is the name of our gem
+          package-name: dynamic_migrations
+          # Should breaking changes before 1.0.0 produce minor bumps?
+          bump-minor-pre-major: true
+          # Path to our version file to increment
+          version-file: "lib/dynamic_migrations/version.rb"
+
+      # Checkout code if release was created
+      - uses: actions/checkout@v3
+        if: ${{ steps.release.outputs.release_created }}
+
+      # Setup ruby if a release was created
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: 3.0.0
+        if: ${{ steps.release.outputs.release_created }}
+
+      # Bundle install
+      - run: bundle install
+        if: ${{ steps.release.outputs.release_created }}
+
+      # run the linter
+      - name: Run standard linter
+        run: bundle exec standardrb
+        if: ${{ steps.release.outputs.release_created }}
+
+      # run the type checker
+      - name: Run steep type checker
+        run: bundle exec steep check
+        if: ${{ steps.release.outputs.release_created }}
+
+      # run the tests
+      - name: Run rspec test suite
+        run: bundle exec rspec
+        if: ${{ steps.release.outputs.release_created }}
+
+      # Publish the Gem to ruby gems
+      - name: Publish gem
+        run: |
+          mkdir -p $HOME/.gem
+          touch $HOME/.gem/credentials
+          chmod 0600 $HOME/.gem/credentials
+          printf -- "---\n:rubygems_api_key: ${GEM_HOST_API_KEY}\n" > $HOME/.gem/credentials
+          gem build *.gemspec
+          gem push *.gem
+        if: ${{ steps.release.outputs.release_created }}
+        env:
+          GEM_HOST_API_KEY: "${{ secrets.RUBYGEMS_AUTH_TOKEN  }}"
