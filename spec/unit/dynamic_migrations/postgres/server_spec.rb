@@ -20,7 +20,7 @@ RSpec.describe DynamicMigrations::Postgres::Server do
     it "raises an error if providing something other than a symbol" do
       expect {
         server.add_database("name")
-      }.to raise_error DynamicMigrations::Postgres::Server::ExpectedSymbolError
+      }.to raise_error DynamicMigrations::ExpectedSymbolError
     end
   end
 
@@ -56,7 +56,7 @@ RSpec.describe DynamicMigrations::Postgres::Server do
     it "raises an error if providing something other than a symbol" do
       expect {
         server.database("name")
-      }.to raise_error DynamicMigrations::Postgres::Server::ExpectedSymbolError
+      }.to raise_error DynamicMigrations::ExpectedSymbolError
     end
 
     describe "after a database has been added" do

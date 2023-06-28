@@ -7,10 +7,7 @@ module DynamicMigrations
         class Schema
           class Table
             # This class represents a single column within a postgres table
-            class Column
-              class ExpectedSymbolError < StandardError
-              end
-
+            class Column < Source
               class ExpectedTableError < StandardError
               end
 
@@ -18,7 +15,8 @@ module DynamicMigrations
               attr_reader :column_name
 
               # initialize a new object to represent a column in a postgres table
-              def initialize table, column_name, type, null: true, description: nil, default: nil
+              def initialize source, table, column_name, type, null: true, description: nil, default: nil
+                super source
                 raise ExpectedTableError, table unless table.is_a? Table
                 raise ExpectedSymbolError, column_name unless column_name.is_a? Symbol
                 @table = table

@@ -21,7 +21,7 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database do
     it "raises an error if providing an invalid database name" do
       expect {
         DynamicMigrations::Postgres::Server::Database.new server, "my_database"
-      }.to raise_error DynamicMigrations::Postgres::Server::Database::ExpectedSymbolError
+      }.to raise_error DynamicMigrations::ExpectedSymbolError
     end
   end
 

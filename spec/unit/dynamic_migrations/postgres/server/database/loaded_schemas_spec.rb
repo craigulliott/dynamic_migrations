@@ -6,37 +6,39 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database do
     let(:server) { DynamicMigrations::Postgres::Server.new pg_helper.host, pg_helper.port, pg_helper.username, pg_helper.password }
     let(:database) { DynamicMigrations::Postgres::Server::Database.new server, pg_helper.database }
 
-    describe :add_schema_from_database do
+    describe :add_loaded_schema do
       it "creates a new schema object" do
-        expect(database.add_schema_from_database(:schema_name)).to be_a DynamicMigrations::Postgres::Server::Database::Schema
+        expect(database.add_loaded_schema(:schema_name)).to be_a DynamicMigrations::Postgres::Server::Database::Schema
       end
 
       it "raises an error if providing an invalid schema name" do
         expect {
-          database.add_schema_from_database "my_database"
-        }.to raise_error DynamicMigrations::Postgres::Server::Database::ExpectedSymbolError
+          database.add_loaded_schema "my_database"
+        }.to raise_error DynamicMigrations::ExpectedSymbolError
       end
 
       describe "when a schema already exists" do
         before(:each) do
-          database.add_schema_from_database(:schema_name)
+          database.add_loaded_schema(:schema_name)
         end
 
         it "raises an error if using the same schema name" do
           expect {
-            database.add_schema_from_database(:schema_name)
+            database.add_loaded_schema(:schema_name)
           }.to raise_error DynamicMigrations::Postgres::Server::Database::LoadedSchemaAlreadyExistsError
         end
       end
     end
 
     describe :loaded_schema do
-      it "returns nil" do
-        expect(database.loaded_schema(:schema_name)).to be_nil
+      it "raises an error" do
+        expect {
+          database.loaded_schema(:schema_name)
+        }.to raise_error DynamicMigrations::Postgres::Server::Database::LoadedSchemaDoesNotExistError
       end
 
       describe "after the expected schema has been added" do
-        let(:schema) { database.add_schema_from_database :schema_name }
+        let(:schema) { database.add_loaded_schema :schema_name }
 
         before(:each) do
           schema
@@ -48,6 +50,24 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database do
       end
     end
 
+    describe :has_loaded_schema? do
+      it "returns false" do
+        expect(database.has_loaded_schema?(:loaded_schema)).to be(false)
+      end
+
+      describe "after the expected loaded_schema has been added" do
+        let(:loaded_schema) { database.add_loaded_schema :loaded_schema }
+
+        before(:each) do
+          loaded_schema
+        end
+
+        it "returns true" do
+          expect(database.has_loaded_schema?(:loaded_schema)).to be(true)
+        end
+      end
+    end
+
     describe :loaded_schemas do
       it "returns an empty array" do
         expect(database.loaded_schemas).to be_an Array
@@ -55,7 +75,7 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database do
       end
 
       describe "after the expected schema has been added" do
-        let(:schema) { database.add_schema_from_database :schema_name }
+        let(:schema) { database.add_loaded_schema :schema_name }
 
         before(:each) do
           schema
@@ -63,71 +83,6 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database do
 
         it "returns an array of the expected schemas" do
           expect(database.loaded_schemas).to eql([schema])
-        end
-      end
-    end
-
-    describe :fetch_schema_names do
-      it "raises an error" do
-        expect {
-          database.fetch_schema_names
-        }.to raise_error DynamicMigrations::Postgres::Server::Database::NotConnectedError
-      end
-
-      describe "after a connection has been established" do
-        before :each do
-          database.connect
-        end
-
-        it "returns an empty array" do
-          expect(database.fetch_schema_names).to be_empty
-        end
-
-        describe "after a schema has been added" do
-          before :each do
-            pg_helper.create_schema :foo
-          end
-
-          it "returns the expected array" do
-            expect(database.fetch_schema_names).to eql ["foo"]
-          end
-        end
-      end
-    end
-
-    describe :load_schemas do
-      it "raises an error" do
-        expect {
-          database.load_schemas
-        }.to raise_error DynamicMigrations::Postgres::Server::Database::NotConnectedError
-      end
-
-      describe "after a connection has been established" do
-        before :each do
-          database.connect
-        end
-
-        it "does not raise an error" do
-          expect {
-            database.load_schemas
-          }.to_not raise_error
-        end
-
-        it "does not add any schemas to the database object" do
-          database.load_schemas
-          expect(database.loaded_schemas).to be_empty
-        end
-
-        describe "after a schema has been added" do
-          before :each do
-            pg_helper.create_schema :foo
-          end
-
-          it "does add a schemas to the database object" do
-            database.load_schemas
-            expect(database.loaded_schemas.count).to eq(1)
-            expect(database.loaded_schemas.first.schema_name).to eq(:foo)
-          end
         end
       end
     end

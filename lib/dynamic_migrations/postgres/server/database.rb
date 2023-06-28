@@ -6,13 +6,11 @@ module DynamicMigrations
       # This class represents a postgres database. A database can contain many different
       # schemas.
       class Database
-        class ExpectedSymbolError < StandardError
-        end
-
         class ExpectedServerError < StandardError
         end
 
         include Connection
+        include Loader
         include LoadedSchemas
         include ConfiguredSchemas
 

@@ -8,17 +8,26 @@ module DynamicMigrations
           class ConfiguredSchemaAlreadyExistsError < StandardError
           end
 
-          def add_schema_from_configuration schema_name
+          class ConfiguredSchemaDoesNotExistError < StandardError
+          end
+
+          def add_configured_schema schema_name
             raise ExpectedSymbolError, schema_name unless schema_name.is_a? Symbol
-            if configured_schema schema_name
+            if has_configured_schema? schema_name
               raise(ConfiguredSchemaAlreadyExistsError, "Configured schema #{schema_name} already exists")
             end
-            @configured_schemas[schema_name] = Schema.new self, schema_name
+            @configured_schemas[schema_name] = Schema.new :configuration, self, schema_name
           end
 
           def configured_schema schema_name
             raise ExpectedSymbolError, schema_name unless schema_name.is_a? Symbol
+            raise ConfiguredSchemaDoesNotExistError unless has_configured_schema? schema_name
             @configured_schemas[schema_name]
+          end
+
+          def has_configured_schema? schema_name
+            raise ExpectedSymbolError, schema_name unless schema_name.is_a? Symbol
+            @configured_schemas.key? schema_name
           end
 
           def configured_schemas

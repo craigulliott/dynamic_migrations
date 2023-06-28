@@ -4,9 +4,6 @@ module DynamicMigrations
   module Postgres
     # This class represents a postgres server. A server can contain many databases.
     class Server
-      class ExpectedSymbolError < StandardError
-      end
-
       attr_reader :host, :port, :username, :password
 
       # initialize a new object to represent a postgres server
