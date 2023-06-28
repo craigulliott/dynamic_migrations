@@ -9,7 +9,13 @@ Monitor and generate database migrations based on difference between current sch
 
 ## Key Features
 
-* todo
+* Strictly follows standard (active record style) naming conventions
+* Supports complex column based constraints
+* Supports stored procedures
+* Supports postgis types
+* Supports multiple postgres schemas
+* Generates your database migrations
+* Compares/validates actual database schema against desired configuration
 
 ## Installation
 
@@ -20,6 +26,14 @@ Install the gem by executing:
 Create your new platform:
 
     $ dynamic_migrations create my_platform_name
+
+Note, this gem depends on the postgres gem `pg`, which depends on the `libpq` package. On Apple Silicon you can run the following commands before installation to prepare your system.
+
+```
+# required for pg gem on apple silicon
+brew install libpq
+export PATH="/opt/homebrew/opt/libpq/bin:$PATH"
+``
 
 ## Getting Started
 

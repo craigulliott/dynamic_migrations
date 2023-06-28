@@ -2,19 +2,11 @@ PATH
   remote: .
   specs:
     dynamic_migrations (0.0.0)
-      activemodel (~> 7.0)
-      activerecord (~> 7.0)
-      activesupport (~> 7.0)
-      dsl_compose (~> 1.0)
+      pg (~> 1.5)
 
 GEM
   remote: https://rubygems.org/
   specs:
-    activemodel (7.0.5.1)
-      activesupport (= 7.0.5.1)
-    activerecord (7.0.5.1)
-      activemodel (= 7.0.5.1)
-      activesupport (= 7.0.5.1)
     activesupport (7.0.5.1)
       concurrent-ruby (~> 1.0, >= 1.0.2)
       i18n (>= 1.6, < 2)
@@ -25,7 +17,6 @@ GEM
     concurrent-ruby (1.2.2)
     csv (3.2.7)
     diff-lcs (1.5.0)
-    dsl_compose (1.4.0)
     ffi (1.15.5)
     fileutils (1.7.1)
     i18n (1.14.1)
@@ -42,6 +33,7 @@ GEM
     parser (3.2.2.3)
       ast (~> 2.4.1)
       racc
+    pg (1.5.3)
     racc (1.7.1)
     rainbow (3.1.1)
     rake (13.0.6)
@@ -115,6 +107,7 @@ GEM
     tzinfo (2.0.6)
       concurrent-ruby (~> 1.0)
     unicode-display_width (2.4.2)
+    yaml (0.2.1)
 
 PLATFORMS
   arm64-darwin-22
@@ -128,6 +121,7 @@ DEPENDENCIES
   standard (~> 1.0)
   steep
   typeprof
+  yaml (~> 0.2)
 
 RUBY VERSION
    ruby 3.1.4p223

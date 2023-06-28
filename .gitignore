@@ -9,6 +9,8 @@
 
 .DS_Store
 
+/config/database.yaml
+
 # rspec failure tracking
 .rspec_status
 
