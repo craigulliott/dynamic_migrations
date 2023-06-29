@@ -8,6 +8,8 @@ require "dynamic_migrations/expected_symbol_error"
 
 require "dynamic_migrations/postgres/server/database/connection"
 require "dynamic_migrations/postgres/server/database/loader"
+require "dynamic_migrations/postgres/server/database/differences"
+require "dynamic_migrations/postgres/server/database/data_type"
 require "dynamic_migrations/postgres/server/database/loaded_schemas"
 require "dynamic_migrations/postgres/server/database/configured_schemas"
 require "dynamic_migrations/postgres/server/database"

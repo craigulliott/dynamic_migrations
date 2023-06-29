@@ -13,6 +13,7 @@ module DynamicMigrations
         include Loader
         include LoadedSchemas
         include ConfiguredSchemas
+        include Differences
 
         attr_reader :server
         attr_reader :database_name
