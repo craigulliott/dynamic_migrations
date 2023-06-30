@@ -10,9 +10,11 @@ module DynamicMigrations
         end
 
         include Connection
-        include Loader
+        include StructureLoader
+        include ConstraintsLoader
         include LoadedSchemas
         include ConfiguredSchemas
+        include LoadedSchemasBuilder
         include Differences
 
         attr_reader :server

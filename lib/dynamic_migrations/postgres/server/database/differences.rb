@@ -66,7 +66,8 @@ module DynamicMigrations
                 # the exists flag will be set to true and the other fields will be set)
                 other_schema_tables[table.table_name] ||= {
                   exists: false,
-                  columns: {}
+                  columns: {},
+                  constraints: {}
                 }
 
                 # if this table already exists for the current_source schema, then it was
@@ -90,6 +91,7 @@ module DynamicMigrations
                   current_schema_tables[table.table_name] = {
                     exists: true,
                     columns: {},
+                    constraints: {},
                     description: {
                       value: table.description,
                       # assume the description does not match until we prove otherwise
@@ -144,6 +146,48 @@ module DynamicMigrations
                         matches: false
                       }
                     end
+                  end
+                end
+
+                current_table_constraints = current_schema_tables[table.table_name][:constraints]
+                other_table_constraints = other_schema_tables[table.table_name][:constraints]
+
+                # process the constraints for the current table
+                table.constraints.each do |constraint|
+                  # if this is the first time we are processing this constraint for the other source
+                  # type, then add it and assume it is missing (if it is processed later, then
+                  # the exists flag will be set to true and the other fields will be set)
+                  other_table_constraints[constraint.constraint_name] ||= {
+                    exists: false
+                  }
+
+                  # if this constraint already exists for the current_source table, then it was
+                  # created by the other source type, and we need to mark it as existing
+                  if current_table_constraints.key? constraint.constraint_name
+                    # note that the constraint exists
+                    current_table_constraints[constraint.constraint_name][:exists] = true
+                    # update the check_clause metadata
+                    current_table_constraints[constraint.constraint_name][:check_clause] = {
+                      value: constraint.check_clause,
+                      matches: constraint.check_clause == other_table_constraints[constraint.constraint_name][:exists] && other_table_constraints[constraint.constraint_name][:check_clause][:value]
+                    }
+                    # If this constraint exists on the other_table_constraints, then update its value of `matches` for
+                    # the check_clause
+                    if other_table_constraints[constraint.constraint_name][:exists]
+                      other_table_constraints[constraint.constraint_name][:check_clause][:matches] = constraint.description == other_table_constraints[constraint.constraint_name][:check_clause][:value]
+                    end
+                  else
+                    # if it is the first time we are processing a constraint with this name for the
+                    # current source, then create it
+                    current_table_constraints[constraint.constraint_name] = {
+                      exists: true,
+                      check_clause: {
+                        value: constraint.check_clause,
+                        # assume the check_clause does not match until we prove otherwise
+                        matches: false
+                      }
+
+                    }
                   end
                 end
               end

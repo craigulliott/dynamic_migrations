@@ -163,4 +163,89 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database::Schema::Table do
       end
     end
   end
+
+  describe :add_constraint do
+    before(:each) do
+      table.add_column :column_name, :boolean
+    end
+
+    it "creates a new constraint object" do
+      expect(table.add_constraint(:constraint_name, [:column_name], "constraint SQL")).to be_a DynamicMigrations::Postgres::Server::Database::Schema::Table::Constraint
+    end
+
+    describe "when a constraint already exists" do
+      before(:each) do
+        table.add_constraint(:constraint_name, [:column_name], "constraint SQL")
+      end
+
+      it "raises an error if using the same constraint name" do
+        expect {
+          table.add_constraint(:constraint_name, [:column_name], "constraint SQL")
+        }.to raise_error DynamicMigrations::Postgres::Server::Database::Schema::Table::ConstraintAlreadyExistsError
+      end
+    end
+  end
+
+  describe :constraint do
+    it "raises an error" do
+      expect {
+        table.constraint(:constraint_name)
+      }.to raise_error DynamicMigrations::Postgres::Server::Database::Schema::Table::ConstraintDoesNotExistError
+    end
+
+    describe "after the expected constraint has been added" do
+      let(:column) { table.add_column :column_name, :boolean }
+      let(:constraint) { table.add_constraint :constraint_name, [:column_name], "constraint SQL" }
+
+      before(:each) do
+        column
+        constraint
+      end
+
+      it "returns the constraint" do
+        expect(table.constraint(:constraint_name)).to eq(constraint)
+      end
+    end
+  end
+
+  describe :has_constraint? do
+    it "returns false" do
+      expect(table.has_constraint?(:constraint_name)).to be(false)
+    end
+
+    describe "after the expected constraint has been added" do
+      let(:column) { table.add_column :column_name, :boolean }
+      let(:constraint) { table.add_constraint :constraint_name, [:column_name], "constraint SQL" }
+
+      before(:each) do
+        column
+        constraint
+      end
+
+      it "returns true" do
+        expect(table.has_constraint?(:constraint_name)).to be(true)
+      end
+    end
+  end
+
+  describe :constraints do
+    it "returns an empty array" do
+      expect(table.constraints).to be_an Array
+      expect(table.constraints).to be_empty
+    end
+
+    describe "after the expected constraint has been added" do
+      let(:column) { table.add_column :column_name, :boolean }
+      let(:constraint) { table.add_constraint :constraint_name, [:column_name], "constraint SQL" }
+
+      before(:each) do
+        column
+        constraint
+      end
+
+      it "returns an array of the expected constraints" do
+        expect(table.constraints).to eql([constraint])
+      end
+    end
+  end
 end

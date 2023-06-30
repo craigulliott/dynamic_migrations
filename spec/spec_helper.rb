@@ -33,6 +33,6 @@ RSpec.configure do |config|
   end
 
   config.after(:each) do
-    config.primary_postgres_helper.delete_all_schemas cascade: true
+    config.primary_postgres_helper.reset!
   end
 end

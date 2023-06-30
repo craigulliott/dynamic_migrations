@@ -21,6 +21,10 @@ module Helpers
         connection.exec(<<-SQL)
           CREATE SCHEMA #{connection.quote_ident schema_name.to_s};
         SQL
+        # refresh the cached representation of the database structure
+        refresh_structure_cache_materialized_view
+        # note that the structure has changed, so that the database can be reset between tests
+        @has_changes = true
       end
 
       def get_schema_names
@@ -41,6 +45,12 @@ module Helpers
             DROP SCHEMA #{connection.quote_ident schema_name.to_s} #{cascade ? "CASCADE" : ""};
           SQL
         end
+        # refresh the cached representation of the database structure
+        refresh_structure_cache_materialized_view
+        # also refresh the constraints, as removing objects can affect them
+        refresh_constraints_cache_materialized_view
+        # note that the database has been reset and there are no changes
+        @has_changes = true
       end
     end
   end

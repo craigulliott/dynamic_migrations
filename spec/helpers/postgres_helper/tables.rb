@@ -7,6 +7,10 @@ module Helpers
             -- tables are created empty, and have columns added to them later
           );
         SQL
+        # refresh the cached representation of the database structure
+        refresh_structure_cache_materialized_view
+        # note that the structure has changed, so that the database can be reset between tests
+        @has_changes = true
       end
 
       def get_table_names

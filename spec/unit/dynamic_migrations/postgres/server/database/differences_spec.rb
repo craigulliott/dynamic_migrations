@@ -76,7 +76,8 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database do
                     tables: {
                       my_table: {
                         exists: false,
-                        columns: {}
+                        columns: {},
+                        constraints: {}
                       }
                     },
                     exists: true
@@ -91,7 +92,8 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database do
                           matches: false
                         },
                         exists: true,
-                        columns: {}
+                        columns: {},
+                        constraints: {}
                       }
                     },
                     exists: true
@@ -118,7 +120,8 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database do
                             value: nil,
                             matches: false
                           },
-                          columns: {}
+                          columns: {},
+                          constraints: {}
                         }
                       },
                       exists: true
@@ -133,7 +136,8 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database do
                             value: "table description",
                             matches: false
                           },
-                          columns: {}
+                          columns: {},
+                          constraints: {}
                         }
                       },
                       exists: true
@@ -157,6 +161,7 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database do
                           exists: true, tables: {
                             my_table: {
                               exists: true,
+                              constraints: {},
                               columns: {
                                 my_column: {
                                   exists: false
@@ -176,6 +181,7 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database do
                           tables: {
                             my_table: {
                               exists: true,
+                              constraints: {},
                               columns: {
                                 my_column: {
                                   exists: true,
@@ -265,6 +271,7 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database do
                             tables: {
                               my_table: {
                                 exists: true,
+                                constraints: {},
                                 columns: {
                                   my_column: {
                                     exists: true,
@@ -340,6 +347,7 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database do
                             tables: {
                               my_table: {
                                 exists: true,
+                                constraints: {},
                                 columns: {
                                   my_column: {
                                     exists: true,
@@ -411,6 +419,185 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database do
                         }
                       }
                     )
+                  end
+
+                  describe "after a loaded constraint has been added" do
+                    let(:configured_constraint) { configured_table.add_constraint :my_constraint, [:my_column], "my_column IS TRUE" }
+
+                    before :each do
+                      configured_constraint
+                    end
+
+                    it "returns a hash with the expected representation of the differences" do
+                      expect(database.differences).to eql(
+                        {
+                          configuration: {
+                            my_schema: {
+                              exists: true,
+                              tables: {
+                                my_table: {
+                                  exists: true,
+                                  constraints: {
+                                    my_constraint: {
+                                      exists: true,
+                                      check_clause: {
+                                        value: "my_column IS TRUE",
+                                        matches: false
+                                      }
+                                    }
+                                  },
+                                  columns: {
+                                    my_column: {
+                                      exists: true,
+                                      data_type: {
+                                        value: :integer,
+                                        matches: false
+                                      },
+                                      null: {
+                                        value: nil,
+                                        matches: true
+                                      },
+                                      default: {
+                                        value: nil,
+                                        matches: true
+                                      },
+                                      description: {
+                                        value: nil,
+                                        matches: true
+                                      },
+                                      character_maximum_length: {
+                                        value: nil,
+                                        matches: true
+                                      },
+                                      character_octet_length: {
+                                        value: nil,
+                                        matches: true
+                                      },
+                                      numeric_precision: {
+                                        value: 32,
+                                        matches: false
+                                      },
+                                      numeric_precision_radix: {
+                                        value: 2,
+                                        matches: false
+                                      },
+                                      numeric_scale: {
+                                        value: 0,
+                                        matches: false
+                                      },
+                                      datetime_precision: {
+                                        value: nil,
+                                        matches: true
+                                      },
+                                      interval_type: {
+                                        value: nil,
+                                        matches: true
+                                      },
+                                      udt_schema: {
+                                        value: nil,
+                                        matches: true
+                                      },
+                                      udt_name: {
+                                        value: nil,
+                                        matches: true
+                                      },
+                                      updatable: {
+                                        value: nil,
+                                        matches: true
+                                      }
+                                    }
+                                  },
+                                  description: {
+                                    value: nil,
+                                    matches: false
+                                  }
+                                }
+                              }
+                            }
+                          },
+                          database: {
+                            my_schema: {
+                              exists: true,
+                              tables: {
+                                my_table: {
+                                  exists: true,
+                                  constraints: {
+                                    my_constraint: {
+                                      exists: false
+                                    }
+                                  },
+                                  columns: {
+                                    my_column: {
+                                      exists: true,
+                                      data_type: {
+                                        value: :boolean,
+                                        matches: false
+                                      },
+                                      null: {
+                                        value: nil,
+                                        matches: true
+                                      },
+                                      default: {
+                                        value: nil,
+                                        matches: true
+                                      },
+                                      description: {
+                                        value: nil,
+                                        matches: true
+                                      },
+                                      character_maximum_length: {
+                                        value: nil,
+                                        matches: true
+                                      },
+                                      character_octet_length: {
+                                        value: nil,
+                                        matches: true
+                                      },
+                                      numeric_precision: {
+                                        value: nil,
+                                        matches: false
+                                      },
+                                      numeric_precision_radix: {
+                                        value: nil,
+                                        matches: false
+                                      },
+                                      numeric_scale: {
+                                        value: nil,
+                                        matches: false
+                                      },
+                                      datetime_precision: {
+                                        value: nil,
+                                        matches: true
+                                      },
+                                      interval_type: {
+                                        value: nil,
+                                        matches: true
+                                      },
+                                      udt_schema: {
+                                        value: nil,
+                                        matches: true
+                                      },
+                                      udt_name: {
+                                        value: nil,
+                                        matches: true
+                                      },
+                                      updatable: {
+                                        value: nil,
+                                        matches: true
+                                      }
+                                    }
+                                  },
+                                  description: {
+                                    value: "table description",
+                                    matches: false
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        }
+                      )
+                    end
                   end
                 end
               end
