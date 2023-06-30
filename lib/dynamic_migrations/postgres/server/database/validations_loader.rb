@@ -4,10 +4,10 @@ module DynamicMigrations
   module Postgres
     class Server
       class Database
-        module ConstraintsLoader
-          def create_database_constraints_cache
+        module ValidationsLoader
+          def create_database_validations_cache
             connection.exec(<<~SQL)
-              CREATE MATERIALIZED VIEW public.dynamic_migrations_constraints_cache as
+              CREATE MATERIALIZED VIEW public.dynamic_migrations_validations_cache as
                 SELECT table_constraints.table_schema as schema_name,
                   table_constraints.table_name,
                   array_agg(col.column_name) AS columns,
@@ -35,24 +35,24 @@ module DynamicMigrations
                   check_constraints.check_clause;
             SQL
             connection.exec(<<~SQL)
-              CREATE UNIQUE INDEX title_idx ON public.dynamic_migrations_constraints_cache (schema_name, table_name, constraint_name);
+              CREATE UNIQUE INDEX title_idx ON public.dynamic_migrations_validations_cache (schema_name, table_name, validation_name);
             SQL
             connection.exec(<<~SQL)
-              COMMENT ON MATERIALIZED VIEW public.dynamic_migrations_constraints_cache IS 'A cached representation of the database constraints. This is used by the dynamic migrations library and is created automatically and updated automatically after migrations have run.';
+              COMMENT ON MATERIALIZED VIEW public.dynamic_migrations_validations_cache IS 'A cached representation of the database validations. This is used by the dynamic migrations library and is created automatically and updated automatically after migrations have run.';
             SQL
           end
 
           # fetch all columns from the database and build and return a
-          # useful hash representing the constraints of your database
-          def fetch_constraints
+          # useful hash representing the validations of your database
+          def fetch_validations
             begin
               rows = connection.exec_params(<<~SQL)
-                SELECT * FROM public.dynamic_migrations_constraints_cache
+                SELECT * FROM public.dynamic_migrations_validations_cache
               SQL
             rescue PG::UndefinedTable
-              create_database_constraints_cache
+              create_database_validations_cache
               rows = connection.exec_params(<<~SQL)
-                SELECT * FROM public.dynamic_migrations_constraints_cache
+                SELECT * FROM public.dynamic_migrations_validations_cache
               SQL
             end
 
@@ -64,9 +64,9 @@ module DynamicMigrations
               table_name = row["table_name"].to_sym
               table = schema[table_name] ||= {}
 
-              constraint_name = row["constraint_name"].to_sym
+              validation_name = row["constraint_name"].to_sym
 
-              table[constraint_name] = {
+              table[validation_name] = {
                 columns: row["columns"].gsub(/\A\{/, "").gsub(/\}\Z/, "").split(",").map { |column_name| column_name.to_sym },
                 check_clause: row["check_clause"]
               }

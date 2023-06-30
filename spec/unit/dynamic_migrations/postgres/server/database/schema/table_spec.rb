@@ -164,87 +164,87 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database::Schema::Table do
     end
   end
 
-  describe :add_constraint do
+  describe :add_validation do
     before(:each) do
       table.add_column :column_name, :boolean
     end
 
-    it "creates a new constraint object" do
-      expect(table.add_constraint(:constraint_name, [:column_name], "constraint SQL")).to be_a DynamicMigrations::Postgres::Server::Database::Schema::Table::Constraint
+    it "creates a new validation object" do
+      expect(table.add_validation(:validation_name, [:column_name], "validation SQL")).to be_a DynamicMigrations::Postgres::Server::Database::Schema::Table::Validation
     end
 
-    describe "when a constraint already exists" do
+    describe "when a validation already exists" do
       before(:each) do
-        table.add_constraint(:constraint_name, [:column_name], "constraint SQL")
+        table.add_validation(:validation_name, [:column_name], "validation SQL")
       end
 
-      it "raises an error if using the same constraint name" do
+      it "raises an error if using the same validation name" do
         expect {
-          table.add_constraint(:constraint_name, [:column_name], "constraint SQL")
-        }.to raise_error DynamicMigrations::Postgres::Server::Database::Schema::Table::ConstraintAlreadyExistsError
+          table.add_validation(:validation_name, [:column_name], "validation SQL")
+        }.to raise_error DynamicMigrations::Postgres::Server::Database::Schema::Table::ValidationAlreadyExistsError
       end
     end
   end
 
-  describe :constraint do
+  describe :validation do
     it "raises an error" do
       expect {
-        table.constraint(:constraint_name)
-      }.to raise_error DynamicMigrations::Postgres::Server::Database::Schema::Table::ConstraintDoesNotExistError
+        table.validation(:validation_name)
+      }.to raise_error DynamicMigrations::Postgres::Server::Database::Schema::Table::ValidationDoesNotExistError
     end
 
-    describe "after the expected constraint has been added" do
+    describe "after the expected validation has been added" do
       let(:column) { table.add_column :column_name, :boolean }
-      let(:constraint) { table.add_constraint :constraint_name, [:column_name], "constraint SQL" }
+      let(:validation) { table.add_validation :validation_name, [:column_name], "validation SQL" }
 
       before(:each) do
         column
-        constraint
+        validation
       end
 
-      it "returns the constraint" do
-        expect(table.constraint(:constraint_name)).to eq(constraint)
+      it "returns the validation" do
+        expect(table.validation(:validation_name)).to eq(validation)
       end
     end
   end
 
-  describe :has_constraint? do
+  describe :has_validation? do
     it "returns false" do
-      expect(table.has_constraint?(:constraint_name)).to be(false)
+      expect(table.has_validation?(:validation_name)).to be(false)
     end
 
-    describe "after the expected constraint has been added" do
+    describe "after the expected validation has been added" do
       let(:column) { table.add_column :column_name, :boolean }
-      let(:constraint) { table.add_constraint :constraint_name, [:column_name], "constraint SQL" }
+      let(:validation) { table.add_validation :validation_name, [:column_name], "validation SQL" }
 
       before(:each) do
         column
-        constraint
+        validation
       end
 
       it "returns true" do
-        expect(table.has_constraint?(:constraint_name)).to be(true)
+        expect(table.has_validation?(:validation_name)).to be(true)
       end
     end
   end
 
-  describe :constraints do
+  describe :validations do
     it "returns an empty array" do
-      expect(table.constraints).to be_an Array
-      expect(table.constraints).to be_empty
+      expect(table.validations).to be_an Array
+      expect(table.validations).to be_empty
     end
 
-    describe "after the expected constraint has been added" do
+    describe "after the expected validation has been added" do
       let(:column) { table.add_column :column_name, :boolean }
-      let(:constraint) { table.add_constraint :constraint_name, [:column_name], "constraint SQL" }
+      let(:validation) { table.add_validation :validation_name, [:column_name], "validation SQL" }
 
       before(:each) do
         column
-        constraint
+        validation
       end
 
-      it "returns an array of the expected constraints" do
-        expect(table.constraints).to eql([constraint])
+      it "returns an array of the expected validations" do
+        expect(table.validations).to eql([validation])
       end
     end
   end

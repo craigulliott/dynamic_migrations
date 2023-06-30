@@ -3,8 +3,8 @@ require_relative "postgres_helper/connection"
 require_relative "postgres_helper/schemas"
 require_relative "postgres_helper/tables"
 require_relative "postgres_helper/columns"
-require_relative "postgres_helper/constraints"
-require_relative "postgres_helper/constraints_cache"
+require_relative "postgres_helper/validations"
+require_relative "postgres_helper/validations_cache"
 require_relative "postgres_helper/structure_cache"
 
 module Helpers
@@ -14,8 +14,8 @@ module Helpers
     include Schemas
     include Tables
     include Columns
-    include Constraints
-    include ConstraintsCache
+    include Validations
+    include ValidationsCache
     include StructureCache
 
     attr_reader :database, :username, :password, :host, :port

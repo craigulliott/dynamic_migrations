@@ -66,9 +66,9 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database do
                 expect(table.columns.map(&:column_name)).to eql [:my_column, :my_second_column]
               end
 
-              describe "after a constraint has been added" do
+              describe "after a validation has been added" do
                 before :each do
-                  pg_helper.create_constraint :my_schema, :my_table, :my_constraint, "my_column IS TRUE AND my_second_column IS TRUE"
+                  pg_helper.create_validation :my_schema, :my_table, :my_validation, "my_column IS TRUE AND my_second_column IS TRUE"
                 end
 
                 it "creates the expected columns" do
@@ -76,8 +76,8 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database do
 
                   table = database.loaded_schema(:my_schema).table(:my_table)
 
-                  expect(table.constraints).to be_a Array
-                  expect(table.constraints.map(&:constraint_name)).to eql [:my_constraint]
+                  expect(table.validations).to be_a Array
+                  expect(table.validations.map(&:validation_name)).to eql [:my_validation]
                 end
               end
             end

@@ -1,15 +1,15 @@
 # frozen_string_literal: true
 
 RSpec.describe DynamicMigrations::Postgres::Server::Database do
-  describe :ContraintsLoader do
+  describe :ValidationsLoader do
     let(:pg_helper) { RSpec.configuration.primary_postgres_helper }
     let(:server) { DynamicMigrations::Postgres::Server.new pg_helper.host, pg_helper.port, pg_helper.username, pg_helper.password }
     let(:database) { DynamicMigrations::Postgres::Server::Database.new server, pg_helper.database }
 
-    describe :fetch_constraints do
+    describe :fetch_validations do
       it "raises an error" do
         expect {
-          database.fetch_constraints
+          database.fetch_validations
         }.to raise_error DynamicMigrations::Postgres::Server::Database::NotConnectedError
       end
 
@@ -19,7 +19,7 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database do
         end
 
         it "returns an empty object" do
-          expect(database.fetch_constraints).to eql({})
+          expect(database.fetch_validations).to eql({})
         end
 
         describe "after a schema has been added" do
@@ -28,7 +28,7 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database do
           end
 
           it "returns an empty object" do
-            expect(database.fetch_constraints).to eql({})
+            expect(database.fetch_validations).to eql({})
           end
 
           describe "after a table has been added" do
@@ -37,7 +37,7 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database do
             end
 
             it "returns an empty object" do
-              expect(database.fetch_constraints).to eql({})
+              expect(database.fetch_validations).to eql({})
             end
 
             describe "after two columns have been added" do
@@ -47,19 +47,19 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database do
               end
 
               it "returns an empty object" do
-                expect(database.fetch_constraints).to eql({})
+                expect(database.fetch_validations).to eql({})
               end
 
-              describe "after a constraint has been added" do
+              describe "after a validation has been added" do
                 before :each do
-                  pg_helper.create_constraint :my_schema, :my_table, :my_constraint, "my_column > 0 AND my_second_column < 100"
+                  pg_helper.create_validation :my_schema, :my_table, :my_validation, "my_column > 0 AND my_second_column < 100"
                 end
 
                 it "returns an empty object" do
-                  expect(database.fetch_constraints).to eql({
+                  expect(database.fetch_validations).to eql({
                     my_schema: {
                       my_table: {
-                        my_constraint: {
+                        my_validation: {
                           columns: [:my_column, :my_second_column],
                           check_clause: "(((my_column > 0) AND (my_second_column < 100)))"
                         }

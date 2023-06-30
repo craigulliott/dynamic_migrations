@@ -16,10 +16,10 @@ module DynamicMigrations
             class ColumnAlreadyExistsError < StandardError
             end
 
-            class ConstraintDoesNotExistError < StandardError
+            class ValidationDoesNotExistError < StandardError
             end
 
-            class ConstraintAlreadyExistsError < StandardError
+            class ValidationAlreadyExistsError < StandardError
             end
 
             attr_reader :schema
@@ -38,7 +38,7 @@ module DynamicMigrations
               @schema = schema
               @table_name = table_name
               @columns = {}
-              @constraints = {}
+              @validations = {}
             end
 
             # returns true if this table has a description, otehrwise false
@@ -73,32 +73,32 @@ module DynamicMigrations
               @columns[column_name] = Column.new source, self, column_name, data_type, **column_options
             end
 
-            # returns the constraint object for the provided constraint name, and raises an
-            # error if the constraint does not exist
-            def constraint constraint_name
-              raise ExpectedSymbolError, constraint_name unless constraint_name.is_a? Symbol
-              raise ConstraintDoesNotExistError unless has_constraint? constraint_name
-              @constraints[constraint_name]
+            # returns the validation object for the provided validation name, and raises an
+            # error if the validation does not exist
+            def validation validation_name
+              raise ExpectedSymbolError, validation_name unless validation_name.is_a? Symbol
+              raise ValidationDoesNotExistError unless has_validation? validation_name
+              @validations[validation_name]
             end
 
-            # returns true if this table has a constraint with the provided name, otherwise false
-            def has_constraint? constraint_name
-              raise ExpectedSymbolError, constraint_name unless constraint_name.is_a? Symbol
-              @constraints.key? constraint_name
+            # returns true if this table has a validation with the provided name, otherwise false
+            def has_validation? validation_name
+              raise ExpectedSymbolError, validation_name unless validation_name.is_a? Symbol
+              @validations.key? validation_name
             end
 
-            # returns an array of this tables constraints
-            def constraints
-              @constraints.values
+            # returns an array of this tables validations
+            def validations
+              @validations.values
             end
 
-            # adds a new constraint to this table, and returns it
-            def add_constraint constraint_name, column_names, check_clause
-              if has_constraint? constraint_name
-                raise(ConstraintAlreadyExistsError, "Constraint #{constraint_name} already exists")
+            # adds a new validation to this table, and returns it
+            def add_validation validation_name, column_names, check_clause
+              if has_validation? validation_name
+                raise(ValidationAlreadyExistsError, "Validation #{validation_name} already exists")
               end
               columns = column_names.map { |column_name| column column_name }
-              @constraints[constraint_name] = Constraint.new source, self, columns, constraint_name, check_clause
+              @validations[validation_name] = Validation.new source, self, columns, validation_name, check_clause
             end
           end
         end

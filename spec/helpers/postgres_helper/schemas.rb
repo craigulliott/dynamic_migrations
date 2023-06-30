@@ -47,8 +47,8 @@ module Helpers
         end
         # refresh the cached representation of the database structure
         refresh_structure_cache_materialized_view
-        # also refresh the constraints, as removing objects can affect them
-        refresh_constraints_cache_materialized_view
+        # also refresh the validations, as removing objects can affect them
+        refresh_validations_cache_materialized_view
         # note that the database has been reset and there are no changes
         @has_changes = true
       end

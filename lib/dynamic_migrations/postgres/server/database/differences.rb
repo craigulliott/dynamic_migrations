@@ -67,7 +67,7 @@ module DynamicMigrations
                 other_schema_tables[table.table_name] ||= {
                   exists: false,
                   columns: {},
-                  constraints: {}
+                  validations: {}
                 }
 
                 # if this table already exists for the current_source schema, then it was
@@ -91,7 +91,7 @@ module DynamicMigrations
                   current_schema_tables[table.table_name] = {
                     exists: true,
                     columns: {},
-                    constraints: {},
+                    validations: {},
                     description: {
                       value: table.description,
                       # assume the description does not match until we prove otherwise
@@ -149,40 +149,40 @@ module DynamicMigrations
                   end
                 end
 
-                current_table_constraints = current_schema_tables[table.table_name][:constraints]
-                other_table_constraints = other_schema_tables[table.table_name][:constraints]
+                current_table_constraints = current_schema_tables[table.table_name][:validations]
+                other_table_constraints = other_schema_tables[table.table_name][:validations]
 
-                # process the constraints for the current table
-                table.constraints.each do |constraint|
-                  # if this is the first time we are processing this constraint for the other source
+                # process the validations for the current table
+                table.validations.each do |validation|
+                  # if this is the first time we are processing this validation for the other source
                   # type, then add it and assume it is missing (if it is processed later, then
                   # the exists flag will be set to true and the other fields will be set)
-                  other_table_constraints[constraint.constraint_name] ||= {
+                  other_table_constraints[validation.validation_name] ||= {
                     exists: false
                   }
 
-                  # if this constraint already exists for the current_source table, then it was
+                  # if this validation already exists for the current_source table, then it was
                   # created by the other source type, and we need to mark it as existing
-                  if current_table_constraints.key? constraint.constraint_name
-                    # note that the constraint exists
-                    current_table_constraints[constraint.constraint_name][:exists] = true
+                  if current_table_constraints.key? validation.validation_name
+                    # note that the validation exists
+                    current_table_constraints[validation.validation_name][:exists] = true
                     # update the check_clause metadata
-                    current_table_constraints[constraint.constraint_name][:check_clause] = {
-                      value: constraint.check_clause,
-                      matches: constraint.check_clause == other_table_constraints[constraint.constraint_name][:exists] && other_table_constraints[constraint.constraint_name][:check_clause][:value]
+                    current_table_constraints[validation.validation_name][:check_clause] = {
+                      value: validation.check_clause,
+                      matches: validation.check_clause == other_table_constraints[validation.validation_name][:exists] && other_table_constraints[validation.validation_name][:check_clause][:value]
                     }
-                    # If this constraint exists on the other_table_constraints, then update its value of `matches` for
+                    # If this validation exists on the other_table_constraints, then update its value of `matches` for
                     # the check_clause
-                    if other_table_constraints[constraint.constraint_name][:exists]
-                      other_table_constraints[constraint.constraint_name][:check_clause][:matches] = constraint.description == other_table_constraints[constraint.constraint_name][:check_clause][:value]
+                    if other_table_constraints[validation.validation_name][:exists]
+                      other_table_constraints[validation.validation_name][:check_clause][:matches] = validation.description == other_table_constraints[validation.validation_name][:check_clause][:value]
                     end
                   else
-                    # if it is the first time we are processing a constraint with this name for the
+                    # if it is the first time we are processing a validation with this name for the
                     # current source, then create it
-                    current_table_constraints[constraint.constraint_name] = {
+                    current_table_constraints[validation.validation_name] = {
                       exists: true,
                       check_clause: {
-                        value: constraint.check_clause,
+                        value: validation.check_clause,
                         # assume the check_clause does not match until we prove otherwise
                         matches: false
                       }

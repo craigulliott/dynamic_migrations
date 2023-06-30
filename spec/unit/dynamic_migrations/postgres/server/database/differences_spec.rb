@@ -77,7 +77,7 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database do
                       my_table: {
                         exists: false,
                         columns: {},
-                        constraints: {}
+                        validations: {}
                       }
                     },
                     exists: true
@@ -93,7 +93,7 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database do
                         },
                         exists: true,
                         columns: {},
-                        constraints: {}
+                        validations: {}
                       }
                     },
                     exists: true
@@ -121,7 +121,7 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database do
                             matches: false
                           },
                           columns: {},
-                          constraints: {}
+                          validations: {}
                         }
                       },
                       exists: true
@@ -137,7 +137,7 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database do
                             matches: false
                           },
                           columns: {},
-                          constraints: {}
+                          validations: {}
                         }
                       },
                       exists: true
@@ -161,7 +161,7 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database do
                           exists: true, tables: {
                             my_table: {
                               exists: true,
-                              constraints: {},
+                              validations: {},
                               columns: {
                                 my_column: {
                                   exists: false
@@ -181,7 +181,7 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database do
                           tables: {
                             my_table: {
                               exists: true,
-                              constraints: {},
+                              validations: {},
                               columns: {
                                 my_column: {
                                   exists: true,
@@ -271,7 +271,7 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database do
                             tables: {
                               my_table: {
                                 exists: true,
-                                constraints: {},
+                                validations: {},
                                 columns: {
                                   my_column: {
                                     exists: true,
@@ -347,7 +347,7 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database do
                             tables: {
                               my_table: {
                                 exists: true,
-                                constraints: {},
+                                validations: {},
                                 columns: {
                                   my_column: {
                                     exists: true,
@@ -421,11 +421,11 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database do
                     )
                   end
 
-                  describe "after a loaded constraint has been added" do
-                    let(:configured_constraint) { configured_table.add_constraint :my_constraint, [:my_column], "my_column IS TRUE" }
+                  describe "after a loaded validation has been added" do
+                    let(:configured_validation) { configured_table.add_validation :my_validation, [:my_column], "my_column IS TRUE" }
 
                     before :each do
-                      configured_constraint
+                      configured_validation
                     end
 
                     it "returns a hash with the expected representation of the differences" do
@@ -437,8 +437,8 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database do
                               tables: {
                                 my_table: {
                                   exists: true,
-                                  constraints: {
-                                    my_constraint: {
+                                  validations: {
+                                    my_validation: {
                                       exists: true,
                                       check_clause: {
                                         value: "my_column IS TRUE",
@@ -521,8 +521,8 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database do
                               tables: {
                                 my_table: {
                                   exists: true,
-                                  constraints: {
-                                    my_constraint: {
+                                  validations: {
+                                    my_validation: {
                                       exists: false
                                     }
                                   },

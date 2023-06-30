@@ -8,14 +8,14 @@ module DynamicMigrations
           # recursively process the database and build all the schemas,
           # tables and columns
           def recursively_build_schemas_from_database
-            constraints = fetch_constraints
+            validations = fetch_validations
             fetch_structure.each do |schema_name, schema_definition|
               schema = add_loaded_schema schema_name
-              schema_constraints = constraints[schema_name]
+              schema_validations = validations[schema_name]
 
               schema_definition[:tables].each do |table_name, table_definition|
                 table = schema.add_table table_name, table_definition[:description]
-                table_constraints = schema_constraints && schema_constraints[table_name]
+                table_constraints = schema_validations && schema_validations[table_name]
 
                 # add each table column
                 table_definition[:columns].each do |column_name, column_definition|
@@ -44,10 +44,10 @@ module DynamicMigrations
                     updatable: column_definition[:updatable]
                 end
 
-                # add any constraints
+                # add any validations
                 if table_constraints
-                  table_constraints.each do |constraint_name, constraint_definition|
-                    table.add_constraint constraint_name, constraint_definition[:columns], constraint_definition[:check_clause]
+                  table_constraints.each do |validation_name, validation_definition|
+                    table.add_validation validation_name, validation_definition[:columns], validation_definition[:check_clause]
                   end
                 end
               end

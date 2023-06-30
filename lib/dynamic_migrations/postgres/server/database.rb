@@ -11,7 +11,7 @@ module DynamicMigrations
 
         include Connection
         include StructureLoader
-        include ConstraintsLoader
+        include ValidationsLoader
         include LoadedSchemas
         include ConfiguredSchemas
         include LoadedSchemasBuilder

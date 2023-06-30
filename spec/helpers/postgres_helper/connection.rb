@@ -17,7 +17,7 @@ module Helpers
           # after initial connect, we refresh the cached representation of
           # the database structure and constaints
           refresh_structure_cache_materialized_view
-          refresh_constraints_cache_materialized_view
+          refresh_validations_cache_materialized_view
         end
         @connection
       end
