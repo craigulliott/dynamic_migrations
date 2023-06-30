@@ -31,12 +31,12 @@ module DynamicMigrations
           end
 
           # create and add a new table from a provided table name
-          def add_table table_name
+          def add_table table_name, description = nil
             raise ExpectedSymbolError, table_name unless table_name.is_a? Symbol
             if has_table? table_name
               raise(TableAlreadyExistsError, "Table #{table_name} already exists")
             end
-            @tables[table_name] = Table.new source, self, table_name
+            @tables[table_name] = Table.new source, self, table_name, description
           end
 
           # return a table by its name, raises an error if the table does not exist

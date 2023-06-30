@@ -62,8 +62,8 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database do
             })
           end
 
-          describe "after a loaded table has been added" do
-            let(:loaded_table) { loaded_schema.add_table :my_table }
+          describe "after a loaded table with a description has been added" do
+            let(:loaded_table) { loaded_schema.add_table :my_table, "table description" }
 
             before :each do
               loaded_table
@@ -86,6 +86,10 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database do
                   my_schema: {
                     tables: {
                       my_table: {
+                        description: {
+                          value: "table description",
+                          matches: false
+                        },
                         exists: true,
                         columns: {}
                       }
@@ -110,6 +114,10 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database do
                       tables: {
                         my_table: {
                           exists: true,
+                          description: {
+                            value: nil,
+                            matches: false
+                          },
                           columns: {}
                         }
                       },
@@ -121,6 +129,10 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database do
                       tables: {
                         my_table: {
                           exists: true,
+                          description: {
+                            value: "table description",
+                            matches: false
+                          },
                           columns: {}
                         }
                       },
@@ -131,87 +143,274 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database do
               end
 
               describe "after a loaded column has been added" do
-                let(:loaded_column) { loaded_table.add_column :my_column, :integer }
+                let(:loaded_column) { loaded_table.add_column :my_column, :boolean }
 
                 before :each do
                   loaded_column
                 end
 
                 it "returns a hash with the expected representation of the differences" do
-                  expect(database.differences).to eql({
-                    configuration: {
-                      my_schema: {
-                        tables: {
-                          my_table: {
-                            exists: true,
-                            columns: {
-                              my_column: {
-                                exists: false
+                  expect(database.differences).to eql(
+                    {
+                      configuration: {
+                        my_schema: {
+                          exists: true, tables: {
+                            my_table: {
+                              exists: true,
+                              columns: {
+                                my_column: {
+                                  exists: false
+                                }
+                              },
+                              description: {
+                                value: nil,
+                                matches: false
                               }
                             }
                           }
-                        },
-                        exists: true
-                      }
-                    },
-                    database: {
-                      my_schema: {
-                        tables: {
-                          my_table: {
-                            exists: true,
-                            columns: {
-                              my_column: {
-                                exists: true
+                        }
+                      },
+                      database: {
+                        my_schema: {
+                          exists: true,
+                          tables: {
+                            my_table: {
+                              exists: true,
+                              columns: {
+                                my_column: {
+                                  exists: true,
+                                  data_type: {
+                                    value: :boolean,
+                                    matches: false
+                                  },
+                                  null: {
+                                    value: nil,
+                                    matches: false
+                                  },
+                                  default: {
+                                    value: nil,
+                                    matches: false
+                                  },
+                                  description: {
+                                    value: nil,
+                                    matches: false
+                                  },
+                                  character_maximum_length: {
+                                    value: nil,
+                                    matches: false
+                                  },
+                                  character_octet_length: {
+                                    value: nil,
+                                    matches: false
+                                  },
+                                  numeric_precision: {
+                                    value: nil,
+                                    matches: false
+                                  },
+                                  numeric_precision_radix: {
+                                    value: nil,
+                                    matches: false
+                                  },
+                                  numeric_scale: {
+                                    value: nil,
+                                    matches: false
+                                  },
+                                  datetime_precision: {
+                                    value: nil,
+                                    matches: false
+                                  },
+                                  interval_type: {
+                                    value: nil,
+                                    matches: false
+                                  },
+                                  udt_schema: {
+                                    value: nil,
+                                    matches: false
+                                  },
+                                  udt_name: {
+                                    value: nil,
+                                    matches: false
+                                  },
+                                  updatable: {
+                                    value: nil,
+                                    matches: false
+                                  }
+                                }
+                              },
+                              description: {
+                                value: "table description",
+                                matches: false
                               }
                             }
                           }
-                        },
-                        exists: true
+                        }
                       }
                     }
-                  })
+                  )
                 end
 
                 describe "after a configured column of the same name has been added" do
-                  let(:configured_column) { configured_table.add_column :my_column, :integer }
+                  let(:configured_column) { configured_table.add_column :my_column, :integer, numeric_precision: 32, numeric_precision_radix: 2, numeric_scale: 0 }
 
                   before :each do
                     configured_column
                   end
 
                   it "returns a hash with the expected representation of the differences" do
-                    expect(database.differences).to eql({
-                      configuration: {
-                        my_schema: {
-                          tables: {
-                            my_table: {
-                              exists: true,
-                              columns: {
-                                my_column: {
-                                  exists: true
+                    expect(database.differences).to eql(
+                      {
+                        configuration: {
+                          my_schema: {
+                            exists: true,
+                            tables: {
+                              my_table: {
+                                exists: true,
+                                columns: {
+                                  my_column: {
+                                    exists: true,
+                                    data_type: {
+                                      value: :integer,
+                                      matches: false
+                                    },
+                                    null: {
+                                      value: nil,
+                                      matches: true
+                                    },
+                                    default: {
+                                      value: nil,
+                                      matches: true
+                                    },
+                                    description: {
+                                      value: nil,
+                                      matches: true
+                                    },
+                                    character_maximum_length: {
+                                      value: nil,
+                                      matches: true
+                                    },
+                                    character_octet_length: {
+                                      value: nil,
+                                      matches: true
+                                    },
+                                    numeric_precision: {
+                                      value: 32,
+                                      matches: false
+                                    },
+                                    numeric_precision_radix: {
+                                      value: 2,
+                                      matches: false
+                                    },
+                                    numeric_scale: {
+                                      value: 0,
+                                      matches: false
+                                    },
+                                    datetime_precision: {
+                                      value: nil,
+                                      matches: true
+                                    },
+                                    interval_type: {
+                                      value: nil,
+                                      matches: true
+                                    },
+                                    udt_schema: {
+                                      value: nil,
+                                      matches: true
+                                    },
+                                    udt_name: {
+                                      value: nil,
+                                      matches: true
+                                    },
+                                    updatable: {
+                                      value: nil,
+                                      matches: true
+                                    }
+                                  }
+                                },
+                                description: {
+                                  value: nil,
+                                  matches: false
                                 }
                               }
                             }
-                          },
-                          exists: true
-                        }
-                      },
-                      database: {
-                        my_schema: {
-                          tables: {
-                            my_table: {
-                              exists: true,
-                              columns: {
-                                my_column: {
-                                  exists: true
+                          }
+                        },
+                        database: {
+                          my_schema: {
+                            exists: true,
+                            tables: {
+                              my_table: {
+                                exists: true,
+                                columns: {
+                                  my_column: {
+                                    exists: true,
+                                    data_type: {
+                                      value: :boolean,
+                                      matches: false
+                                    },
+                                    null: {
+                                      value: nil,
+                                      matches: true
+                                    },
+                                    default: {
+                                      value: nil,
+                                      matches: true
+                                    },
+                                    description: {
+                                      value: nil,
+                                      matches: true
+                                    },
+                                    character_maximum_length: {
+                                      value: nil,
+                                      matches: true
+                                    },
+                                    character_octet_length: {
+                                      value: nil,
+                                      matches: true
+                                    },
+                                    numeric_precision: {
+                                      value: nil,
+                                      matches: false
+                                    },
+                                    numeric_precision_radix: {
+                                      value: nil,
+                                      matches: false
+                                    },
+                                    numeric_scale: {
+                                      value: nil,
+                                      matches: false
+                                    },
+                                    datetime_precision: {
+                                      value: nil,
+                                      matches: true
+                                    },
+                                    interval_type: {
+                                      value: nil,
+                                      matches: true
+                                    },
+                                    udt_schema: {
+                                      value: nil,
+                                      matches: true
+                                    },
+                                    udt_name: {
+                                      value: nil,
+                                      matches: true
+                                    },
+                                    updatable: {
+                                      value: nil,
+                                      matches: true
+                                    }
+                                  }
+                                },
+                                description: {
+                                  value: "table description",
+                                  matches: false
                                 }
                               }
                             }
-                          },
-                          exists: true
+                          }
                         }
                       }
-                    })
+                    )
                   end
                 end
               end

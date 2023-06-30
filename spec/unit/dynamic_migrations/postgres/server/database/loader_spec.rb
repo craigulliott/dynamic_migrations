@@ -30,7 +30,9 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database do
           it "returns the expected hash" do
             expect(database.fetch_all).to eql(
               {
-                my_schema: {}
+                my_schema: {
+                  tables: {}
+                }
               }
             )
           end
@@ -44,7 +46,12 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database do
               expect(database.fetch_all).to eql(
                 {
                   my_schema: {
-                    my_table: {}
+                    tables: {
+                      my_table: {
+                        description: nil,
+                        columns: {}
+                      }
+                    }
                   }
                 }
               )
@@ -60,35 +67,43 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database do
                 expect(database.fetch_all).to eql(
                   {
                     my_schema: {
-                      my_table: {
-                        my_column: {
-                          default: nil,
-                          null: true,
-                          data_type: :integer,
-                          numeric_precision: 32,
-                          numeric_precision_radix: 2,
-                          numeric_scale: 0,
-                          datetime_precision: nil,
-                          udt_schema: :pg_catalog,
-                          udt_name: :int4,
-                          updatable: true,
-                          character_maximum_length: nil,
-                          character_octet_length: nil
-
-                        },
-                        my_second_column: {
-                          default: nil,
-                          null: true,
-                          data_type: :integer,
-                          numeric_precision: 32,
-                          numeric_precision_radix: 2,
-                          numeric_scale: 0,
-                          datetime_precision: nil,
-                          udt_schema: :pg_catalog,
-                          udt_name: :int4,
-                          updatable: true,
-                          character_maximum_length: nil,
-                          character_octet_length: nil
+                      tables: {
+                        my_table: {
+                          description: nil,
+                          columns: {
+                            my_column: {
+                              default: nil,
+                              null: true,
+                              description: nil,
+                              data_type: :integer,
+                              numeric_precision: 32,
+                              numeric_precision_radix: 2,
+                              numeric_scale: 0,
+                              datetime_precision: nil,
+                              udt_schema: :pg_catalog,
+                              udt_name: :int4,
+                              updatable: true,
+                              character_maximum_length: nil,
+                              character_octet_length: nil,
+                              interval_type: nil
+                            },
+                            my_second_column: {
+                              default: nil,
+                              null: true,
+                              description: nil,
+                              data_type: :integer,
+                              numeric_precision: 32,
+                              numeric_precision_radix: 2,
+                              numeric_scale: 0,
+                              datetime_precision: nil,
+                              udt_schema: :pg_catalog,
+                              udt_name: :int4,
+                              updatable: true,
+                              character_maximum_length: nil,
+                              character_octet_length: nil,
+                              interval_type: nil
+                            }
+                          }
                         }
                       }
                     }
@@ -147,8 +162,8 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database do
 
             describe "after two columns have been added" do
               before :each do
-                pg_helper.create_column :my_schema, :my_table, :my_column, :integer
-                pg_helper.create_column :my_schema, :my_table, :my_second_column, :integer
+                pg_helper.create_column :my_schema, :my_table, :my_column, :boolean
+                pg_helper.create_column :my_schema, :my_table, :my_second_column, :boolean
               end
 
               it "creates the expected columns" do

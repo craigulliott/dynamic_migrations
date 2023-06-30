@@ -14,8 +14,12 @@ module DynamicMigrations
                 schemata.schema_name,
                 -- Name of the table
                 tables.table_name,
+                -- The comment which has been added to the table (if any)
+                table_description.description as table_description,
                 -- Name of the column
                 columns.column_name,
+                -- The comment which has been added to the column (if any)
+                column_description.description as column_description,
                 -- Default expression of the column
                 columns.column_default,
                 -- YES if the column is possibly nullable, NO if
@@ -85,38 +89,50 @@ module DynamicMigrations
                 columns.is_updatable
               FROM information_schema.schemata
               LEFT JOIN information_schema.tables ON schemata.schema_name = tables.table_schema
-              LEFT JOIN information_schema.columns on tables.table_name = columns.table_name
-                WHERE schemata.schema_name != 'information_schema'
-                  AND schemata.schema_name != 'postgis'
-                  AND left(schemata.schema_name, 3) != 'pg_'
-                  #{include_public_schema ? "" : "AND schemata.schema_name != 'public'"}
+              LEFT JOIN information_schema.columns ON tables.table_name = columns.table_name
+              -- required for the column and table description/comment joins
+              LEFT JOIN pg_catalog.pg_statio_all_tables ON pg_statio_all_tables.schemaname = schemata.schema_name AND pg_statio_all_tables.relname = tables.table_name
+              -- required for the table description/comment
+              LEFT JOIN pg_catalog.pg_description table_description ON table_description.objoid = pg_statio_all_tables.relid AND table_description.objsubid = 0
+              -- required for the column description/comment
+              LEFT JOIN pg_catalog.pg_description column_description ON column_description.objoid = pg_statio_all_tables.relid AND column_description.objsubid = columns.ordinal_position
+              WHERE schemata.schema_name != 'information_schema'
+                AND schemata.schema_name != 'postgis'
+                AND left(schemata.schema_name, 3) != 'pg_'
+                #{include_public_schema ? "" : "AND schemata.schema_name != 'public'"}
+              -- order by the schema and table names alphabetically, then by the column position in the table
+              ORDER BY schemata.schema_name, tables.table_schema, columns.ordinal_position
             SQL
 
             schemas = {}
             rows.each do |row|
               schema_name = row["schema_name"].to_sym
-              schema = schemas[schema_name] ||= {}
+              schema = schemas[schema_name] ||= {
+                tables: {}
+              }
 
               unless row["table_name"].nil?
                 table_name = row["table_name"].to_sym
-                table = schema[table_name] ||= {}
+                table = schema[:tables][table_name] ||= {
+                  description: row["table_description"],
+                  columns: {}
+                }
 
                 unless row["column_name"].nil?
                   column_name = row["column_name"].to_sym
-                  column = table[column_name] ||= {}
+                  column = table[:columns][column_name] ||= {}
 
-                  column[:default] = row["column_default"]
+                  column[:data_type] = row["data_type"].to_sym
                   column[:null] = row["is_nullable"] == "YES"
-
-                  data_type = DataType.new(row["data_type"].to_sym)
-                  column[:data_type] = data_type.name
-
+                  column[:default] = row["column_default"]
+                  column[:description] = row["column_description"]
                   column[:character_maximum_length] = row["character_maximum_length"].nil? ? nil : row["character_maximum_length"].to_i
                   column[:character_octet_length] = row["character_octet_length"].nil? ? nil : row["character_octet_length"].to_i
                   column[:numeric_precision] = row["numeric_precision"].nil? ? nil : row["numeric_precision"].to_i
                   column[:numeric_precision_radix] = row["numeric_precision_radix"].nil? ? nil : row["numeric_precision_radix"].to_i
                   column[:numeric_scale] = row["numeric_scale"].nil? ? nil : row["numeric_scale"].to_i
                   column[:datetime_precision] = row["datetime_precision"].nil? ? nil : row["datetime_precision"].to_i
+                  column[:interval_type] = row["interval_type"].nil? ? nil : row["interval_type"].to_sym
                   column[:udt_schema] = row["udt_schema"].to_sym
                   column[:udt_name] = row["udt_name"].to_sym
                   column[:updatable] = row["is_updatable"] == "YES"
@@ -129,14 +145,36 @@ module DynamicMigrations
           # recursively process the database and build all the schemas,
           # tables and columns
           def recursively_build_schema_from_database
-            fetch_all.each do |schema_name, tables|
+            fetch_all.each do |schema_name, schema_definition|
               schema = add_loaded_schema schema_name
 
-              tables.each do |table_name, columns|
-                table = schema.add_table table_name
+              schema_definition[:tables].each do |table_name, table_definition|
+                table = schema.add_table table_name, table_definition[:description]
 
-                columns.each do |column_name, column_config|
-                  table.add_column column_name, column_config[:data_type]
+                table_definition[:columns].each do |column_name, column_definition|
+                  # we only need these for arrays and user-defined types
+                  # (user-defined is usually ENUMS)
+                  if [:ARRAY, :"USER-DEFINED"].include? column_definition[:data_type]
+                    udt_schema = column_definition[:udt_schema]
+                    udt_name = column_definition[:udt_name]
+                  else
+                    udt_schema = nil
+                    udt_name = nil
+                  end
+
+                  table.add_column column_name, column_definition[:data_type],
+                    null: column_definition[:null],
+                    default: column_definition[:default],
+                    description: column_definition[:description],
+                    character_maximum_length: column_definition[:character_maximum_length],
+                    character_octet_length: column_definition[:character_octet_length],
+                    numeric_precision: column_definition[:numeric_precision],
+                    numeric_precision_radix: column_definition[:numeric_precision_radix],
+                    numeric_scale: column_definition[:numeric_scale],
+                    datetime_precision: column_definition[:datetime_precision],
+                    udt_schema: udt_schema,
+                    udt_name: udt_name,
+                    updatable: column_definition[:updatable]
                 end
               end
             end

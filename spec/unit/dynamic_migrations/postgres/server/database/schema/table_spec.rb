@@ -25,6 +25,20 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database::Schema::Table do
         DynamicMigrations::Postgres::Server::Database::Schema::Table.new :configuration, schema, "my_table"
       }.to raise_error DynamicMigrations::ExpectedSymbolError
     end
+
+    describe "when providing an optional description" do
+      it "instantiates a new table without raising an error" do
+        expect {
+          DynamicMigrations::Postgres::Server::Database::Schema::Table.new :configuration, schema, :my_table, "a valid description of my table"
+        }.to_not raise_error
+      end
+
+      it "raises an error if providing an invalid schema" do
+        expect {
+          DynamicMigrations::Postgres::Server::Database::Schema::Table.new :configuration, schema, :my_table, :an_invalid_description_type
+        }.to raise_error DynamicMigrations::ExpectedStringError
+      end
+    end
   end
 
   describe :schema do
@@ -39,9 +53,39 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database::Schema::Table do
     end
   end
 
+  describe :description do
+    describe "when no description was provided at initialization" do
+      it "returns nil" do
+        expect(table.description).to be_nil
+      end
+    end
+
+    describe "when a description was provided at initialization" do
+      let(:table_with_description) { DynamicMigrations::Postgres::Server::Database::Schema::Table.new :configuration, schema, :my_table, "a valid description of my table" }
+      it "returns the expected description" do
+        expect(table_with_description.description).to eq("a valid description of my table")
+      end
+    end
+  end
+
+  describe :has_description? do
+    describe "when no description was provided at initialization" do
+      it "returns false" do
+        expect(table.has_description?).to be(false)
+      end
+    end
+
+    describe "when a description was provided at initialization" do
+      let(:table_with_description) { DynamicMigrations::Postgres::Server::Database::Schema::Table.new :configuration, schema, :my_table, "a valid description of my table" }
+      it "returns true" do
+        expect(table_with_description.has_description?).to be(true)
+      end
+    end
+  end
+
   describe :add_column do
     it "creates a new column object" do
-      expect(table.add_column(:column_name, :integer)).to be_a DynamicMigrations::Postgres::Server::Database::Schema::Table::Column
+      expect(table.add_column(:column_name, :boolean)).to be_a DynamicMigrations::Postgres::Server::Database::Schema::Table::Column
     end
 
     it "raises an error if providing an invalid column name" do
@@ -52,12 +96,12 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database::Schema::Table do
 
     describe "when a column already exists" do
       before(:each) do
-        table.add_column(:column_name, :integer)
+        table.add_column(:column_name, :boolean)
       end
 
       it "raises an error if using the same column name" do
         expect {
-          table.add_column(:column_name, :integer)
+          table.add_column(:column_name, :boolean)
         }.to raise_error DynamicMigrations::Postgres::Server::Database::Schema::Table::ColumnAlreadyExistsError
       end
     end
@@ -71,7 +115,7 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database::Schema::Table do
     end
 
     describe "after the expected column has been added" do
-      let(:column) { table.add_column :column_name, :integer }
+      let(:column) { table.add_column :column_name, :boolean }
 
       before(:each) do
         column
@@ -89,7 +133,7 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database::Schema::Table do
     end
 
     describe "after the expected column has been added" do
-      let(:column) { table.add_column :column_name, :integer }
+      let(:column) { table.add_column :column_name, :boolean }
 
       before(:each) do
         column
@@ -108,7 +152,7 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database::Schema::Table do
     end
 
     describe "after the expected column has been added" do
-      let(:column) { table.add_column :column_name, :integer }
+      let(:column) { table.add_column :column_name, :boolean }
 
       before(:each) do
         column
