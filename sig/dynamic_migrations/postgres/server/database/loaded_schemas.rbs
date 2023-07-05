@@ -1,0 +1,23 @@
+module DynamicMigrations
+  module Postgres
+    class Server
+      class Database
+        module LoadedSchemas
+          @loaded_schemas: Hash[Symbol, Schema]
+
+          def add_loaded_schema: (Symbol schema_name) -> Schema
+          def loaded_schema: (Symbol schema_name) -> Schema
+          def has_loaded_schema?: (Symbol schema_name) -> bool
+          def loaded_schemas: -> Array[Schema]
+          def loaded_schemas_hash: -> Hash[Symbol, Schema]
+
+          class LoadedSchemaAlreadyExistsError < StandardError
+          end
+
+          class LoadedSchemaDoesNotExistError < StandardError
+          end
+        end
+      end
+    end
+  end
+end

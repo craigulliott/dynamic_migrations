@@ -1,0 +1,27 @@
+module DynamicMigrations
+  module Postgres
+    class Server
+      class Database
+        class Schema
+          class Table
+            module Columns
+              @columns: Hash[Symbol, Column]
+
+              def column: (Symbol column_name) -> Column
+              def has_column?: (Symbol column_name) -> bool
+              def columns: -> Array[Column]
+              def columns_hash: -> Hash[Symbol, Column]
+              def add_column: (Symbol column_name, Symbol data_type, **untyped) -> untyped
+
+              class ColumnDoesNotExistError < StandardError
+              end
+
+              class DuplicateColumnError < StandardError
+              end
+            end
+          end
+        end
+      end
+    end
+  end
+end

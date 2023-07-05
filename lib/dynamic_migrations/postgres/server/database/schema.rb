@@ -36,7 +36,12 @@ module DynamicMigrations
             if has_table? table_name
               raise(TableAlreadyExistsError, "Table #{table_name} already exists")
             end
-            @tables[table_name] = Table.new source, self, table_name, description
+            included_target = self
+            if included_target.is_a? Schema
+              @tables[table_name] = Table.new source, included_target, table_name, description
+            else
+              raise ModuleIncludedIntoUnexpectedTargetError, included_target
+            end
           end
 
           # return a table by its name, raises an error if the table does not exist

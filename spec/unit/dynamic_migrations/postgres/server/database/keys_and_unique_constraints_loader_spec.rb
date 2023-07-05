@@ -169,7 +169,7 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database do
                                 index_type: nil
                               }
                             },
-                            "PRIMARY_KEY": {
+                            PRIMARY_KEY: {
                               my_table_pkey: {
                                 column_names: [
                                   :my_column,

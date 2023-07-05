@@ -25,9 +25,12 @@ module DynamicMigrations
           end
 
           def disconnect
-            raise NotConnectedError unless @connection
-            Postgres::Connections.disconnect @connection
-            @connection = nil
+            if (conn = @connection)
+              Postgres::Connections.disconnect conn
+              @connection = nil
+            else
+              raise NotConnectedError
+            end
           end
         end
       end

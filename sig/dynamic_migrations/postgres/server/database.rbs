@@ -1,0 +1,27 @@
+module DynamicMigrations
+  module Postgres
+    class Server
+      class Database
+        @configured_schemas: Hash[Symbol, Schema]
+        @loaded_schemas: Hash[Symbol, Schema]
+
+        include Connection
+        include StructureLoader
+        include ValidationsLoader
+        include KeysAndUniqueConstraintsLoader
+        include LoadedSchemas
+        include ConfiguredSchemas
+        include LoadedSchemasBuilder
+
+        attr_reader server: Server
+        attr_reader database_name: Symbol
+        def initialize: (Server server, Symbol database_name) -> void
+        def schema: (Symbol schema_name, database_or_configuration source) -> untyped
+        def differences: -> Hash[untyped, untyped]
+
+        class ExpectedServerError < StandardError
+        end
+      end
+    end
+  end
+end

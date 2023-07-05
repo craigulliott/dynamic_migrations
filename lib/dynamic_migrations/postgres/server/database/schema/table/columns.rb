@@ -42,7 +42,12 @@ module DynamicMigrations
                 if has_column? column_name
                   raise(DuplicateColumnError, "Column #{column_name} already exists")
                 end
-                @columns[column_name] = Column.new source, self, column_name, data_type, **column_options
+                included_target = self
+                if included_target.is_a? Table
+                  @columns[column_name] = Column.new source, included_target, column_name, data_type, **column_options
+                else
+                  raise ModuleIncludedIntoUnexpectedTargetError, included_target
+                end
               end
             end
           end

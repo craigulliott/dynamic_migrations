@@ -1,0 +1,23 @@
+module DynamicMigrations
+  module Postgres
+    class Server
+      class Database
+        module ConfiguredSchemas
+          @configured_schemas: Hash[Symbol, Schema]
+
+          def add_configured_schema: (Symbol schema_name) -> Schema
+          def configured_schema: (Symbol schema_name) -> Schema
+          def has_configured_schema?: (Symbol schema_name) -> bool
+          def configured_schemas: -> Array[Schema]
+          def configured_schemas_hash: -> Hash[Symbol, Schema]
+
+          class ConfiguredSchemaAlreadyExistsError < StandardError
+          end
+
+          class ConfiguredSchemaDoesNotExistError < StandardError
+          end
+        end
+      end
+    end
+  end
+end

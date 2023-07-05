@@ -3,7 +3,7 @@ module Helpers
     module UniqueConstraints
       # add a unique constraint to the provided table and columns
       def add_unique_constraint schema_name, table_name, column_names, constraint_key_name
-        column_names_sql = column_names.map{|n| connection.quote_ident n.to_s}.join(', ')
+        column_names_sql = column_names.map { |n| connection.quote_ident n.to_s }.join(", ")
         # add the constraint key
         connection.exec(<<-SQL)
           ALTER TABLE #{connection.quote_ident schema_name.to_s}.#{connection.quote_ident table_name.to_s}

@@ -17,7 +17,12 @@ module DynamicMigrations
             if has_loaded_schema? schema_name
               raise(LoadedSchemaAlreadyExistsError, "Loaded schema #{schema_name} already exists")
             end
-            @loaded_schemas[schema_name] = Schema.new :database, self, schema_name
+            included_target = self
+            if included_target.is_a? Database
+              @loaded_schemas[schema_name] = Schema.new :database, included_target, schema_name
+            else
+              raise ModuleIncludedIntoUnexpectedTargetError, included_target
+            end
           end
 
           # returns the loaded schema object for the provided schema name, and raises an

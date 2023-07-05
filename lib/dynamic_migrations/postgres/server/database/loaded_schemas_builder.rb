@@ -47,10 +47,8 @@ module DynamicMigrations
                 end
 
                 # add any validations
-                unless table_validations.nil?
-                  table_validations.each do |validation_name, validation_definition|
-                    table.add_validation validation_name, validation_definition[:columns], validation_definition[:check_clause]
-                  end
+                table_validations&.each do |validation_name, validation_definition|
+                  table.add_validation validation_name, validation_definition[:columns], validation_definition[:check_clause]
                 end
               end
             end

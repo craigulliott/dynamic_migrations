@@ -1,0 +1,16 @@
+module DynamicMigrations
+  module Postgres
+    class Server
+      class Database
+        module StructureLoader
+          def create_database_structure_cache: -> void
+          def fetch_structure: -> Hash[untyped, untyped]
+          def recursively_build_schemas_from_database: -> void
+          def fetch_schema_names: -> Array[String]
+          def fetch_table_names: (Symbol schema_name) -> Array[String]
+          def fetch_columns: (Symbol schema_name, Symbol table_name) -> Hash[untyped, untyped]
+        end
+      end
+    end
+  end
+end

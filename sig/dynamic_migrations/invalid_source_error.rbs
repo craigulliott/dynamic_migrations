@@ -1,0 +1,5 @@
+module DynamicMigrations
+  class InvalidSourceError < StandardError
+    def initialize: (untyped source) -> void
+  end
+end

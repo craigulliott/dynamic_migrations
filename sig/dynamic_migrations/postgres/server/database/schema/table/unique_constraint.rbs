@@ -1,0 +1,46 @@
+module DynamicMigrations
+  module Postgres
+    class Server
+      class Database
+        class Schema
+          class Table
+            class UniqueConstraint < Source
+              INDEX_TYPES: [:btree, :hash, :gist, :gin, :bring, :spgist]
+              @columns: Hash[Symbol, Column]
+
+              attr_reader table: Table
+              attr_reader unique_constraint_name: Symbol
+              attr_reader index_type: :btree | :hash | :gist | :gin | :bring | :spgist
+              attr_reader deferrable: bool
+              attr_reader initially_deferred: bool
+              def initialize: (database_or_configuration source, Table table, Array[Column] columns, Symbol unique_constraint_name, ?index_type: :btree | :hash | :gist | :gin | :bring | :spgist, ?deferrable: bool, ?initially_deferred: bool) -> void
+              def columns: -> Array[Column]
+              def column_names: -> Array[Symbol]
+
+              private
+              def add_column: (Column column) -> void
+
+              class ExpectedTableError < StandardError
+              end
+
+              class ExpectedArrayOfColumnsError < StandardError
+              end
+
+              class UnexpectedIndexTypeError < StandardError
+              end
+
+              class UnexpectedOrderError < StandardError
+              end
+
+              class UnexpectedNullsPositionError < StandardError
+              end
+
+              class DuplicateColumnError < StandardError
+              end
+            end
+          end
+        end
+      end
+    end
+  end
+end

@@ -46,7 +46,12 @@ module DynamicMigrations
                 foreign_schema = schema.database.schema foreign_schema_name, source
                 foreign_table = foreign_schema.table foreign_table_name
                 foreign_columns = foreign_column_names.map { |column_name| foreign_table.column column_name }
-                @foreign_key_constraints[foreign_key_constraint_name] = ForeignKeyConstraint.new source, self, columns, foreign_table, foreign_columns, foreign_key_constraint_name, **foreign_key_constraint_options
+                included_target = self
+                if included_target.is_a? Table
+                  @foreign_key_constraints[foreign_key_constraint_name] = ForeignKeyConstraint.new source, included_target, columns, foreign_table, foreign_columns, foreign_key_constraint_name, **foreign_key_constraint_options
+                else
+                  raise ModuleIncludedIntoUnexpectedTargetError, included_target
+                end
               end
             end
           end

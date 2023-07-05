@@ -17,7 +17,12 @@ module DynamicMigrations
             if has_configured_schema? schema_name
               raise(ConfiguredSchemaAlreadyExistsError, "Configured schema #{schema_name} already exists")
             end
-            @configured_schemas[schema_name] = Schema.new :configuration, self, schema_name
+            included_target = self
+            if included_target.is_a? Database
+              @configured_schemas[schema_name] = Schema.new :configuration, included_target, schema_name
+            else
+              raise ModuleIncludedIntoUnexpectedTargetError, included_target
+            end
           end
 
           # returns the configured schema object for the provided schema name, and raises an

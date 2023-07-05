@@ -1,0 +1,24 @@
+module DynamicMigrations
+  module Postgres
+    class Server
+      class Database
+        module Connection
+          @connection: PG::Connection | nil
+
+          def connect: -> PG::Connection
+          def connection: -> PG::Connection
+          def disconnect: -> void
+
+          class NotConnectedError < StandardError
+          end
+
+          class MissingDatabaseNameError < StandardError
+          end
+
+          class AlreadyConnectedError < StandardError
+          end
+        end
+      end
+    end
+  end
+end

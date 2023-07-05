@@ -47,7 +47,12 @@ module DynamicMigrations
                 end
                 columns = column_names.map { |column_name| column column_name }
                 include_columns = include_column_names.map { |column_name| column column_name }
-                @indexes[index_name] = Index.new source, self, columns, index_name, include_columns: include_columns, **index_options
+                included_target = self
+                if included_target.is_a? Table
+                  @indexes[index_name] = Index.new source, included_target, columns, index_name, include_columns: include_columns, **index_options
+                else
+                  raise ModuleIncludedIntoUnexpectedTargetError, included_target
+                end
               end
             end
           end

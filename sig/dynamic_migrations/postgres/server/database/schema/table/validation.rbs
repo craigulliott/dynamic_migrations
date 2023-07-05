@@ -1,0 +1,36 @@
+module DynamicMigrations
+  module Postgres
+    class Server
+      class Database
+        class Schema
+          class Table
+            class Validation < Source
+              @columns: Hash[Symbol, Column]
+
+              attr_reader table: Table
+              attr_reader validation_name: Symbol
+              attr_reader check_clause: String
+              attr_reader deferrable: bool
+              attr_reader initially_deferred: bool
+              def initialize: (database_or_configuration source, Table table, Array[Column] columns, Symbol validation_name, String check_clause, ?deferrable: bool, ?initially_deferred: bool) -> void
+              def columns: -> Array[Column]
+              def column_names: -> Array[Symbol]
+
+              private
+              def add_column: (Column column) -> void
+
+              class ExpectedTableError < StandardError
+              end
+
+              class ExpectedArrayOfColumnsError < StandardError
+              end
+
+              class DuplicateColumnError < StandardError
+              end
+            end
+          end
+        end
+      end
+    end
+  end
+end

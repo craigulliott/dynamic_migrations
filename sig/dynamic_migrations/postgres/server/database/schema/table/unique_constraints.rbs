@@ -1,0 +1,27 @@
+module DynamicMigrations
+  module Postgres
+    class Server
+      class Database
+        class Schema
+          class Table
+            module UniqueConstraints
+              @unique_constraints: Hash[Symbol, UniqueConstraint]
+
+              def unique_constraint: (Symbol unique_constraint_name) -> UniqueConstraint
+              def has_unique_constraint?: (Symbol unique_constraint_name) -> bool
+              def unique_constraints: -> Array[UniqueConstraint]
+              def unique_constraints_hash: -> Hash[Symbol, UniqueConstraint]
+              def add_unique_constraint: (Symbol unique_constraint_name, Array[Symbol] column_names, **untyped) -> UniqueConstraint
+
+              class UniqueConstraintDoesNotExistError < StandardError
+              end
+
+              class UniqueConstraintAlreadyExistsError < StandardError
+              end
+            end
+          end
+        end
+      end
+    end
+  end
+end

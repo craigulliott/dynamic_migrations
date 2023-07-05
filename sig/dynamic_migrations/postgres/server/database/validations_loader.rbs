@@ -1,0 +1,12 @@
+module DynamicMigrations
+  module Postgres
+    class Server
+      class Database
+        module ValidationsLoader
+          def create_database_validations_cache: -> void
+          def fetch_validations: -> Hash[untyped, untyped]
+        end
+      end
+    end
+  end
+end

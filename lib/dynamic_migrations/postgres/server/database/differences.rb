@@ -104,7 +104,7 @@ module DynamicMigrations
               exists: true,
               description: {
                 value: table.description,
-                matches: (comparison_table && comparison_table.description == table.description) ? true : false
+                matches: (comparison_table && comparison_table.description == table.description) || false
               },
               primary_key: compare_record(primary_key, comparison_primary_key, [
                 :primary_key_name,
@@ -273,15 +273,15 @@ module DynamicMigrations
                 exists: false
               }
             else
-              result = {
-                exists: true
-              }
+              result = {}
               method_list.each do |method_name|
+                matches = (comparison && comparison.send(method_name) == base.send(method_name)) || false
                 result[method_name] = {
                   value: base.send(method_name),
-                  matches: (comparison && comparison.send(method_name) == base.send(method_name)) ? true : false
+                  matches: matches
                 }
               end
+              result[:exists] = true
               result
             end
           end

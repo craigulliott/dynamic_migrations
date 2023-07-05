@@ -1,0 +1,12 @@
+module DynamicMigrations
+  module Postgres
+    module Connections
+      self.@connections: Hash[PG::Connection, true]
+
+      def self.create_connection: (String host, Integer port, String username, String password, Server::Database database) -> PG::Connection
+      def self.connections: -> Array[PG::Connection]
+      def self.disconnect: (PG::Connection connection) -> bool
+      def self.disconnect_all: -> void
+    end
+  end
+end

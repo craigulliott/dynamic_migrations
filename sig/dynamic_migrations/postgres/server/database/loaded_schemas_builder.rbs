@@ -1,0 +1,14 @@
+module DynamicMigrations
+  module Postgres
+    class Server
+      class Database
+        module LoadedSchemasBuilder
+          def recursively_build_schemas_from_database: -> void
+
+          class UnexpectedConstrintTypeError < StandardError
+          end
+        end
+      end
+    end
+  end
+end

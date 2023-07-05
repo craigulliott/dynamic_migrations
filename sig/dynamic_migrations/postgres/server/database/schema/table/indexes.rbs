@@ -1,0 +1,27 @@
+module DynamicMigrations
+  module Postgres
+    class Server
+      class Database
+        class Schema
+          class Table
+            module Indexes
+              @indexes: Hash[Symbol, Index]
+
+              def index: (Symbol index_name) -> Index
+              def has_index?: (Symbol index_name) -> bool
+              def indexes: -> Array[Index]
+              def indexes_hash: -> Hash[Symbol, Index]
+              def add_index: (Symbol index_name, Array[Symbol] column_names, ?include_column_names: Array[Symbol], **untyped) -> Index
+
+              class IndexDoesNotExistError < StandardError
+              end
+
+              class IndexAlreadyExistsError < StandardError
+              end
+            end
+          end
+        end
+      end
+    end
+  end
+end

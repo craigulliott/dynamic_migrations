@@ -1,0 +1,15 @@
+module DynamicMigrations
+  module Postgres
+    class Server
+      class Database
+        class Source
+          attr_reader source: database_or_configuration
+          def initialize: (database_or_configuration source) -> void
+          def from_configuration?: -> bool
+          def from_database?: -> bool
+          def assert_is_a_symbol!: (untyped value) -> true
+        end
+      end
+    end
+  end
+end

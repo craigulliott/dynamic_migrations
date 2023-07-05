@@ -1,3 +1,5 @@
+type database_or_configuration = :database | :configuration
+
 module DynamicMigrations
   VERSION: String
   # See the writing guide of rbs: https://github.com/ruby/rbs#guides

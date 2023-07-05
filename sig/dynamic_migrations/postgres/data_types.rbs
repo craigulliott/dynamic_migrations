@@ -1,0 +1,22 @@
+module DynamicMigrations
+  module Postgres
+    module DataTypes
+      DATA_TYPES: Hash[Symbol, untyped]
+
+      def self.validate_type_exists!: (Symbol data_type) -> true
+      def self.validate_column_properties!: (Symbol data_type, **untyped) -> true
+
+      class MissingRequiredAttributeError < StandardError
+        def initialize: (Symbol data_type, :character_maximum_length | :character_octet_length | :datetime_precision | :numeric_precision | :numeric_precision_radix | :numeric_scale | :udt_name | :udt_schema attribute) -> void
+      end
+
+      class UnexpectedPropertyError < StandardError
+        def initialize: (Symbol data_type, untyped attribute, untyped value) -> void
+      end
+
+      class UnsupportedTypeError < StandardError
+        def initialize: (Symbol data_type) -> void
+      end
+    end
+  end
+end

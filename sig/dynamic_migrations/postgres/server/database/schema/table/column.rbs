@@ -1,0 +1,35 @@
+module DynamicMigrations
+  module Postgres
+    class Server
+      class Database
+        class Schema
+          class Table
+            class Column < Source
+              attr_reader table: Table
+              attr_reader column_name: Symbol
+              attr_reader description: String
+              attr_reader null: bool
+              attr_reader default: untyped
+              attr_reader data_type: Symbol
+              attr_reader character_maximum_length: Integer?
+              attr_reader character_octet_length: Integer?
+              attr_reader numeric_precision: Integer?
+              attr_reader numeric_precision_radix: Integer?
+              attr_reader numeric_scale: Integer?
+              attr_reader datetime_precision: Integer?
+              attr_reader interval_type: Symbol?
+              attr_reader udt_schema: Symbol?
+              attr_reader udt_name: Symbol?
+              attr_reader updatable: bool
+              def initialize: (database_or_configuration source, Table table, Symbol column_name, Symbol data_type, ?null: bool, ?default: untyped, ?description: String | nil, ?character_maximum_length: Integer | nil, ?character_octet_length: Integer | nil, ?numeric_precision: Integer | nil, ?numeric_precision_radix: Integer | nil, ?numeric_scale: Integer | nil, ?datetime_precision: Integer | nil, ?interval_type: Symbol | nil, ?udt_schema: Symbol | nil, ?udt_name: Symbol | nil, ?updatable: bool) -> void
+              def has_description?: -> bool
+
+              class ExpectedTableError < StandardError
+              end
+            end
+          end
+        end
+      end
+    end
+  end
+end

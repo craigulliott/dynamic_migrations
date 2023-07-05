@@ -1,0 +1,7 @@
+module PG
+  class Connection
+
+    def close: () -> void
+
+  end
+end

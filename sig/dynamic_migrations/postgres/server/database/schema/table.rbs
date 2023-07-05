@@ -1,0 +1,39 @@
+module DynamicMigrations
+  module Postgres
+    class Server
+      class Database
+        class Schema
+          class Table < Source
+            @columns: Hash[Symbol, untyped]
+            @validations: Hash[Symbol, untyped]
+            @indexes: Hash[Symbol, untyped]
+            @foreign_key_constraints: Hash[Symbol, untyped]
+            @unique_constraints: Hash[Symbol, untyped]
+            @primary_key: PrimaryKey?
+
+            include Columns
+            include Validations
+            include Indexes
+            include ForeignKeyConstraints
+            include UniqueConstraints
+
+            attr_reader schema: Schema
+            attr_reader table_name: Symbol
+            attr_reader description: String?
+            def initialize: (database_or_configuration source, Schema schema, Symbol table_name, ?nil | String? description ) -> void
+            def has_description?: -> bool
+            def add_primary_key: (Symbol primary_key_name, Array[Symbol] column_names, **untyped) -> untyped
+            def has_primary_key?: -> bool
+            def primary_key: -> PrimaryKey?
+
+            class ExpectedSchemaError < StandardError
+            end
+
+            class PrimaryKeyDoesNotExistError < StandardError
+            end
+          end
+        end
+      end
+    end
+  end
+end

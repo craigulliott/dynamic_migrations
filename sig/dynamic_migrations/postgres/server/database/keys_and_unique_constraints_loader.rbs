@@ -1,0 +1,12 @@
+module DynamicMigrations
+  module Postgres
+    class Server
+      class Database
+        module KeysAndUniqueConstraintsLoader
+          def create_database_keys_and_unique_constraints_cache: -> void
+          def fetch_keys_and_unique_constraints: -> Hash[untyped, untyped]
+        end
+      end
+    end
+  end
+end

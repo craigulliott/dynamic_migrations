@@ -1,0 +1,16 @@
+module DynamicMigrations
+  module Postgres
+    class Server
+      @databases: Hash[Symbol, Database]
+
+      attr_reader host: String
+      attr_reader port: Integer
+      attr_reader username: String
+      attr_reader password: String
+      def initialize: (String host, Integer port, String username, String password) -> void
+      def add_database: (Symbol database_name) -> Database
+      def database: (Symbol database_name) -> Database
+      def databases: -> Array[Database]
+    end
+  end
+end

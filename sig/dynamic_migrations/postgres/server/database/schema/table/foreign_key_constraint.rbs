@@ -1,0 +1,44 @@
+module DynamicMigrations
+  module Postgres
+    class Server
+      class Database
+        class Schema
+          class Table
+            class ForeignKeyConstraint < Source
+              @columns: Hash[Symbol, Column]
+              @foreign_columns: Hash[Symbol, Column]
+
+              attr_reader table: Table
+              attr_reader foreign_table: Table
+              attr_reader foreign_key_constraint_name: Symbol
+              attr_reader deferrable: bool
+              attr_reader initially_deferred: bool
+              def initialize: (database_or_configuration source, Table table, Array[Column] columns, Table foreign_table, Array[Column] foreign_columns, Symbol foreign_key_constraint_name, ?deferrable: bool, ?initially_deferred: bool) -> void
+              def columns: -> Array[Column]
+              def column_names: -> Array[Symbol]
+              def foreign_columns: -> Array[Column]
+              def foreign_column_names: -> Array[Symbol]
+              def foreign_schema_name: -> Symbol
+              def foreign_table_name: -> Symbol
+
+              private
+              def add_column: (Column column, ?bool foreign) -> void
+
+              class ExpectedTableError < StandardError
+              end
+
+              class ExpectedArrayOfColumnsError < StandardError
+              end
+
+              class ExpectedDifferentTablesError < StandardError
+              end
+
+              class DuplicateColumnError < StandardError
+              end
+            end
+          end
+        end
+      end
+    end
+  end
+end

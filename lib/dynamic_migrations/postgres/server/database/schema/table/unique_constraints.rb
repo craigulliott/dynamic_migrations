@@ -43,7 +43,12 @@ module DynamicMigrations
                   raise(UniqueConstraintAlreadyExistsError, "unique_constraint #{unique_constraint_name} already exists")
                 end
                 columns = column_names.map { |column_name| column column_name }
-                @unique_constraints[unique_constraint_name] = UniqueConstraint.new source, self, columns, unique_constraint_name, **unique_constraint_options
+                included_target = self
+                if included_target.is_a? Table
+                  @unique_constraints[unique_constraint_name] = UniqueConstraint.new source, included_target, columns, unique_constraint_name, **unique_constraint_options
+                else
+                  raise ModuleIncludedIntoUnexpectedTargetError, included_target
+                end
               end
             end
           end

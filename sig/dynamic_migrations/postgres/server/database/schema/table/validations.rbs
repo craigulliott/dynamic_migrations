@@ -1,0 +1,27 @@
+module DynamicMigrations
+  module Postgres
+    class Server
+      class Database
+        class Schema
+          class Table
+            module Validations
+              @validations: Hash[Symbol, Validation]
+
+              def validation: (Symbol validation_name) -> Validation
+              def has_validation?: (Symbol validation_name) -> bool
+              def validations: -> Array[Validation]
+              def validations_hash: -> Hash[Symbol, Validation]
+              def add_validation: (Symbol validation_name, Array[Symbol] column_names, String check_clause, **untyped) -> untyped
+
+              class ValidationDoesNotExistError < StandardError
+              end
+
+              class ValidationAlreadyExistsError < StandardError
+              end
+            end
+          end
+        end
+      end
+    end
+  end
+end
