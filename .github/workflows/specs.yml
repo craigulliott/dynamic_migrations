@@ -4,10 +4,28 @@ on:
   push:
     branches:
       - "*"
+  pull_request:
+    branches:
+      - "*"
 
 jobs:
   specs:
     runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:15
+        env:
+          POSTGRES_USER: specs_user
+          POSTGRES_PASSWORD: specs_password
+          POSTGRES_DB: dynamic_migrations
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 5432:5432
+
     steps:
 
       # Checkout code
@@ -20,6 +38,10 @@ jobs:
 
       # Bundle install
       - run: bundle install
+
+      # move the database configuration into place
+      - name: Move database configuration file
+        run: mv config/database.ci.yaml config/database.yaml
 
       # run the tests
       - name: Run rspec test suite

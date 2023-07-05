@@ -1,0 +1,8 @@
+# this file is used by the test suite to connect to the database
+postgres:
+  primary:
+    database: dynamic_migrations
+    username: specs_user
+    password: specs_password
+    host: localhost
+    port: 5432
