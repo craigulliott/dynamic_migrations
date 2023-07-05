@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    dynamic_migrations (0.0.0)
+    dynamic_migrations (1.0.0)
       pg (~> 1.5)
 
 GEM
