@@ -16,6 +16,32 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database::Schema::Table::Val
       }.to_not raise_error
     end
 
+    describe "providing an optional deferrable value" do
+      it "does not raise an error" do
+        expect {
+          DynamicMigrations::Postgres::Server::Database::Schema::Table::Validation.new :configuration, table, [column], :validation_name, "validation SQL", deferrable: true
+        }.to_not raise_error
+      end
+
+      it "returns the expected value via a getter of the same name" do
+        validation = DynamicMigrations::Postgres::Server::Database::Schema::Table::Validation.new :configuration, table, [column], :validation_name, "validation SQL", deferrable: true
+        expect(validation.deferrable).to be true
+      end
+    end
+
+    describe "providing an optional initially_deferred value" do
+      it "does not raise an error" do
+        expect {
+          DynamicMigrations::Postgres::Server::Database::Schema::Table::Validation.new :configuration, table, [column], :validation_name, "validation SQL", initially_deferred: true
+        }.to_not raise_error
+      end
+
+      it "returns the expected value via a getter of the same name" do
+        validation = DynamicMigrations::Postgres::Server::Database::Schema::Table::Validation.new :configuration, table, [column], :validation_name, "validation SQL", initially_deferred: true
+        expect(validation.initially_deferred).to be true
+      end
+    end
+
     it "raises an error if providing an invalid table" do
       expect {
         DynamicMigrations::Postgres::Server::Database::Schema::Table::Validation.new :configuration, :not_a_table, [column], :validation_name, "validation SQL"
@@ -37,10 +63,10 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database::Schema::Table::Val
     it "raises an error if providing duplicate columns" do
       expect {
         DynamicMigrations::Postgres::Server::Database::Schema::Table::Validation.new :configuration, table, [column, column], :validation_name, "validation SQL"
-      }.to raise_error DynamicMigrations::Postgres::Server::Database::Schema::Table::ColumnAlreadyExistsError
+      }.to raise_error DynamicMigrations::Postgres::Server::Database::Schema::Table::Validation::DuplicateColumnError
     end
 
-    it "raises an error if providing an ampty array of columns" do
+    it "raises an error if providing an empty array of columns" do
       expect {
         DynamicMigrations::Postgres::Server::Database::Schema::Table::Validation.new :configuration, table, [], :validation_name, "validation SQL"
       }.to raise_error DynamicMigrations::Postgres::Server::Database::Schema::Table::Validation::ExpectedArrayOfColumnsError
@@ -71,6 +97,12 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database::Schema::Table::Val
     end
   end
 
+  describe :column_names do
+    it "returns the expected column_names" do
+      expect(validation.column_names).to eql([:my_column])
+    end
+  end
+
   describe :validation_name do
     it "returns the expected validation_name" do
       expect(validation.validation_name).to eq(:validation_name)
@@ -80,6 +112,18 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database::Schema::Table::Val
   describe :check_clause do
     it "returns the expected check_clause" do
       expect(validation.check_clause).to eq("validation SQL")
+    end
+  end
+
+  describe :deferrable do
+    it "returns the expected deferrable" do
+      expect(validation.deferrable).to eq(false)
+    end
+  end
+
+  describe :initially_deferred do
+    it "returns the expected initially_deferred" do
+      expect(validation.initially_deferred).to eq(false)
     end
   end
 end

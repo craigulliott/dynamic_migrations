@@ -206,7 +206,7 @@ module DynamicMigrations
             schema_names.reject! { |schema_name| schema_name == "information_schema" }
             schema_names.reject! { |schema_name| schema_name == "public" }
             schema_names.reject! { |schema_name| schema_name.start_with? "pg_" }
-            schema_names
+            schema_names.sort
           end
 
           # returns a list of the table names in the provided schema
@@ -217,7 +217,7 @@ module DynamicMigrations
             SQL
             table_names = rows.map { |row| row["table_name"] }
             table_names.reject! { |table_name| table_name.start_with? "pg_" }
-            table_names
+            table_names.sort
           end
 
           # returns a list of columns definitions for the provided table

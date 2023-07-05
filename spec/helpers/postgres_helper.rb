@@ -4,8 +4,14 @@ require_relative "postgres_helper/schemas"
 require_relative "postgres_helper/tables"
 require_relative "postgres_helper/columns"
 require_relative "postgres_helper/validations"
-require_relative "postgres_helper/validations_cache"
+require_relative "postgres_helper/foreign_keys"
+require_relative "postgres_helper/unique_constraints"
+require_relative "postgres_helper/primary_keys"
+require_relative "postgres_helper/indexes"
+require_relative "postgres_helper/validation_cache"
 require_relative "postgres_helper/structure_cache"
+require_relative "postgres_helper/foreign_key_cache"
+require_relative "postgres_helper/index_cache"
 
 module Helpers
   class PostgresHelper
@@ -15,8 +21,14 @@ module Helpers
     include Tables
     include Columns
     include Validations
-    include ValidationsCache
+    include ForeignKeys
+    include UniqueConstraints
+    include PrimaryKeys
+    include Indexes
+    include ValidationCache
     include StructureCache
+    include ForeignKeyCache
+    include IndexCache
 
     attr_reader :database, :username, :password, :host, :port
 
@@ -38,8 +50,8 @@ module Helpers
       @has_changes
     end
 
-    def reset!
-      if @has_changes
+    def reset! force = false
+      if force || @has_changes
         delete_all_schemas cascade: true
         # note that the database has been reset and there are no changes
         @has_changes = false

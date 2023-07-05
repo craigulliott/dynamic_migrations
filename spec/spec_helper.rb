@@ -21,9 +21,9 @@ RSpec.configure do |config|
 
   config.before(:suite) do
     if ENV["DYNAMIC_MIGRATIONS_CLEAR_DB_ON_STARTUP"]
-      config.primary_postgres_helper.delete_all_schemas cascade: true
+      config.primary_postgres_helper.reset! true
     else
-      config.primary_postgres_helper.assert_no_schemas!
+      config.primary_postgres_helper.assert_database_empty!
     end
   end
 

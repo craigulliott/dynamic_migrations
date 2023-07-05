@@ -14,12 +14,17 @@ module DynamicMigrations
               class ExpectedArrayOfColumnsError < StandardError
               end
 
+              class DuplicateColumnError < StandardError
+              end
+
               attr_reader :table
               attr_reader :validation_name
               attr_reader :check_clause
+              attr_reader :deferrable
+              attr_reader :initially_deferred
 
               # initialize a new object to represent a validation in a postgres table
-              def initialize source, table, columns, validation_name, check_clause
+              def initialize source, table, columns, validation_name, check_clause, deferrable: false, initially_deferred: false
                 super source
                 raise ExpectedTableError, table unless table.is_a? Table
                 @table = table
@@ -39,11 +44,21 @@ module DynamicMigrations
 
                 raise ExpectedStringError, check_clause unless check_clause.is_a? String
                 @check_clause = check_clause
+
+                raise ExpectedBooleanError, deferrable unless [true, false].include?(deferrable)
+                @deferrable = deferrable
+
+                raise ExpectedBooleanError, initially_deferred unless [true, false].include?(initially_deferred)
+                @initially_deferred = initially_deferred
               end
 
               # return an array of this validations columns
               def columns
                 @columns.values
+              end
+
+              def column_names
+                @columns.keys
               end
 
               private
@@ -61,7 +76,7 @@ module DynamicMigrations
                 end
 
                 if @columns.key? column.column_name
-                  raise(ColumnAlreadyExistsError, "Column #{column.column_name} already exists")
+                  raise(DuplicateColumnError, "Column #{column.column_name} already exists")
                 end
 
                 @columns[column.column_name] = column

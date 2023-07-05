@@ -9,9 +9,9 @@ Monitor and generate database migrations based on difference between current sch
 
 ## Key Features
 
-* Strictly follows standard (active record style) naming conventions
-* Supports complex column based validations
+* Supports complex validations via constraints
 * Supports stored procedures
+* Supports complex indexes and multi column foreign keys
 * Supports postgis types
 * Supports multiple postgres schemas
 * Generates your database migrations

@@ -86,5 +86,23 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database do
         end
       end
     end
+
+    describe :loaded_schemas_hash do
+      it "returns an empty hash" do
+        expect(database.loaded_schemas_hash).to eql({})
+      end
+
+      describe "after the expected schema has been added" do
+        let(:schema) { database.add_loaded_schema :schema_name }
+
+        before(:each) do
+          schema
+        end
+
+        it "returns a hash representation of the expected schemas" do
+          expect(database.loaded_schemas_hash).to eql({schema_name: schema})
+        end
+      end
+    end
   end
 end

@@ -11,6 +11,7 @@ module DynamicMigrations
           class LoadedSchemaDoesNotExistError < StandardError
           end
 
+          # adds a new loaded schema for this database
           def add_loaded_schema schema_name
             raise ExpectedSymbolError, schema_name unless schema_name.is_a? Symbol
             if has_loaded_schema? schema_name
@@ -19,19 +20,28 @@ module DynamicMigrations
             @loaded_schemas[schema_name] = Schema.new :database, self, schema_name
           end
 
+          # returns the loaded schema object for the provided schema name, and raises an
+          # error if the schema does not exist
           def loaded_schema schema_name
             raise ExpectedSymbolError, schema_name unless schema_name.is_a? Symbol
             raise LoadedSchemaDoesNotExistError unless has_loaded_schema? schema_name
             @loaded_schemas[schema_name]
           end
 
+          # returns true if this table has a loaded schema with the provided name, otherwise false
           def has_loaded_schema? schema_name
             raise ExpectedSymbolError, schema_name unless schema_name.is_a? Symbol
             @loaded_schemas.key? schema_name
           end
 
+          # returns an array of this tables loaded schemas
           def loaded_schemas
             @loaded_schemas.values
+          end
+
+          # returns a hash of this tables loaded schemas, keyed by schema name
+          def loaded_schemas_hash
+            @loaded_schemas
           end
         end
       end

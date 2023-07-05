@@ -29,7 +29,7 @@ module DynamicMigrations
               attr_reader :updatable
 
               # initialize a new object to represent a column in a postgres table
-              def initialize source, table, column_name, data_type, null: nil, default: nil, description: nil, character_maximum_length: nil, character_octet_length: nil, numeric_precision: nil, numeric_precision_radix: nil, numeric_scale: nil, datetime_precision: nil, interval_type: nil, udt_schema: nil, udt_name: nil, updatable: nil
+              def initialize source, table, column_name, data_type, null: true, default: nil, description: nil, character_maximum_length: nil, character_octet_length: nil, numeric_precision: nil, numeric_precision_radix: nil, numeric_scale: nil, datetime_precision: nil, interval_type: nil, udt_schema: nil, udt_name: nil, updatable: true
                 super source
                 raise ExpectedTableError, table unless table.is_a? Table
                 @table = table
@@ -71,6 +71,7 @@ module DynamicMigrations
                 @updatable = updatable
               end
 
+              # return true if this column has a description, otherwise false
               def has_description?
                 !@description.nil?
               end

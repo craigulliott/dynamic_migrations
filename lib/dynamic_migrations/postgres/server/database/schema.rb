@@ -56,6 +56,10 @@ module DynamicMigrations
           def tables
             @tables.values
           end
+
+          def tables_hash
+            @tables
+          end
         end
       end
     end

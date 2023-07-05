@@ -10,17 +10,14 @@ module DynamicMigrations
             class ExpectedSchemaError < StandardError
             end
 
-            class ColumnDoesNotExistError < StandardError
+            class PrimaryKeyDoesNotExistError < StandardError
             end
 
-            class ColumnAlreadyExistsError < StandardError
-            end
-
-            class ValidationDoesNotExistError < StandardError
-            end
-
-            class ValidationAlreadyExistsError < StandardError
-            end
+            include Columns
+            include Validations
+            include Indexes
+            include ForeignKeyConstraints
+            include UniqueConstraints
 
             attr_reader :schema
             attr_reader :table_name
@@ -39,6 +36,9 @@ module DynamicMigrations
               @table_name = table_name
               @columns = {}
               @validations = {}
+              @indexes = {}
+              @foreign_key_constraints = {}
+              @unique_constraints = {}
             end
 
             # returns true if this table has a description, otehrwise false
@@ -46,59 +46,24 @@ module DynamicMigrations
               !@description.nil?
             end
 
-            # returns the column object for the provided column name, and raises an
-            # error if the column does not exist
-            def column column_name
-              raise ExpectedSymbolError, column_name unless column_name.is_a? Symbol
-              raise ColumnDoesNotExistError unless has_column? column_name
-              @columns[column_name]
-            end
-
-            # returns true if this table has a column with the provided name, otherwise false
-            def has_column? column_name
-              raise ExpectedSymbolError, column_name unless column_name.is_a? Symbol
-              @columns.key? column_name
-            end
-
-            # returns an array of this tables columns
-            def columns
-              @columns.values
-            end
-
-            # adds a new column to this table, and returns it
-            def add_column column_name, data_type, **column_options
-              if has_column? column_name
-                raise(ColumnAlreadyExistsError, "Column #{column_name} already exists")
-              end
-              @columns[column_name] = Column.new source, self, column_name, data_type, **column_options
-            end
-
-            # returns the validation object for the provided validation name, and raises an
-            # error if the validation does not exist
-            def validation validation_name
-              raise ExpectedSymbolError, validation_name unless validation_name.is_a? Symbol
-              raise ValidationDoesNotExistError unless has_validation? validation_name
-              @validations[validation_name]
-            end
-
-            # returns true if this table has a validation with the provided name, otherwise false
-            def has_validation? validation_name
-              raise ExpectedSymbolError, validation_name unless validation_name.is_a? Symbol
-              @validations.key? validation_name
-            end
-
-            # returns an array of this tables validations
-            def validations
-              @validations.values
-            end
-
-            # adds a new validation to this table, and returns it
-            def add_validation validation_name, column_names, check_clause
-              if has_validation? validation_name
-                raise(ValidationAlreadyExistsError, "Validation #{validation_name} already exists")
-              end
+            # add a primary key to this table
+            def add_primary_key primary_key_name, column_names, **primary_key_options
+              raise PrimaryKeyAlreadyExistsError if @primary_key
               columns = column_names.map { |column_name| column column_name }
-              @validations[validation_name] = Validation.new source, self, columns, validation_name, check_clause
+              @primary_key = PrimaryKey.new source, self, columns, primary_key_name, **primary_key_options
+            end
+
+            # returns true if this table has a primary key, otherwise false
+            def has_primary_key?
+              !@primary_key.nil?
+            end
+
+            # returns a primary key if one exists, else raises an error
+            def primary_key
+              unless @primary_key
+                raise PrimaryKeyDoesNotExistError
+              end
+              @primary_key
             end
           end
         end

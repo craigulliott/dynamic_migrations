@@ -18,7 +18,7 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database do
           database.connect
         end
 
-        it "returns an empty object" do
+        it "returns an empty hash" do
           expect(database.fetch_validations).to eql({})
         end
 
@@ -27,7 +27,7 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database do
             pg_helper.create_schema :my_schema
           end
 
-          it "returns an empty object" do
+          it "returns an empty hash" do
             expect(database.fetch_validations).to eql({})
           end
 
@@ -36,7 +36,7 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database do
               pg_helper.create_table :my_schema, :my_table
             end
 
-            it "returns an empty object" do
+            it "returns an empty hash" do
               expect(database.fetch_validations).to eql({})
             end
 
@@ -46,7 +46,7 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database do
                 pg_helper.create_column :my_schema, :my_table, :my_second_column, :integer
               end
 
-              it "returns an empty object" do
+              it "returns an empty hash" do
                 expect(database.fetch_validations).to eql({})
               end
 
@@ -55,7 +55,7 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database do
                   pg_helper.create_validation :my_schema, :my_table, :my_validation, "my_column > 0 AND my_second_column < 100"
                 end
 
-                it "returns an empty object" do
+                it "returns the expected hash" do
                   expect(database.fetch_validations).to eql({
                     my_schema: {
                       my_table: {

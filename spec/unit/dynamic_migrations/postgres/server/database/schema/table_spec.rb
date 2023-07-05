@@ -83,168 +83,69 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database::Schema::Table do
     end
   end
 
-  describe :add_column do
-    it "creates a new column object" do
-      expect(table.add_column(:column_name, :boolean)).to be_a DynamicMigrations::Postgres::Server::Database::Schema::Table::Column
-    end
-
-    it "raises an error if providing an invalid column name" do
-      expect {
-        table.add_column "column_name", :integer
-      }.to raise_error DynamicMigrations::ExpectedSymbolError
-    end
-
-    describe "when a column already exists" do
-      before(:each) do
-        table.add_column(:column_name, :boolean)
-      end
-
-      it "raises an error if using the same column name" do
-        expect {
-          table.add_column(:column_name, :boolean)
-        }.to raise_error DynamicMigrations::Postgres::Server::Database::Schema::Table::ColumnAlreadyExistsError
-      end
-    end
-  end
-
-  describe :column do
-    it "raises an error" do
-      expect {
-        table.column(:column_name)
-      }.to raise_error DynamicMigrations::Postgres::Server::Database::Schema::Table::ColumnDoesNotExistError
-    end
-
-    describe "after the expected column has been added" do
-      let(:column) { table.add_column :column_name, :boolean }
-
-      before(:each) do
-        column
-      end
-
-      it "returns the column" do
-        expect(table.column(:column_name)).to eq(column)
-      end
-    end
-  end
-
-  describe :has_column? do
-    it "returns false" do
-      expect(table.has_column?(:column_name)).to be(false)
-    end
-
-    describe "after the expected column has been added" do
-      let(:column) { table.add_column :column_name, :boolean }
-
-      before(:each) do
-        column
-      end
-
-      it "returns true" do
-        expect(table.has_column?(:column_name)).to be(true)
-      end
-    end
-  end
-
-  describe :columns do
-    it "returns an empty array" do
-      expect(table.columns).to be_an Array
-      expect(table.columns).to be_empty
-    end
-
-    describe "after the expected column has been added" do
-      let(:column) { table.add_column :column_name, :boolean }
-
-      before(:each) do
-        column
-      end
-
-      it "returns an array of the expected columns" do
-        expect(table.columns).to eql([column])
-      end
-    end
-  end
-
-  describe :add_validation do
+  describe :add_primary_key do
     before(:each) do
-      table.add_column :column_name, :boolean
+      table.add_column :my_column, :boolean
     end
 
-    it "creates a new validation object" do
-      expect(table.add_validation(:validation_name, [:column_name], "validation SQL")).to be_a DynamicMigrations::Postgres::Server::Database::Schema::Table::Validation
+    it "adds and returns a primary key" do
+      expect(table.add_primary_key(:pk_name, [:my_column])).to be_a DynamicMigrations::Postgres::Server::Database::Schema::Table::PrimaryKey
     end
 
-    describe "when a validation already exists" do
-      before(:each) do
-        table.add_validation(:validation_name, [:column_name], "validation SQL")
-      end
-
-      it "raises an error if using the same validation name" do
+    describe "providing an optional type value" do
+      it "does not raise an error" do
         expect {
-          table.add_validation(:validation_name, [:column_name], "validation SQL")
-        }.to raise_error DynamicMigrations::Postgres::Server::Database::Schema::Table::ValidationAlreadyExistsError
+          table.add_primary_key :pk_name, [:my_column], index_type: :gin
+        }.to_not raise_error
+      end
+
+      it "raises an error if providing an unexpected index type" do
+        expect {
+          table.add_primary_key :pk_name, [:my_column], index_type: :not_a_valid_index_type
+        }.to raise_error DynamicMigrations::Postgres::Server::Database::Schema::Table::PrimaryKey::UnexpectedIndexTypeError
+      end
+
+      it "returns the expected value via a getter of the same name" do
+        primary_key = table.add_primary_key :pk_name, [:my_column], index_type: :gin
+
+        expect(primary_key.index_type).to be :gin
       end
     end
   end
 
-  describe :validation do
-    it "raises an error" do
-      expect {
-        table.validation(:validation_name)
-      }.to raise_error DynamicMigrations::Postgres::Server::Database::Schema::Table::ValidationDoesNotExistError
-    end
-
-    describe "after the expected validation has been added" do
-      let(:column) { table.add_column :column_name, :boolean }
-      let(:validation) { table.add_validation :validation_name, [:column_name], "validation SQL" }
-
-      before(:each) do
-        column
-        validation
-      end
-
-      it "returns the validation" do
-        expect(table.validation(:validation_name)).to eq(validation)
-      end
-    end
-  end
-
-  describe :has_validation? do
+  describe :has_primary_key? do
     it "returns false" do
-      expect(table.has_validation?(:validation_name)).to be(false)
+      expect(table.has_primary_key?).to be(false)
     end
 
-    describe "after the expected validation has been added" do
-      let(:column) { table.add_column :column_name, :boolean }
-      let(:validation) { table.add_validation :validation_name, [:column_name], "validation SQL" }
-
+    describe "after a primary key has been added" do
       before(:each) do
-        column
-        validation
+        table.add_column :my_column, :boolean
+        table.add_primary_key(:pk_name, [:my_column])
       end
 
       it "returns true" do
-        expect(table.has_validation?(:validation_name)).to be(true)
+        expect(table.has_primary_key?).to be(true)
       end
     end
   end
 
-  describe :validations do
-    it "returns an empty array" do
-      expect(table.validations).to be_an Array
-      expect(table.validations).to be_empty
+  describe :primary_key do
+    it "raises an error" do
+      expect {
+        table.primary_key
+      }.to raise_error DynamicMigrations::Postgres::Server::Database::Schema::Table::PrimaryKeyDoesNotExistError
     end
 
-    describe "after the expected validation has been added" do
-      let(:column) { table.add_column :column_name, :boolean }
-      let(:validation) { table.add_validation :validation_name, [:column_name], "validation SQL" }
-
+    describe "after a primary key has been added" do
+      let(:primary_key) { table.add_primary_key(:pk_name, [:my_column]) }
       before(:each) do
-        column
-        validation
+        table.add_column :my_column, :boolean
+        primary_key
       end
 
-      it "returns an array of the expected validations" do
-        expect(table.validations).to eql([validation])
+      it "returns the primary key" do
+        expect(table.primary_key).to be(primary_key)
       end
     end
   end

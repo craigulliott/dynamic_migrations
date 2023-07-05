@@ -11,6 +11,7 @@ module DynamicMigrations
           class ConfiguredSchemaDoesNotExistError < StandardError
           end
 
+          # adds a new configured schema for this database
           def add_configured_schema schema_name
             raise ExpectedSymbolError, schema_name unless schema_name.is_a? Symbol
             if has_configured_schema? schema_name
@@ -19,19 +20,28 @@ module DynamicMigrations
             @configured_schemas[schema_name] = Schema.new :configuration, self, schema_name
           end
 
+          # returns the configured schema object for the provided schema name, and raises an
+          # error if the schema does not exist
           def configured_schema schema_name
             raise ExpectedSymbolError, schema_name unless schema_name.is_a? Symbol
             raise ConfiguredSchemaDoesNotExistError unless has_configured_schema? schema_name
             @configured_schemas[schema_name]
           end
 
+          # returns true if this table has a configured schema with the provided name, otherwise false
           def has_configured_schema? schema_name
             raise ExpectedSymbolError, schema_name unless schema_name.is_a? Symbol
             @configured_schemas.key? schema_name
           end
 
+          # returns an array of this tables configured schemas
           def configured_schemas
             @configured_schemas.values
+          end
+
+          # returns a hash of this tables configured schemas, keyed by schema name
+          def configured_schemas_hash
+            @configured_schemas
           end
         end
       end

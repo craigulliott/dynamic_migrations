@@ -13,12 +13,20 @@ module Helpers
         @has_changes = true
       end
 
-      def get_table_names
-        rows = database.connection.exec_params(<<-SQL, [schema_name])
+      def get_table_names schema_name
+        rows = connection.exec_params(<<-SQL, [schema_name.to_s])
           SELECT table_name FROM information_schema.tables
             WHERE table_schema = $1
         SQL
         rows.map { |row| row["table_name"] }
+      end
+
+      def delete_tables schema_name
+        get_table_names(schema_name).each do |table_name|
+          connection.exec(<<-SQL)
+            DROP TABLE #{connection.quote_ident schema_name.to_s}.#{connection.quote_ident table_name.to_s} CASCASE
+          SQL
+        end
       end
     end
   end
