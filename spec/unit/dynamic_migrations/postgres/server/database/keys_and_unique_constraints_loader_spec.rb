@@ -2,7 +2,7 @@
 
 RSpec.describe DynamicMigrations::Postgres::Server::Database do
   describe :KeysAndUniqueConstraintsLoader do
-    let(:pg_helper) { RSpec.configuration.primary_postgres_helper }
+    let(:pg_helper) { RSpec.configuration.pg_spec_helper }
     let(:server) { DynamicMigrations::Postgres::Server.new pg_helper.host, pg_helper.port, pg_helper.username, pg_helper.password }
     let(:database) { DynamicMigrations::Postgres::Server::Database.new server, pg_helper.database }
 
@@ -55,7 +55,7 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database do
 
               describe "after a unique constraint has been added" do
                 before :each do
-                  pg_helper.add_unique_constraint :my_schema, :my_other_table, [:my_column, :my_second_column], :my_unique_constraint
+                  pg_helper.create_unique_constraint :my_schema, :my_other_table, [:my_column, :my_second_column], :my_unique_constraint
                 end
 
                 it "returns the expected hash" do
@@ -132,10 +132,11 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database do
                   describe "after a primary_key has been added" do
                     before :each do
                       # note, the foreign key constraint requires a unique constraint (which was added in the previous test)
-                      pg_helper.add_primary_key :my_schema, :my_table, [:my_column, :my_second_column]
+                      pg_helper.create_primary_key :my_schema, :my_table, [:my_column, :my_second_column], :my_primary_key
                     end
 
                     it "returns the expected hash" do
+                      pp database.fetch_keys_and_unique_constraints
                       expect(database.fetch_keys_and_unique_constraints).to eql({
                         my_schema: {
                           my_other_table: {
@@ -170,7 +171,7 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database do
                               }
                             },
                             PRIMARY_KEY: {
-                              my_table_pkey: {
+                              my_primary_key: {
                                 column_names: [
                                   :my_column,
                                   :my_second_column

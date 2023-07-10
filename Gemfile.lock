@@ -34,6 +34,8 @@ GEM
       ast (~> 2.4.1)
       racc
     pg (1.5.3)
+    pg_spec_helper (1.4.0)
+      pg (~> 1.5)
     racc (1.7.1)
     rainbow (3.1.1)
     rake (13.0.6)
@@ -115,6 +117,7 @@ PLATFORMS
 DEPENDENCIES
   byebug (~> 11.0)
   dynamic_migrations!
+  pg_spec_helper (~> 1.0)
   rake (~> 13.0)
   rbs
   rspec (~> 3.0)

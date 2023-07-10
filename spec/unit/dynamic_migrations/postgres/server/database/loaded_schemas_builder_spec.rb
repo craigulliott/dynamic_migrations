@@ -2,7 +2,7 @@
 
 RSpec.describe DynamicMigrations::Postgres::Server::Database do
   describe :LoadedSchemasBuilder do
-    let(:pg_helper) { RSpec.configuration.primary_postgres_helper }
+    let(:pg_helper) { RSpec.configuration.pg_spec_helper }
     let(:server) { DynamicMigrations::Postgres::Server.new pg_helper.host, pg_helper.port, pg_helper.username, pg_helper.password }
     let(:database) { DynamicMigrations::Postgres::Server::Database.new server, pg_helper.database }
 
@@ -49,7 +49,7 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database do
               schema = database.loaded_schema(:my_schema)
 
               expect(schema.tables).to be_a Array
-              expect(schema.tables.map(&:table_name)).to eq([:my_table, :my_other_table])
+              expect(schema.tables.map(&:table_name)).to eq([:my_other_table, :my_table])
             end
 
             describe "after two columns have been added to each table" do
@@ -89,7 +89,7 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database do
 
                 describe "after a unique constraint has been added" do
                   before :each do
-                    pg_helper.add_unique_constraint :my_schema, :my_other_table, [:my_column, :my_second_column], :my_unique_constraint
+                    pg_helper.create_unique_constraint :my_schema, :my_other_table, [:my_column, :my_second_column], :my_unique_constraint
                   end
 
                   it "creates the expected constraints" do
@@ -118,7 +118,7 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database do
 
                     describe "after a primary_key has been added" do
                       before :each do
-                        pg_helper.add_primary_key :my_schema, :my_table, [:my_column, :my_second_column]
+                        pg_helper.create_primary_key :my_schema, :my_table, [:my_column, :my_second_column], :my_primary_key
                       end
 
                       it "creates the expected primary key" do

@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 RSpec.describe DynamicMigrations::Postgres::Server do
-  let(:pg_helper) { RSpec.configuration.primary_postgres_helper }
+  let(:pg_helper) { RSpec.configuration.pg_spec_helper }
   let(:server) { DynamicMigrations::Postgres::Server.new pg_helper.host, pg_helper.port, pg_helper.username, pg_helper.password }
 
   describe :initialize do

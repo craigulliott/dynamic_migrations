@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 RSpec.describe DynamicMigrations::Postgres::Connections do
-  let(:pg_helper) { RSpec.configuration.primary_postgres_helper }
+  let(:pg_helper) { RSpec.configuration.pg_spec_helper }
   let(:connections_module) { DynamicMigrations::Postgres::Connections }
   let(:connection) { connections_module.create_connection(pg_helper.host, pg_helper.port, pg_helper.username, pg_helper.password, pg_helper.database) }
   let(:connection2) { connections_module.create_connection(pg_helper.host, pg_helper.port, pg_helper.username, pg_helper.password, pg_helper.database) }

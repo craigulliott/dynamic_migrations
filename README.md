@@ -33,7 +33,7 @@ Note, this gem depends on the postgres gem `pg`, which depends on the `libpq` pa
 # required for pg gem on apple silicon
 brew install libpq
 export PATH="/opt/homebrew/opt/libpq/bin:$PATH"
-``
+```
 
 ## Getting Started
 
