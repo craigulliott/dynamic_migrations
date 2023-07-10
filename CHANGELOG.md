@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.1.0](https://github.com/craigulliott/dynamic_migrations/compare/v1.0.0...v1.1.0) (2023-07-10)
+
+
+### Features
+
+* storing and returning database structure objects in alphabetical order of their names ([1b3255b](https://github.com/craigulliott/dynamic_migrations/commit/1b3255b220349bfb63d7f72d990557a104131cf7))
+
 ## 1.0.0 (2023-07-05)
 
 
