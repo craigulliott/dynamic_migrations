@@ -38,10 +38,18 @@ module DynamicMigrations
             end
             included_target = self
             if included_target.is_a? Schema
-              @tables[table_name] = Table.new source, included_target, table_name, description
+              new_table = @tables[table_name] = Table.new source, included_target, table_name, description
             else
               raise ModuleIncludedIntoUnexpectedTargetError, included_target
             end
+            # sort the hash so that the tables are in alphabetical order by name
+            sorted_tables = {}
+            @tables.keys.sort.each do |table_name|
+              sorted_tables[table_name] = @tables[table_name]
+            end
+            @tables = sorted_tables
+            # return the new table
+            new_table
           end
 
           # return a table by its name, raises an error if the table does not exist

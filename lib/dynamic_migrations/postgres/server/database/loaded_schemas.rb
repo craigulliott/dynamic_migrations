@@ -19,10 +19,18 @@ module DynamicMigrations
             end
             included_target = self
             if included_target.is_a? Database
-              @loaded_schemas[schema_name] = Schema.new :database, included_target, schema_name
+              new_schema = @loaded_schemas[schema_name] = Schema.new :database, included_target, schema_name
             else
               raise ModuleIncludedIntoUnexpectedTargetError, included_target
             end
+            # sort the hash so that the schemas are in alphabetical order by name
+            sorted_schemas = {}
+            @loaded_schemas.keys.sort.each do |schema_name|
+              sorted_schemas[schema_name] = @loaded_schemas[schema_name]
+            end
+            @loaded_schemas = sorted_schemas
+            # return the new schema
+            new_schema
           end
 
           # returns the loaded schema object for the provided schema name, and raises an

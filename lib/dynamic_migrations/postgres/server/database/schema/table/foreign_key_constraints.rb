@@ -48,10 +48,18 @@ module DynamicMigrations
                 foreign_columns = foreign_column_names.map { |column_name| foreign_table.column column_name }
                 included_target = self
                 if included_target.is_a? Table
-                  @foreign_key_constraints[foreign_key_constraint_name] = ForeignKeyConstraint.new source, included_target, columns, foreign_table, foreign_columns, foreign_key_constraint_name, **foreign_key_constraint_options
+                  new_foreign_key_constraint = @foreign_key_constraints[foreign_key_constraint_name] = ForeignKeyConstraint.new source, included_target, columns, foreign_table, foreign_columns, foreign_key_constraint_name, **foreign_key_constraint_options
                 else
                   raise ModuleIncludedIntoUnexpectedTargetError, included_target
                 end
+                # sort the hash so that the foreign_key_constraints are in alphabetical order by name
+                sorted_foreign_key_constraints = {}
+                @foreign_key_constraints.keys.sort.each do |foreign_key_constraint_name|
+                  sorted_foreign_key_constraints[foreign_key_constraint_name] = @foreign_key_constraints[foreign_key_constraint_name]
+                end
+                @foreign_key_constraints = sorted_foreign_key_constraints
+                # return the new foreign_key_constraint
+                new_foreign_key_constraint
               end
             end
           end

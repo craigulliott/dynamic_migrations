@@ -45,10 +45,18 @@ module DynamicMigrations
                 columns = column_names.map { |column_name| column column_name }
                 included_target = self
                 if included_target.is_a? Table
-                  @validations[validation_name] = Validation.new source, included_target, columns, validation_name, check_clause, **validation_options
+                  new_validation = @validations[validation_name] = Validation.new source, included_target, columns, validation_name, check_clause, **validation_options
                 else
                   raise ModuleIncludedIntoUnexpectedTargetError, included_target
                 end
+                # sort the hash so that the validations are in alphabetical order by name
+                sorted_validations = {}
+                @validations.keys.sort.each do |validation_name|
+                  sorted_validations[validation_name] = @validations[validation_name]
+                end
+                @validations = sorted_validations
+                # return the new validation
+                new_validation
               end
             end
           end

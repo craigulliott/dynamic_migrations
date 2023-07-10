@@ -44,10 +44,18 @@ module DynamicMigrations
                 end
                 included_target = self
                 if included_target.is_a? Table
-                  @columns[column_name] = Column.new source, included_target, column_name, data_type, **column_options
+                  new_column = @columns[column_name] = Column.new source, included_target, column_name, data_type, **column_options
                 else
                   raise ModuleIncludedIntoUnexpectedTargetError, included_target
                 end
+                # sort the hash so that the columns are in alphabetical order by name
+                sorted_columns = {}
+                @columns.keys.sort.each do |column_name|
+                  sorted_columns[column_name] = @columns[column_name]
+                end
+                @columns = sorted_columns
+                # return the new column
+                new_column
               end
             end
           end

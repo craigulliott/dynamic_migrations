@@ -45,10 +45,18 @@ module DynamicMigrations
                 columns = column_names.map { |column_name| column column_name }
                 included_target = self
                 if included_target.is_a? Table
-                  @unique_constraints[unique_constraint_name] = UniqueConstraint.new source, included_target, columns, unique_constraint_name, **unique_constraint_options
+                  new_unique_constraint = @unique_constraints[unique_constraint_name] = UniqueConstraint.new source, included_target, columns, unique_constraint_name, **unique_constraint_options
                 else
                   raise ModuleIncludedIntoUnexpectedTargetError, included_target
                 end
+                # sort the hash so that the unique_constraints are in alphabetical order by name
+                sorted_unique_constraints = {}
+                @unique_constraints.keys.sort.each do |unique_constraint_name|
+                  sorted_unique_constraints[unique_constraint_name] = @unique_constraints[unique_constraint_name]
+                end
+                @unique_constraints = sorted_unique_constraints
+                # return the new unique_constraint
+                new_unique_constraint
               end
             end
           end

@@ -49,10 +49,18 @@ module DynamicMigrations
                 include_columns = include_column_names.map { |column_name| column column_name }
                 included_target = self
                 if included_target.is_a? Table
-                  @indexes[index_name] = Index.new source, included_target, columns, index_name, include_columns: include_columns, **index_options
+                  new_index = @indexes[index_name] = Index.new source, included_target, columns, index_name, include_columns: include_columns, **index_options
                 else
                   raise ModuleIncludedIntoUnexpectedTargetError, included_target
                 end
+                # sort the hash so that the indexes are in alphabetical order by name
+                sorted_indexes = {}
+                @indexes.keys.sort.each do |index_name|
+                  sorted_indexes[index_name] = @indexes[index_name]
+                end
+                @indexes = sorted_indexes
+                # return the new index
+                new_index
               end
             end
           end
