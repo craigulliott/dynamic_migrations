@@ -22,6 +22,18 @@ RSpec.describe DynamicMigrations::Postgres::Server do
         server.add_database("name")
       }.to raise_error DynamicMigrations::ExpectedSymbolError
     end
+
+    describe "if a database has already been added" do
+      before(:each) do
+        server.add_database(:name)
+      end
+
+      it "raises an error if adding a database with the same name" do
+        expect {
+          server.add_database(:name)
+        }.to raise_error DynamicMigrations::Postgres::Server::DatabaseAlreadyExistsError
+      end
+    end
   end
 
   describe :host do

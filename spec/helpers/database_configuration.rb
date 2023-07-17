@@ -45,7 +45,7 @@ module Helpers
       configuration = load_configuration_file
 
       if configuration[@database_type].nil?
-        raise MissingConfigurationError, "no database configuration found for #{name} in database.yaml"
+        raise MissingConfigurationError, "no database configuration found for #{database_type} in database.yaml"
       end
 
       if configuration[@database_type][@name].nil?

@@ -136,7 +136,6 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database do
                     end
 
                     it "returns the expected hash" do
-                      pp database.fetch_keys_and_unique_constraints
                       expect(database.fetch_keys_and_unique_constraints).to eql({
                         my_schema: {
                           my_other_table: {
