@@ -61,11 +61,6 @@ RSpec.configure do |config|
     end
   end
 
-  # refresh all tracked materialized views before the suite starts
-  config.before(:suite) do
-    DynamicMigrations::Postgres::Connections.disconnect_all
-  end
-
   # after each spec, disconnect all the open pg connections
   config.after(:each) do
     DynamicMigrations::Postgres::Connections.disconnect_all

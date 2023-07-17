@@ -4,6 +4,9 @@ module DynamicMigrations
   module Postgres
     # This class represents a postgres server. A server can contain many databases.
     class Server
+      class DatabaseAlreadyExistsError < StandardError
+      end
+
       attr_reader :host, :port, :username, :password
 
       # initialize a new object to represent a postgres server
@@ -17,6 +20,7 @@ module DynamicMigrations
 
       def add_database database_name
         raise ExpectedSymbolError, database_name unless database_name.is_a? Symbol
+        raise DatabaseAlreadyExistsError, "database `#{database_name}` already exists" if @databases.key? database_name
         @databases[database_name] = Database.new self, database_name
       end
 
