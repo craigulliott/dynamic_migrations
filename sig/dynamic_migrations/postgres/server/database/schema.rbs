@@ -6,8 +6,8 @@ module DynamicMigrations
           @tables: Hash[Symbol, untyped]
 
           attr_reader database: Database
-          attr_reader schema_name: Symbol
-          def initialize: (database_or_configuration source, Database database, Symbol schema_name) -> void
+          attr_reader name: Symbol
+          def initialize: (database_or_configuration source, Database database, Symbol name) -> void
           def add_table: (Symbol table_name, ?nil | String? description) -> Table
           def table: (Symbol table_name) -> Table
           def has_table?: (Symbol table_name) -> bool

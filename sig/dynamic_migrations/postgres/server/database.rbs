@@ -14,8 +14,8 @@ module DynamicMigrations
         include LoadedSchemasBuilder
 
         attr_reader server: Server
-        attr_reader database_name: Symbol
-        def initialize: (Server server, Symbol database_name) -> void
+        attr_reader name: Symbol
+        def initialize: (Server server, Symbol name) -> void
         def schema: (Symbol schema_name, database_or_configuration source) -> untyped
         def differences: -> Hash[untyped, untyped]
 
