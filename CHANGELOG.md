@@ -1,5 +1,16 @@
 # Changelog
 
+## [2.0.0](https://github.com/craigulliott/dynamic_migrations/compare/v1.1.1...v2.0.0) (2023-07-27)
+
+
+### ⚠ BREAKING CHANGES
+
+* changing all name related methods from %object%_name to just name (i.e. `table.table_name` is now just `table.name`)
+
+### Features
+
+* changing all name related methods from %object%_name to just name (i.e. `table.table_name` is now just `table.name`) ([77f18ae](https://github.com/craigulliott/dynamic_migrations/commit/77f18ae168c2449fa437fa7692ff9339931f9076))
+
 ## [1.1.1](https://github.com/craigulliott/dynamic_migrations/compare/v1.1.0...v1.1.1) (2023-07-17)
 
 
