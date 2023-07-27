@@ -18,15 +18,15 @@ module DynamicMigrations
         @databases = {}
       end
 
-      def add_database database_name
-        raise ExpectedSymbolError, database_name unless database_name.is_a? Symbol
-        raise DatabaseAlreadyExistsError, "database `#{database_name}` already exists" if @databases.key? database_name
-        @databases[database_name] = Database.new self, database_name
+      def add_database name
+        raise ExpectedSymbolError, name unless name.is_a? Symbol
+        raise DatabaseAlreadyExistsError, "database `#{name}` already exists" if @databases.key? name
+        @databases[name] = Database.new self, name
       end
 
-      def database database_name
-        raise ExpectedSymbolError, database_name unless database_name.is_a? Symbol
-        @databases[database_name]
+      def database name
+        raise ExpectedSymbolError, name unless name.is_a? Symbol
+        @databases[name]
       end
 
       def databases

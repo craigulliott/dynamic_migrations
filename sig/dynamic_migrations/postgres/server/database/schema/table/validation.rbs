@@ -8,11 +8,11 @@ module DynamicMigrations
               @columns: Hash[Symbol, Column]
 
               attr_reader table: Table
-              attr_reader validation_name: Symbol
+              attr_reader name: Symbol
               attr_reader check_clause: String
               attr_reader deferrable: bool
               attr_reader initially_deferred: bool
-              def initialize: (database_or_configuration source, Table table, Array[Column] columns, Symbol validation_name, String check_clause, ?deferrable: bool, ?initially_deferred: bool) -> void
+              def initialize: (database_or_configuration source, Table table, Array[Column] columns, Symbol name, String check_clause, ?deferrable: bool, ?initially_deferred: bool) -> void
               def columns: -> Array[Column]
               def column_names: -> Array[Symbol]
 

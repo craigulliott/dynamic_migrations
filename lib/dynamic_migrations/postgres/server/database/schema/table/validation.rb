@@ -18,13 +18,13 @@ module DynamicMigrations
               end
 
               attr_reader :table
-              attr_reader :validation_name
+              attr_reader :name
               attr_reader :check_clause
               attr_reader :deferrable
               attr_reader :initially_deferred
 
               # initialize a new object to represent a validation in a postgres table
-              def initialize source, table, columns, validation_name, check_clause, deferrable: false, initially_deferred: false
+              def initialize source, table, columns, name, check_clause, deferrable: false, initially_deferred: false
                 super source
                 raise ExpectedTableError, table unless table.is_a? Table
                 @table = table
@@ -39,8 +39,8 @@ module DynamicMigrations
                   add_column column
                 end
 
-                raise ExpectedSymbolError, validation_name unless validation_name.is_a? Symbol
-                @validation_name = validation_name
+                raise ExpectedSymbolError, name unless name.is_a? Symbol
+                @name = name
 
                 raise ExpectedStringError, check_clause unless check_clause.is_a? String
                 @check_clause = check_clause
@@ -71,15 +71,15 @@ module DynamicMigrations
                 end
 
                 # assert that the provided column exists within this validations table
-                unless @table.has_column? column.column_name
+                unless @table.has_column? column.name
                   raise ExpectedArrayOfColumnsError, "One or more columns do not exist in this validations table"
                 end
 
-                if @columns.key? column.column_name
-                  raise(DuplicateColumnError, "Column #{column.column_name} already exists")
+                if @columns.key? column.name
+                  raise(DuplicateColumnError, "Column #{column.name} already exists")
                 end
 
-                @columns[column.column_name] = column
+                @columns[column.name] = column
               end
             end
           end

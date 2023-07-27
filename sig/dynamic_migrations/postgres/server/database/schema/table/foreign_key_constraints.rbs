@@ -7,11 +7,11 @@ module DynamicMigrations
             module ForeignKeyConstraints
               @foreign_key_constraints: Hash[Symbol, ForeignKeyConstraint]
 
-              def foreign_key_constraint: (Symbol foreign_key_constraint_name) -> ForeignKeyConstraint
-              def has_foreign_key_constraint?: (Symbol foreign_key_constraint_name) -> bool
+              def foreign_key_constraint: (Symbol name) -> ForeignKeyConstraint
+              def has_foreign_key_constraint?: (Symbol name) -> bool
               def foreign_key_constraints: -> Array[ForeignKeyConstraint]
               def foreign_key_constraints_hash: -> Hash[Symbol, ForeignKeyConstraint]
-              def add_foreign_key_constraint: (Symbol foreign_key_constraint_name, Array[Symbol] column_names, Symbol foreign_schema_name, Symbol foreign_table_name, Array[Symbol] foreign_column_names, **untyped) -> untyped
+              def add_foreign_key_constraint: (Symbol name, Array[Symbol] column_names, Symbol foreign_schema_name, Symbol foreign_table_name, Array[Symbol] foreign_column_names, **untyped) -> untyped
 
               class ForeignKeyConstraintDoesNotExistError < StandardError
               end

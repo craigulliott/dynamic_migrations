@@ -34,7 +34,7 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database::Differences do
           foreign_table.add_unique_constraint :foreign_unique_constraint, [:foreign_column]
           # create the foreign key constraint
           comparison.add_column :local_column, :boolean
-          comparison.add_foreign_key_constraint :foreign_key_constraint, [:local_column], foreign_table.schema.schema_name, foreign_table.table_name, [:foreign_column]
+          comparison.add_foreign_key_constraint :foreign_key_constraint, [:local_column], foreign_table.schema.name, foreign_table.name, [:foreign_column]
         }
 
         it "returns the expected object" do
@@ -57,7 +57,7 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database::Differences do
         foreign_table.add_unique_constraint :foreign_unique_constraint, [:foreign_column]
         # create the foreign key constraint
         base.add_column :local_column, :boolean
-        base.add_foreign_key_constraint :foreign_key_constraint, [:local_column], foreign_table.schema.schema_name, foreign_table.table_name, [:foreign_column]
+        base.add_foreign_key_constraint :foreign_key_constraint, [:local_column], foreign_table.schema.name, foreign_table.name, [:foreign_column]
       }
 
       describe "when comparison table has no foreign key constraints" do
@@ -104,7 +104,7 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database::Differences do
           foreign_table.add_unique_constraint :foreign_unique_constraint, [:foreign_column]
           # create the foreign key constraint
           comparison.add_column :local_column, :boolean
-          comparison.add_foreign_key_constraint :foreign_key_constraint, [:local_column], foreign_table.schema.schema_name, foreign_table.table_name, [:foreign_column]
+          comparison.add_foreign_key_constraint :foreign_key_constraint, [:local_column], foreign_table.schema.name, foreign_table.name, [:foreign_column]
         }
 
         it "returns the expected object" do
@@ -148,7 +148,7 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database::Differences do
           foreign_table.add_unique_constraint :foreign_unique_constraint, [:different_foreign_column_name]
           # create the foreign key constraint
           comparison.add_column :local_column, :boolean
-          comparison.add_foreign_key_constraint :foreign_key_constraint, [:local_column], foreign_table.schema.schema_name, foreign_table.table_name, [:different_foreign_column_name]
+          comparison.add_foreign_key_constraint :foreign_key_constraint, [:local_column], foreign_table.schema.name, foreign_table.name, [:different_foreign_column_name]
         }
 
         it "returns the expected object" do

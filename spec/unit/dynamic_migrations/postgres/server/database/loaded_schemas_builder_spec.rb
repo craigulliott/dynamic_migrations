@@ -22,7 +22,7 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database do
           database.recursively_build_schemas_from_database
 
           expect(database.loaded_schemas).to be_a Array
-          expect(database.loaded_schemas.map(&:schema_name)).to eq([:public])
+          expect(database.loaded_schemas.map(&:name)).to eq([:public])
         end
 
         describe "after a schema has been added" do
@@ -34,7 +34,7 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database do
             database.recursively_build_schemas_from_database
 
             expect(database.loaded_schemas).to be_a Array
-            expect(database.loaded_schemas.map(&:schema_name)).to eq([:my_schema, :public])
+            expect(database.loaded_schemas.map(&:name)).to eq([:my_schema, :public])
           end
 
           describe "after tables have been added" do
@@ -49,7 +49,7 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database do
               schema = database.loaded_schema(:my_schema)
 
               expect(schema.tables).to be_a Array
-              expect(schema.tables.map(&:table_name)).to eq([:my_other_table, :my_table])
+              expect(schema.tables.map(&:name)).to eq([:my_other_table, :my_table])
             end
 
             describe "after two columns have been added to each table" do
@@ -67,10 +67,10 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database do
                 other_table = database.loaded_schema(:my_schema).table(:my_other_table)
 
                 expect(table.columns).to be_a Array
-                expect(table.columns.map(&:column_name)).to eql [:my_column, :my_second_column]
+                expect(table.columns.map(&:name)).to eql [:my_column, :my_second_column]
 
                 expect(other_table.columns).to be_a Array
-                expect(other_table.columns.map(&:column_name)).to eql [:my_column, :my_second_column]
+                expect(other_table.columns.map(&:name)).to eql [:my_column, :my_second_column]
               end
 
               describe "after a validation has been added" do
@@ -84,7 +84,7 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database do
                   table = database.loaded_schema(:my_schema).table(:my_table)
 
                   expect(table.validations).to be_a Array
-                  expect(table.validations.map(&:validation_name)).to eql [:my_validation]
+                  expect(table.validations.map(&:name)).to eql [:my_validation]
                 end
 
                 describe "after a unique constraint has been added" do
@@ -98,7 +98,7 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database do
                     table = database.loaded_schema(:my_schema).table(:my_other_table)
 
                     expect(table.unique_constraints).to be_a Array
-                    expect(table.unique_constraints.map(&:unique_constraint_name)).to eql [:my_unique_constraint]
+                    expect(table.unique_constraints.map(&:name)).to eql [:my_unique_constraint]
                   end
 
                   describe "after a foreign_key has been added" do
@@ -113,7 +113,7 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database do
                       table = database.loaded_schema(:my_schema).table(:my_table)
 
                       expect(table.foreign_key_constraints).to be_a Array
-                      expect(table.foreign_key_constraints.map(&:foreign_key_constraint_name)).to eql [:my_foreign_key]
+                      expect(table.foreign_key_constraints.map(&:name)).to eql [:my_foreign_key]
                     end
 
                     describe "after a primary_key has been added" do

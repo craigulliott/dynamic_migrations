@@ -107,7 +107,7 @@ module DynamicMigrations
                 matches: (comparison_table && comparison_table.description == table.description) || false
               },
               primary_key: compare_record(primary_key, comparison_primary_key, [
-                :primary_key_name,
+                :name,
                 :index_type
               ]),
               columns: compare_columns(table.columns_hash, comparison_columns),
@@ -159,9 +159,9 @@ module DynamicMigrations
           def self.compare_unique_constraints unique_constraints, comparison_unique_constraints
             result = {}
             # the base unique_constraints
-            unique_constraints.each do |unique_constraint_name, unique_constraint|
+            unique_constraints.each do |name, unique_constraint|
               # compare this unique_constraint to the equivilent in the comparison list
-              result[unique_constraint_name] = compare_record unique_constraint, comparison_unique_constraints[unique_constraint_name], [
+              result[name] = compare_record unique_constraint, comparison_unique_constraints[name], [
                 :column_names,
                 :index_type,
                 :deferrable,
@@ -169,9 +169,9 @@ module DynamicMigrations
               ]
             end
             # look for any unique_constraints in the comparison list which were not in the base list
-            comparison_unique_constraints.each do |unique_constraint_name, unique_constraint|
-              unless result.key? unique_constraint_name
-                result[unique_constraint_name] = {
+            comparison_unique_constraints.each do |name, unique_constraint|
+              unless result.key? name
+                result[name] = {
                   exists: false
                 }
               end
@@ -185,9 +185,9 @@ module DynamicMigrations
           def self.compare_indexes indexes, comparison_indexes
             result = {}
             # the base indexes
-            indexes.each do |index_name, index|
+            indexes.each do |name, index|
               # compare this index to the equivilent in the comparison list
-              result[index_name] = compare_record index, comparison_indexes[index_name], [
+              result[name] = compare_record index, comparison_indexes[name], [
                 :column_names,
                 :unique,
                 :where,
@@ -199,9 +199,9 @@ module DynamicMigrations
               ]
             end
             # look for any indexes in the comparison list which were not in the base list
-            comparison_indexes.each do |index_name, index|
-              unless result.key? index_name
-                result[index_name] = {
+            comparison_indexes.each do |name, index|
+              unless result.key? name
+                result[name] = {
                   exists: false
                 }
               end
@@ -215,9 +215,9 @@ module DynamicMigrations
           def self.compare_validations validations, comparison_validations
             result = {}
             # the base validations
-            validations.each do |validation_name, validation|
+            validations.each do |name, validation|
               # compare this validation to the equivilent in the comparison list
-              result[validation_name] = compare_record validation, comparison_validations[validation_name], [
+              result[name] = compare_record validation, comparison_validations[name], [
                 :check_clause,
                 :column_names,
                 :deferrable,
@@ -225,9 +225,9 @@ module DynamicMigrations
               ]
             end
             # look for any validations in the comparison list which were not in the base list
-            comparison_validations.each do |validation_name, validation|
-              unless result.key? validation_name
-                result[validation_name] = {
+            comparison_validations.each do |name, validation|
+              unless result.key? name
+                result[name] = {
                   exists: false
                 }
               end
@@ -241,9 +241,9 @@ module DynamicMigrations
           def self.compare_foreign_key_constraints foreign_key_constraints, comparison_foreign_key_constraints
             result = {}
             # the base foreign_key_constraints
-            foreign_key_constraints.each do |foreign_key_constraint_name, foreign_key_constraint|
+            foreign_key_constraints.each do |name, foreign_key_constraint|
               # compare this foreign_key_constraint to the equivilent in the comparison list
-              result[foreign_key_constraint_name] = compare_record foreign_key_constraint, comparison_foreign_key_constraints[foreign_key_constraint_name], [
+              result[name] = compare_record foreign_key_constraint, comparison_foreign_key_constraints[name], [
                 :column_names,
                 :foreign_schema_name,
                 :foreign_table_name,
@@ -253,9 +253,9 @@ module DynamicMigrations
               ]
             end
             # look for any foreign_key_constraints in the comparison list which were not in the base list
-            comparison_foreign_key_constraints.each do |foreign_key_constraint_name, foreign_key_constraint|
-              unless result.key? foreign_key_constraint_name
-                result[foreign_key_constraint_name] = {
+            comparison_foreign_key_constraints.each do |name, foreign_key_constraint|
+              unless result.key? name
+                result[name] = {
                   exists: false
                 }
               end

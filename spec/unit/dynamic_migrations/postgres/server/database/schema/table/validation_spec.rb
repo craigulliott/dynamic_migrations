@@ -103,9 +103,9 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database::Schema::Table::Val
     end
   end
 
-  describe :validation_name do
-    it "returns the expected validation_name" do
-      expect(validation.validation_name).to eq(:validation_name)
+  describe :name do
+    it "returns the expected name" do
+      expect(validation.name).to eq(:validation_name)
     end
   end
 

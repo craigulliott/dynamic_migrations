@@ -22,12 +22,12 @@ module DynamicMigrations
 
               attr_reader :table
               attr_reader :foreign_table
-              attr_reader :foreign_key_constraint_name
+              attr_reader :name
               attr_reader :deferrable
               attr_reader :initially_deferred
 
               # initialize a new object to represent a foreign_key_constraint in a postgres table
-              def initialize source, table, columns, foreign_table, foreign_columns, foreign_key_constraint_name, deferrable: false, initially_deferred: false
+              def initialize source, table, columns, foreign_table, foreign_columns, name, deferrable: false, initially_deferred: false
                 super source
 
                 raise ExpectedTableError, table unless table.is_a? Table
@@ -43,7 +43,7 @@ module DynamicMigrations
                   raise ExpectedArrayOfColumnsError
                 end
 
-                if table.table_name == foreign_table.table_name && table.schema.schema_name == foreign_table.schema.schema_name
+                if table.name == foreign_table.name && table.schema.name == foreign_table.schema.name
                   raise ExpectedDifferentTablesError
                 end
 
@@ -61,8 +61,8 @@ module DynamicMigrations
                   add_column column, true
                 end
 
-                raise ExpectedSymbolError, foreign_key_constraint_name unless foreign_key_constraint_name.is_a? Symbol
-                @foreign_key_constraint_name = foreign_key_constraint_name
+                raise ExpectedSymbolError, name unless name.is_a? Symbol
+                @name = name
 
                 raise ExpectedBooleanError, deferrable unless [true, false].include?(deferrable)
                 @deferrable = deferrable
@@ -88,11 +88,11 @@ module DynamicMigrations
               end
 
               def foreign_schema_name
-                @foreign_table.schema.schema_name
+                @foreign_table.schema.name
               end
 
               def foreign_table_name
-                @foreign_table.table_name
+                @foreign_table.name
               end
 
               private
@@ -113,15 +113,15 @@ module DynamicMigrations
                 end
 
                 # assert that the provided column exists within this foreign_key_constraints table
-                unless t.has_column? column.column_name
+                unless t.has_column? column.name
                   raise ExpectedArrayOfColumnsError, "One or more columns do not exist in this foreign_key_constraints table"
                 end
 
-                if cs.key? column.column_name
-                  raise(DuplicateColumnError, "Column #{column.column_name} already exists")
+                if cs.key? column.name
+                  raise(DuplicateColumnError, "Column #{column.name} already exists")
                 end
 
-                cs[column.column_name] = column
+                cs[column.name] = column
               end
             end
           end

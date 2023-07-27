@@ -33,7 +33,7 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database do
 
   describe :database_name do
     it "returns the expected database_name" do
-      expect(database.database_name).to eq(:my_database)
+      expect(database.name).to eq(:my_database)
     end
   end
 

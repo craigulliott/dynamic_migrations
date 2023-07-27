@@ -18,15 +18,15 @@ module DynamicMigrations
           end
 
           attr_reader :database
-          attr_reader :schema_name
+          attr_reader :name
 
           # initialize a new object to represent a postgres schema
-          def initialize source, database, schema_name
+          def initialize source, database, name
             super source
             raise ExpectedDatabaseError, database unless database.is_a? Database
-            raise ExpectedSymbolError, schema_name unless schema_name.is_a? Symbol
+            raise ExpectedSymbolError, name unless name.is_a? Symbol
             @database = database
-            @schema_name = schema_name
+            @name = name
             @tables = {}
           end
 

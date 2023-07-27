@@ -31,7 +31,7 @@ module DynamicMigrations
               end
 
               attr_reader :table
-              attr_reader :index_name
+              attr_reader :name
               attr_reader :unique
               attr_reader :where
               attr_reader :type
@@ -41,7 +41,7 @@ module DynamicMigrations
               attr_reader :nulls_position
 
               # initialize a new object to represent a index in a postgres table
-              def initialize source, table, columns, index_name, unique: false, where: nil, type: :btree, deferrable: false, initially_deferred: false, include_columns: [], order: :asc, nulls_position: :last
+              def initialize source, table, columns, name, unique: false, where: nil, type: :btree, deferrable: false, initially_deferred: false, include_columns: [], order: :asc, nulls_position: :last
                 super source
                 raise ExpectedTableError, table unless table.is_a? Table
                 @table = table
@@ -57,8 +57,8 @@ module DynamicMigrations
                   add_column column
                 end
 
-                raise ExpectedSymbolError, index_name unless index_name.is_a? Symbol
-                @index_name = index_name
+                raise ExpectedSymbolError, name unless name.is_a? Symbol
+                @name = name
 
                 raise ExpectedBooleanError, unique unless [true, false].include?(unique)
                 @unique = unique
@@ -121,18 +121,18 @@ module DynamicMigrations
                 end
 
                 # assert that the provided column exists within this indexes table
-                unless @table.has_column? column.column_name
+                unless @table.has_column? column.name
                   raise ExpectedArrayOfColumnsError, "One or more columns do not exist in this indexes table"
                 end
 
-                if @columns.key?(column.column_name) || @include_columns.key?(column.column_name)
-                  raise(DuplicateColumnError, "Column #{column.column_name} already exists in index, or is already included")
+                if @columns.key?(column.name) || @include_columns.key?(column.name)
+                  raise(DuplicateColumnError, "Column #{column.name} already exists in index, or is already included")
                 end
 
                 if is_include_column
-                  @include_columns[column.column_name] = column
+                  @include_columns[column.name] = column
                 else
-                  @columns[column.column_name] = column
+                  @columns[column.name] = column
                 end
               end
             end

@@ -175,9 +175,9 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database::Schema::Table::For
     end
   end
 
-  describe :foreign_key_constraint_name do
-    it "returns the expected foreign_key_constraint_name" do
-      expect(foreign_key_constraint.foreign_key_constraint_name).to eq(:foreign_key_constraint_name)
+  describe :name do
+    it "returns the expected name" do
+      expect(foreign_key_constraint.name).to eq(:foreign_key_constraint_name)
     end
   end
 

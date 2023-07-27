@@ -10,10 +10,10 @@ module DynamicMigrations
 
               attr_reader table: Table
               attr_reader foreign_table: Table
-              attr_reader foreign_key_constraint_name: Symbol
+              attr_reader name: Symbol
               attr_reader deferrable: bool
               attr_reader initially_deferred: bool
-              def initialize: (database_or_configuration source, Table table, Array[Column] columns, Table foreign_table, Array[Column] foreign_columns, Symbol foreign_key_constraint_name, ?deferrable: bool, ?initially_deferred: bool) -> void
+              def initialize: (database_or_configuration source, Table table, Array[Column] columns, Table foreign_table, Array[Column] foreign_columns, Symbol name, ?deferrable: bool, ?initially_deferred: bool) -> void
               def columns: -> Array[Column]
               def column_names: -> Array[Symbol]
               def foreign_columns: -> Array[Column]

@@ -16,16 +16,16 @@ module DynamicMigrations
 
               # returns the validation object for the provided validation name, and raises an
               # error if the validation does not exist
-              def validation validation_name
-                raise ExpectedSymbolError, validation_name unless validation_name.is_a? Symbol
-                raise ValidationDoesNotExistError unless has_validation? validation_name
-                @validations[validation_name]
+              def validation name
+                raise ExpectedSymbolError, name unless name.is_a? Symbol
+                raise ValidationDoesNotExistError unless has_validation? name
+                @validations[name]
               end
 
               # returns true if this table has a validation with the provided name, otherwise false
-              def has_validation? validation_name
-                raise ExpectedSymbolError, validation_name unless validation_name.is_a? Symbol
-                @validations.key? validation_name
+              def has_validation? name
+                raise ExpectedSymbolError, name unless name.is_a? Symbol
+                @validations.key? name
               end
 
               # returns an array of this tables validations
@@ -38,21 +38,21 @@ module DynamicMigrations
               end
 
               # adds a new validation to this table, and returns it
-              def add_validation validation_name, column_names, check_clause, **validation_options
-                if has_validation? validation_name
-                  raise(ValidationAlreadyExistsError, "Validation #{validation_name} already exists")
+              def add_validation name, column_names, check_clause, **validation_options
+                if has_validation? name
+                  raise(ValidationAlreadyExistsError, "Validation #{name} already exists")
                 end
                 columns = column_names.map { |column_name| column column_name }
                 included_target = self
                 if included_target.is_a? Table
-                  new_validation = @validations[validation_name] = Validation.new source, included_target, columns, validation_name, check_clause, **validation_options
+                  new_validation = @validations[name] = Validation.new source, included_target, columns, name, check_clause, **validation_options
                 else
                   raise ModuleIncludedIntoUnexpectedTargetError, included_target
                 end
                 # sort the hash so that the validations are in alphabetical order by name
                 sorted_validations = {}
-                @validations.keys.sort.each do |validation_name|
-                  sorted_validations[validation_name] = @validations[validation_name]
+                @validations.keys.sort.each do |name|
+                  sorted_validations[name] = @validations[name]
                 end
                 @validations = sorted_validations
                 # return the new validation

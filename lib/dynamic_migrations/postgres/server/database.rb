@@ -18,14 +18,14 @@ module DynamicMigrations
         include LoadedSchemasBuilder
 
         attr_reader :server
-        attr_reader :database_name
+        attr_reader :name
 
         # initialize a new object to represent a postgres database
-        def initialize server, database_name
+        def initialize server, name
           raise ExpectedServerError, server unless server.is_a? Server
-          raise ExpectedSymbolError, database_name unless database_name.is_a? Symbol
+          raise ExpectedSymbolError, name unless name.is_a? Symbol
           @server = server
-          @database_name = database_name
+          @name = name
           @configured_schemas = {}
           @loaded_schemas = {}
         end

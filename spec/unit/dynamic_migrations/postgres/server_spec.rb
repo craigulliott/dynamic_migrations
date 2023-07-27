@@ -78,7 +78,7 @@ RSpec.describe DynamicMigrations::Postgres::Server do
 
       it "returns the expected database" do
         expect(server.database(:name)).to be_a DynamicMigrations::Postgres::Server::Database
-        expect(server.database(:name).database_name).to eq(:name)
+        expect(server.database(:name).name).to eq(:name)
       end
     end
   end

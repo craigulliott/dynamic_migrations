@@ -10,9 +10,9 @@ module DynamicMigrations
               @columns: Hash[Symbol, Column]
 
               attr_reader table: Table
-              attr_reader primary_key_name: Symbol
+              attr_reader name: Symbol
               attr_reader index_type: index_types
-              def initialize: (database_or_configuration source, Table table, Array[Column] columns, Symbol primary_key_name, ?index_type: index_types) -> void
+              def initialize: (database_or_configuration source, Table table, Array[Column] columns, Symbol name, ?index_type: index_types) -> void
               def columns: -> Array[Column]
 
               private

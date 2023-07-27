@@ -228,9 +228,9 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database::Schema::Table::Ind
     end
   end
 
-  describe :index_name do
-    it "returns the expected index_name" do
-      expect(index.index_name).to eq(:index_name)
+  describe :name do
+    it "returns the expected name" do
+      expect(index.name).to eq(:index_name)
     end
   end
 

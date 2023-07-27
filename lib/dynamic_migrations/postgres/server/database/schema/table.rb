@@ -20,20 +20,20 @@ module DynamicMigrations
             include UniqueConstraints
 
             attr_reader :schema
-            attr_reader :table_name
+            attr_reader :name
             attr_reader :description
 
             # initialize a new object to represent a postgres table
-            def initialize source, schema, table_name, description = nil
+            def initialize source, schema, name, description = nil
               super source
               raise ExpectedSchemaError, schema unless schema.is_a? Schema
-              raise ExpectedSymbolError, table_name unless table_name.is_a? Symbol
+              raise ExpectedSymbolError, name unless name.is_a? Symbol
               unless description.nil?
                 raise ExpectedStringError, description unless description.is_a? String
                 @description = description
               end
               @schema = schema
-              @table_name = table_name
+              @name = name
               @columns = {}
               @validations = {}
               @indexes = {}
@@ -47,10 +47,10 @@ module DynamicMigrations
             end
 
             # add a primary key to this table
-            def add_primary_key primary_key_name, column_names, **primary_key_options
+            def add_primary_key name, column_names, **primary_key_options
               raise PrimaryKeyAlreadyExistsError if @primary_key
               columns = column_names.map { |column_name| column column_name }
-              @primary_key = PrimaryKey.new source, self, columns, primary_key_name, **primary_key_options
+              @primary_key = PrimaryKey.new source, self, columns, name, **primary_key_options
             end
 
             # returns true if this table has a primary key, otherwise false

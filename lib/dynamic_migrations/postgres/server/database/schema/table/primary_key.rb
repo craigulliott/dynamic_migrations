@@ -23,11 +23,11 @@ module DynamicMigrations
               end
 
               attr_reader :table
-              attr_reader :primary_key_name
+              attr_reader :name
               attr_reader :index_type
 
               # initialize a new object to represent a primary_key in a postgres table
-              def initialize source, table, columns, primary_key_name, index_type: :btree
+              def initialize source, table, columns, name, index_type: :btree
                 super source
                 raise ExpectedTableError, table unless table.is_a? Table
                 @table = table
@@ -42,8 +42,8 @@ module DynamicMigrations
                   add_column column
                 end
 
-                raise ExpectedSymbolError, primary_key_name unless primary_key_name.is_a? Symbol
-                @primary_key_name = primary_key_name
+                raise ExpectedSymbolError, name unless name.is_a? Symbol
+                @name = name
 
                 raise UnexpectedIndexTypeError, index_type unless INDEX_TYPES.include?(index_type)
                 @index_type = index_type
@@ -64,15 +64,15 @@ module DynamicMigrations
                 end
 
                 # assert that the provided column exists within this primary keys table
-                unless @table.has_column? column.column_name
+                unless @table.has_column? column.name
                   raise ExpectedArrayOfColumnsError, "One or more columns do not exist in this primary keys table"
                 end
 
-                if @columns.key?(column.column_name)
-                  raise(DuplicateColumnError, "Column #{column.column_name} already exists in primary_key, or is already included")
+                if @columns.key?(column.name)
+                  raise(DuplicateColumnError, "Column #{column.name} already exists in primary_key, or is already included")
                 end
 
-                @columns[column.column_name] = column
+                @columns[column.name] = column
               end
             end
           end

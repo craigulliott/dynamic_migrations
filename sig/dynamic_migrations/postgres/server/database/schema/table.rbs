@@ -18,11 +18,11 @@ module DynamicMigrations
             include UniqueConstraints
 
             attr_reader schema: Schema
-            attr_reader table_name: Symbol
+            attr_reader name: Symbol
             attr_reader description: String?
-            def initialize: (database_or_configuration source, Schema schema, Symbol table_name, ?nil | String? description ) -> void
+            def initialize: (database_or_configuration source, Schema schema, Symbol name, ?nil | String? description ) -> void
             def has_description?: -> bool
-            def add_primary_key: (Symbol primary_key_name, Array[Symbol] column_names, **untyped) -> untyped
+            def add_primary_key: (Symbol name, Array[Symbol] column_names, **untyped) -> untyped
             def has_primary_key?: -> bool
             def primary_key: -> PrimaryKey?
 

@@ -85,9 +85,9 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database::Schema::Table::Pri
     end
   end
 
-  describe :primary_key_name do
-    it "returns the expected primary_key_name" do
-      expect(index.primary_key_name).to eq(:primary_key_name)
+  describe :name do
+    it "returns the expected name" do
+      expect(index.name).to eq(:primary_key_name)
     end
   end
 

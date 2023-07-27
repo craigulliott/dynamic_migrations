@@ -40,7 +40,7 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database::Schema do
 
   describe :schema_name do
     it "returns the expected schema_name" do
-      expect(schema.schema_name).to eq(:my_schema)
+      expect(schema.name).to eq(:my_schema)
     end
   end
 

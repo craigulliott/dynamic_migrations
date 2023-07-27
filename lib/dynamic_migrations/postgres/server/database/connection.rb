@@ -15,9 +15,9 @@ module DynamicMigrations
           end
 
           def connect
-            raise MissingDatabaseNameError unless database_name
+            raise MissingDatabaseNameError unless name
             raise AlreadyConnectedError if @connection
-            @connection = Postgres::Connections.create_connection server.host, server.port, server.username, server.password, database_name
+            @connection = Postgres::Connections.create_connection server.host, server.port, server.username, server.password, name
           end
 
           def connection

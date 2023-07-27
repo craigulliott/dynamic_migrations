@@ -48,9 +48,9 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database::Schema::Table::Col
     end
   end
 
-  describe :column_name do
-    it "returns the expected column_name" do
-      expect(column.column_name).to eq(:my_column)
+  describe :name do
+    it "returns the expected name" do
+      expect(column.name).to eq(:my_column)
     end
   end
 

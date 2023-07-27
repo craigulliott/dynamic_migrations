@@ -117,9 +117,9 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database::Schema::Table::Uni
     end
   end
 
-  describe :unique_constraint_name do
-    it "returns the expected unique_constraint_name" do
-      expect(unique_constraint.unique_constraint_name).to eq(:unique_constraint_name)
+  describe :name do
+    it "returns the expected name" do
+      expect(unique_constraint.name).to eq(:unique_constraint_name)
     end
   end
 

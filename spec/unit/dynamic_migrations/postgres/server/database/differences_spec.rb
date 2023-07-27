@@ -480,7 +480,7 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database::Differences do
                               },
                               primary_key: {
                                 exists: true,
-                                primary_key_name: {
+                                name: {
                                   value: :my_primary_key,
                                   matches: false
                                 },
@@ -660,7 +660,7 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database::Differences do
                                 },
                                 primary_key: {
                                   exists: true,
-                                  primary_key_name: {
+                                  name: {
                                     value: :my_primary_key,
                                     matches: true
                                   },
@@ -749,7 +749,7 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database::Differences do
                                 },
                                 primary_key: {
                                   exists: true,
-                                  primary_key_name: {
+                                  name: {
                                     value: :my_primary_key,
                                     matches: true
                                   },

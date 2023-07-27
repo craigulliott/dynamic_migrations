@@ -47,9 +47,9 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database::Schema::Table do
     end
   end
 
-  describe :table_name do
-    it "returns the expected table_name" do
-      expect(table.table_name).to eq(:my_table)
+  describe :name do
+    it "returns the expected name" do
+      expect(table.name).to eq(:my_table)
     end
   end
 

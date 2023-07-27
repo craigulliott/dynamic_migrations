@@ -29,13 +29,13 @@ module DynamicMigrations
               end
 
               attr_reader :table
-              attr_reader :unique_constraint_name
+              attr_reader :name
               attr_reader :index_type
               attr_reader :deferrable
               attr_reader :initially_deferred
 
               # initialize a new object to represent a unique_constraint in a postgres table
-              def initialize source, table, columns, unique_constraint_name, index_type: :btree, deferrable: false, initially_deferred: false
+              def initialize source, table, columns, name, index_type: :btree, deferrable: false, initially_deferred: false
                 super source
                 raise ExpectedTableError, table unless table.is_a? Table
                 @table = table
@@ -50,8 +50,8 @@ module DynamicMigrations
                   add_column column
                 end
 
-                raise ExpectedSymbolError, unique_constraint_name unless unique_constraint_name.is_a? Symbol
-                @unique_constraint_name = unique_constraint_name
+                raise ExpectedSymbolError, name unless name.is_a? Symbol
+                @name = name
 
                 raise UnexpectedIndexTypeError, index_type unless INDEX_TYPES.include?(index_type)
                 @index_type = index_type
@@ -82,15 +82,15 @@ module DynamicMigrations
                 end
 
                 # assert that the provided column exists within this unique_constraints table
-                unless @table.has_column? column.column_name
+                unless @table.has_column? column.name
                   raise ExpectedArrayOfColumnsError, "One or more columns do not exist in this unique_constraints table"
                 end
 
-                if @columns.key?(column.column_name)
-                  raise(DuplicateColumnError, "Column #{column.column_name} already exists in unique_constraint, or is already included")
+                if @columns.key?(column.name)
+                  raise(DuplicateColumnError, "Column #{column.name} already exists in unique_constraint, or is already included")
                 end
 
-                @columns[column.column_name] = column
+                @columns[column.name] = column
               end
             end
           end
