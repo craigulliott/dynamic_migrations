@@ -90,15 +90,6 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database do
                               null: true,
                               description: nil,
                               data_type: :integer,
-                              numeric_precision: 32,
-                              numeric_precision_radix: 2,
-                              numeric_scale: 0,
-                              datetime_precision: nil,
-                              udt_schema: :pg_catalog,
-                              udt_name: :int4,
-                              updatable: true,
-                              character_maximum_length: nil,
-                              character_octet_length: nil,
                               interval_type: nil
                             },
                             my_second_column: {
@@ -106,15 +97,6 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database do
                               null: true,
                               description: nil,
                               data_type: :integer,
-                              numeric_precision: 32,
-                              numeric_precision_radix: 2,
-                              numeric_scale: 0,
-                              datetime_precision: nil,
-                              udt_schema: :pg_catalog,
-                              udt_name: :int4,
-                              updatable: true,
-                              character_maximum_length: nil,
-                              character_octet_length: nil,
                               interval_type: nil
                             }
                           }
@@ -182,36 +164,6 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database do
 
           it "returns the expected array" do
             expect(database.fetch_table_names(:my_schema)).to eql ["my_table"]
-          end
-        end
-      end
-    end
-
-    describe :fetch_columns do
-      it "raises an error" do
-        expect {
-          database.fetch_columns(:my_schema, :my_table)
-        }.to raise_error DynamicMigrations::Postgres::Server::Database::NotConnectedError
-      end
-
-      describe "after a connection has been established" do
-        before :each do
-          database.connect
-        end
-
-        it "returns an empty array" do
-          expect(database.fetch_columns(:my_schema, :my_table)).to be_empty
-        end
-
-        describe "after a column has been added" do
-          before :each do
-            pg_helper.create_schema :my_schema
-            pg_helper.create_table :my_schema, :my_table
-            pg_helper.create_column :my_schema, :my_table, :my_column, :integer
-          end
-
-          it "returns the expected array" do
-            expect(database.fetch_columns(:my_schema, :my_table)).to eql [{column_name: :my_column, type: :integer}]
           end
         end
       end

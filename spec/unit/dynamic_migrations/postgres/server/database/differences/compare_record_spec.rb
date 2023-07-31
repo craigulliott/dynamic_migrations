@@ -20,16 +20,7 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database::Differences do
           :null,
           :default,
           :description,
-          :character_maximum_length,
-          :character_octet_length,
-          :numeric_precision,
-          :numeric_precision_radix,
-          :numeric_scale,
-          :datetime_precision,
-          :interval_type,
-          :udt_schema,
-          :udt_name,
-          :updatable
+          :interval_type
         ]
       }
 
@@ -48,7 +39,7 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database::Differences do
       end
 
       describe "when base is a column object" do
-        let(:base) { configured_table.add_column :column_name, :integer, numeric_precision: 32, numeric_precision_radix: 2, numeric_scale: 0 }
+        let(:base) { configured_table.add_column :column_name, :integer }
 
         describe "when comparison is nil" do
           let(:comparison) { nil }
@@ -72,44 +63,8 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database::Differences do
                 value: nil,
                 matches: false
               },
-              character_maximum_length: {
-                value: nil,
-                matches: false
-              },
-              character_octet_length: {
-                value: nil,
-                matches: false
-              },
-              numeric_precision: {
-                value: 32,
-                matches: false
-              },
-              numeric_precision_radix: {
-                value: 2,
-                matches: false
-              },
-              numeric_scale: {
-                value: 0,
-                matches: false
-              },
-              datetime_precision: {
-                value: nil,
-                matches: false
-              },
               interval_type: {
                 value: nil,
-                matches: false
-              },
-              udt_schema: {
-                value: nil,
-                matches: false
-              },
-              udt_name: {
-                value: nil,
-                matches: false
-              },
-              updatable: {
-                value: true,
                 matches: false
               }
             })
@@ -117,7 +72,7 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database::Differences do
         end
 
         describe "when comparison is equivilent" do
-          let(:comparison) { loaded_table.add_column :column_name, :integer, numeric_precision: 32, numeric_precision_radix: 2, numeric_scale: 0 }
+          let(:comparison) { loaded_table.add_column :column_name, :integer }
 
           it "returns the expected hash" do
             expect(differences_class.compare_record(base, comparison, method_list)).to eql({
@@ -138,44 +93,8 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database::Differences do
                 value: nil,
                 matches: true
               },
-              character_maximum_length: {
-                value: nil,
-                matches: true
-              },
-              character_octet_length: {
-                value: nil,
-                matches: true
-              },
-              numeric_precision: {
-                value: 32,
-                matches: true
-              },
-              numeric_precision_radix: {
-                value: 2,
-                matches: true
-              },
-              numeric_scale: {
-                value: 0,
-                matches: true
-              },
-              datetime_precision: {
-                value: nil,
-                matches: true
-              },
               interval_type: {
                 value: nil,
-                matches: true
-              },
-              udt_schema: {
-                value: nil,
-                matches: true
-              },
-              udt_name: {
-                value: nil,
-                matches: true
-              },
-              updatable: {
-                value: true,
                 matches: true
               }
             })
@@ -183,7 +102,7 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database::Differences do
         end
 
         describe "when comparison has differences" do
-          let(:comparison) { loaded_table.add_column :column_name, :character, character_maximum_length: 8, character_octet_length: 32 }
+          let(:comparison) { loaded_table.add_column :column_name, :character }
 
           it "returns the expected hash" do
             expect(differences_class.compare_record(base, comparison, method_list)).to eql({
@@ -204,44 +123,8 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database::Differences do
                 value: nil,
                 matches: true
               },
-              character_maximum_length: {
-                value: nil,
-                matches: false
-              },
-              character_octet_length: {
-                value: nil,
-                matches: false
-              },
-              numeric_precision: {
-                value: 32,
-                matches: false
-              },
-              numeric_precision_radix: {
-                value: 2,
-                matches: false
-              },
-              numeric_scale: {
-                value: 0,
-                matches: false
-              },
-              datetime_precision: {
-                value: nil,
-                matches: true
-              },
               interval_type: {
                 value: nil,
-                matches: true
-              },
-              udt_schema: {
-                value: nil,
-                matches: true
-              },
-              udt_name: {
-                value: nil,
-                matches: true
-              },
-              updatable: {
-                value: true,
                 matches: true
               }
             })

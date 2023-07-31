@@ -175,7 +175,7 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database::Differences do
 
             describe "when the configured table has a column" do
               before(:each) do
-                configured_table.add_column :my_column, :integer, numeric_precision: 32, numeric_precision_radix: 2, numeric_scale: 0
+                configured_table.add_column :my_column, :integer
               end
 
               it "returns the expected differences" do
@@ -212,44 +212,8 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database::Differences do
                                 value: nil,
                                 matches: false
                               },
-                              character_maximum_length: {
-                                value: nil,
-                                matches: false
-                              },
-                              character_octet_length: {
-                                value: nil,
-                                matches: false
-                              },
-                              numeric_precision: {
-                                value: 32,
-                                matches: false
-                              },
-                              numeric_precision_radix: {
-                                value: 2,
-                                matches: false
-                              },
-                              numeric_scale: {
-                                value: 0,
-                                matches: false
-                              },
-                              datetime_precision: {
-                                value: nil,
-                                matches: false
-                              },
                               interval_type: {
                                 value: nil,
-                                matches: false
-                              },
-                              udt_schema: {
-                                value: nil,
-                                matches: false
-                              },
-                              udt_name: {
-                                value: nil,
-                                matches: false
-                              },
-                              updatable: {
-                                value: true,
                                 matches: false
                               }
                             }
@@ -291,7 +255,7 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database::Differences do
 
               describe "when the loaded database has an equivalent column" do
                 before(:each) do
-                  loaded_table.add_column :my_column, :integer, numeric_precision: 32, numeric_precision_radix: 2, numeric_scale: 0
+                  loaded_table.add_column :my_column, :integer
                 end
 
                 it "returns the expected differences" do
@@ -328,44 +292,8 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database::Differences do
                                   value: nil,
                                   matches: true
                                 },
-                                character_maximum_length: {
-                                  value: nil,
-                                  matches: true
-                                },
-                                character_octet_length: {
-                                  value: nil,
-                                  matches: true
-                                },
-                                numeric_precision: {
-                                  value: 32,
-                                  matches: true
-                                },
-                                numeric_precision_radix: {
-                                  value: 2,
-                                  matches: true
-                                },
-                                numeric_scale: {
-                                  value: 0,
-                                  matches: true
-                                },
-                                datetime_precision: {
-                                  value: nil,
-                                  matches: true
-                                },
                                 interval_type: {
                                   value: nil,
-                                  matches: true
-                                },
-                                udt_schema: {
-                                  value: nil,
-                                  matches: true
-                                },
-                                udt_name: {
-                                  value: nil,
-                                  matches: true
-                                },
-                                updatable: {
-                                  value: true,
                                   matches: true
                                 }
                               }
@@ -409,44 +337,8 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database::Differences do
                                   value: nil,
                                   matches: true
                                 },
-                                character_maximum_length: {
-                                  value: nil,
-                                  matches: true
-                                },
-                                character_octet_length: {
-                                  value: nil,
-                                  matches: true
-                                },
-                                numeric_precision: {
-                                  value: 32,
-                                  matches: true
-                                },
-                                numeric_precision_radix: {
-                                  value: 2,
-                                  matches: true
-                                },
-                                numeric_scale: {
-                                  value: 0,
-                                  matches: true
-                                },
-                                datetime_precision: {
-                                  value: nil,
-                                  matches: true
-                                },
                                 interval_type: {
                                   value: nil,
-                                  matches: true
-                                },
-                                udt_schema: {
-                                  value: nil,
-                                  matches: true
-                                },
-                                udt_name: {
-                                  value: nil,
-                                  matches: true
-                                },
-                                updatable: {
-                                  value: true,
                                   matches: true
                                 }
                               }
@@ -508,44 +400,8 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database::Differences do
                                     value: nil,
                                     matches: true
                                   },
-                                  character_maximum_length: {
-                                    value: nil,
-                                    matches: true
-                                  },
-                                  character_octet_length: {
-                                    value: nil,
-                                    matches: true
-                                  },
-                                  numeric_precision: {
-                                    value: 32,
-                                    matches: true
-                                  },
-                                  numeric_precision_radix: {
-                                    value: 2,
-                                    matches: true
-                                  },
-                                  numeric_scale: {
-                                    value: 0,
-                                    matches: true
-                                  },
-                                  datetime_precision: {
-                                    value: nil,
-                                    matches: true
-                                  },
                                   interval_type: {
                                     value: nil,
-                                    matches: true
-                                  },
-                                  udt_schema: {
-                                    value: nil,
-                                    matches: true
-                                  },
-                                  udt_name: {
-                                    value: nil,
-                                    matches: true
-                                  },
-                                  updatable: {
-                                    value: true,
                                     matches: true
                                   }
                                 }
@@ -589,44 +445,8 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database::Differences do
                                     value: nil,
                                     matches: true
                                   },
-                                  character_maximum_length: {
-                                    value: nil,
-                                    matches: true
-                                  },
-                                  character_octet_length: {
-                                    value: nil,
-                                    matches: true
-                                  },
-                                  numeric_precision: {
-                                    value: 32,
-                                    matches: true
-                                  },
-                                  numeric_precision_radix: {
-                                    value: 2,
-                                    matches: true
-                                  },
-                                  numeric_scale: {
-                                    value: 0,
-                                    matches: true
-                                  },
-                                  datetime_precision: {
-                                    value: nil,
-                                    matches: true
-                                  },
                                   interval_type: {
                                     value: nil,
-                                    matches: true
-                                  },
-                                  udt_schema: {
-                                    value: nil,
-                                    matches: true
-                                  },
-                                  udt_name: {
-                                    value: nil,
-                                    matches: true
-                                  },
-                                  updatable: {
-                                    value: true,
                                     matches: true
                                   }
                                 }
@@ -688,44 +508,8 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database::Differences do
                                       value: nil,
                                       matches: true
                                     },
-                                    character_maximum_length: {
-                                      value: nil,
-                                      matches: true
-                                    },
-                                    character_octet_length: {
-                                      value: nil,
-                                      matches: true
-                                    },
-                                    numeric_precision: {
-                                      value: 32,
-                                      matches: true
-                                    },
-                                    numeric_precision_radix: {
-                                      value: 2,
-                                      matches: true
-                                    },
-                                    numeric_scale: {
-                                      value: 0,
-                                      matches: true
-                                    },
-                                    datetime_precision: {
-                                      value: nil,
-                                      matches: true
-                                    },
                                     interval_type: {
                                       value: nil,
-                                      matches: true
-                                    },
-                                    udt_schema: {
-                                      value: nil,
-                                      matches: true
-                                    },
-                                    udt_name: {
-                                      value: nil,
-                                      matches: true
-                                    },
-                                    updatable: {
-                                      value: true,
                                       matches: true
                                     }
                                   }
@@ -777,44 +561,8 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database::Differences do
                                       value: nil,
                                       matches: true
                                     },
-                                    character_maximum_length: {
-                                      value: nil,
-                                      matches: true
-                                    },
-                                    character_octet_length: {
-                                      value: nil,
-                                      matches: true
-                                    },
-                                    numeric_precision: {
-                                      value: 32,
-                                      matches: true
-                                    },
-                                    numeric_precision_radix: {
-                                      value: 2,
-                                      matches: true
-                                    },
-                                    numeric_scale: {
-                                      value: 0,
-                                      matches: true
-                                    },
-                                    datetime_precision: {
-                                      value: nil,
-                                      matches: true
-                                    },
                                     interval_type: {
                                       value: nil,
-                                      matches: true
-                                    },
-                                    udt_schema: {
-                                      value: nil,
-                                      matches: true
-                                    },
-                                    udt_name: {
-                                      value: nil,
-                                      matches: true
-                                    },
-                                    updatable: {
-                                      value: true,
                                       matches: true
                                     }
                                   }

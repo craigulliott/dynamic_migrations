@@ -22,28 +22,11 @@ module DynamicMigrations
 
                 # add each table column
                 table_definition[:columns].each do |column_name, column_definition|
-                  # we only need these for arrays and user-defined types
-                  # (user-defined is usually ENUMS)
-                  if [:ARRAY, :"USER-DEFINED"].include? column_definition[:data_type]
-                    udt_schema = column_definition[:udt_schema]
-                    udt_name = column_definition[:udt_name]
-                  else
-                    udt_schema = nil
-                    udt_name = nil
-                  end
-
                   table.add_column column_name, column_definition[:data_type],
                     null: column_definition[:null],
                     default: column_definition[:default],
                     description: column_definition[:description],
-                    character_maximum_length: column_definition[:character_maximum_length],
-                    character_octet_length: column_definition[:character_octet_length],
-                    numeric_precision: column_definition[:numeric_precision],
-                    numeric_precision_radix: column_definition[:numeric_precision_radix],
-                    numeric_scale: column_definition[:numeric_scale],
-                    datetime_precision: column_definition[:datetime_precision],
-                    udt_schema: udt_schema,
-                    udt_name: udt_name
+                    interval_type: column_definition[:interval_type]
                 end
 
                 # add any validations

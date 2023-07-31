@@ -8,7 +8,6 @@ module DynamicMigrations
           def recursively_build_schemas_from_database: -> void
           def fetch_schema_names: -> Array[String]
           def fetch_table_names: (Symbol schema_name) -> Array[String]
-          def fetch_columns: (Symbol schema_name, Symbol table_name) -> Hash[untyped, untyped]
         end
       end
     end

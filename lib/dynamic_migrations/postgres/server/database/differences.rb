@@ -130,16 +130,7 @@ module DynamicMigrations
                 :null,
                 :default,
                 :description,
-                :character_maximum_length,
-                :character_octet_length,
-                :numeric_precision,
-                :numeric_precision_radix,
-                :numeric_scale,
-                :datetime_precision,
-                :interval_type,
-                :udt_schema,
-                :udt_name,
-                :updatable
+                :interval_type
               ]
             end
             # look for any columns in the comparison list which were not in the base list

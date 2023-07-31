@@ -28,7 +28,7 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database::Differences do
         let(:comparison) { loaded_table }
 
         before(:each) {
-          comparison.add_column :column_name, :integer, numeric_precision: 32, numeric_precision_radix: 2, numeric_scale: 0
+          comparison.add_column :column_name, :integer
         }
 
         it "returns the expected object" do
@@ -71,44 +71,8 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database::Differences do
                 value: nil,
                 matches: false
               },
-              character_maximum_length: {
-                value: nil,
-                matches: false
-              },
-              character_octet_length: {
-                value: nil,
-                matches: false
-              },
-              numeric_precision: {
-                value: nil,
-                matches: false
-              },
-              numeric_precision_radix: {
-                value: nil,
-                matches: false
-              },
-              numeric_scale: {
-                value: nil,
-                matches: false
-              },
-              datetime_precision: {
-                value: nil,
-                matches: false
-              },
               interval_type: {
                 value: nil,
-                matches: false
-              },
-              udt_schema: {
-                value: nil,
-                matches: false
-              },
-              udt_name: {
-                value: nil,
-                matches: false
-              },
-              updatable: {
-                value: true,
                 matches: false
               }
             }
@@ -143,44 +107,8 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database::Differences do
                 value: nil,
                 matches: true
               },
-              character_maximum_length: {
-                value: nil,
-                matches: true
-              },
-              character_octet_length: {
-                value: nil,
-                matches: true
-              },
-              numeric_precision: {
-                value: nil,
-                matches: true
-              },
-              numeric_precision_radix: {
-                value: nil,
-                matches: true
-              },
-              numeric_scale: {
-                value: nil,
-                matches: true
-              },
-              datetime_precision: {
-                value: nil,
-                matches: true
-              },
               interval_type: {
                 value: nil,
-                matches: true
-              },
-              udt_schema: {
-                value: nil,
-                matches: true
-              },
-              udt_name: {
-                value: nil,
-                matches: true
-              },
-              updatable: {
-                value: true,
                 matches: true
               }
             }
@@ -192,7 +120,7 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database::Differences do
         let(:comparison) { loaded_table }
 
         before(:each) {
-          comparison.add_column :column_name, :character, character_maximum_length: 8, character_octet_length: 32
+          comparison.add_column :column_name, :character
         }
 
         it "returns the expected object" do
@@ -215,44 +143,8 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database::Differences do
                 value: nil,
                 matches: true
               },
-              character_maximum_length: {
-                value: nil,
-                matches: false
-              },
-              character_octet_length: {
-                value: nil,
-                matches: false
-              },
-              numeric_precision: {
-                value: nil,
-                matches: true
-              },
-              numeric_precision_radix: {
-                value: nil,
-                matches: true
-              },
-              numeric_scale: {
-                value: nil,
-                matches: true
-              },
-              datetime_precision: {
-                value: nil,
-                matches: true
-              },
               interval_type: {
                 value: nil,
-                matches: true
-              },
-              udt_schema: {
-                value: nil,
-                matches: true
-              },
-              udt_name: {
-                value: nil,
-                matches: true
-              },
-              updatable: {
-                value: true,
                 matches: true
               }
             }
@@ -296,44 +188,8 @@ end
                 value: nil,
                 matches: false
               },
-              character_maximum_length: {
-                value: nil,
-                matches: false
-              },
-              character_octet_length: {
-                value: nil,
-                matches: false
-              },
-              numeric_precision: {
-                value: 32,
-                matches: false
-              },
-              numeric_precision_radix: {
-                value: 2,
-                matches: false
-              },
-              numeric_scale: {
-                value: 0,
-                matches: false
-              },
-              datetime_precision: {
-                value: nil,
-                matches: false
-              },
               interval_type: {
                 value: nil,
-                matches: false
-              },
-              udt_schema: {
-                value: nil,
-                matches: false
-              },
-              udt_name: {
-                value: nil,
-                matches: false
-              },
-              updatable: {
-                value: true,
                 matches: false
               }
             },
@@ -380,44 +236,8 @@ end
                 value: nil,
                 matches: false
               },
-              character_maximum_length: {
-                value: nil,
-                matches: false
-              },
-              character_octet_length: {
-                value: nil,
-                matches: false
-              },
-              numeric_precision: {
-                value: 32,
-                matches: false
-              },
-              numeric_precision_radix: {
-                value: 2,
-                matches: false
-              },
-              numeric_scale: {
-                value: 0,
-                matches: false
-              },
-              datetime_precision: {
-                value: nil,
-                matches: false
-              },
               interval_type: {
                 value: nil,
-                matches: false
-              },
-              udt_schema: {
-                value: nil,
-                matches: false
-              },
-              udt_name: {
-                value: nil,
-                matches: false
-              },
-              updatable: {
-                value: true,
                 matches: false
               }
             },

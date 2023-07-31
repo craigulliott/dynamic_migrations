@@ -36,7 +36,6 @@ require "dynamic_migrations/postgres/server/database/schema/table/unique_constra
 
 require "dynamic_migrations/postgres/server"
 require "dynamic_migrations/postgres/connections"
-require "dynamic_migrations/postgres/data_types"
 
 module DynamicMigrations
   class Error < StandardError
