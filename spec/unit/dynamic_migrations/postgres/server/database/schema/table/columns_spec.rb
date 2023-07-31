@@ -13,6 +13,10 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database::Schema::Table do
         expect(table.add_column(:column_name, :boolean)).to be_a DynamicMigrations::Postgres::Server::Database::Schema::Table::Column
       end
 
+      it "correctly applies default column data" do
+        expect(table.add_column(:column_name, :integer).numeric_precision).to eq 32
+      end
+
       it "raises an error if providing an invalid column name" do
         expect {
           table.add_column "column_name", :integer

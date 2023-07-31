@@ -9,6 +9,12 @@ module DynamicMigrations
         end
       end
 
+      class UnexpectedPropertyNameError < StandardError
+        def initialize attribute
+          super "Unexpected property `#{attribute}`"
+        end
+      end
+
       class UnexpectedPropertyError < StandardError
         def initialize data_type, attribute, value
           super "Unexpected property `#{attribute}` with value `#{value}` for data_type `#{data_type}`"
@@ -20,6 +26,18 @@ module DynamicMigrations
           super "Unsupported type `#{data_type}`"
         end
       end
+
+      ATTRIBUTE_NAMES = [
+        :character_maximum_length,
+        :character_octet_length,
+        :numeric_precision,
+        :numeric_precision_radix,
+        :numeric_scale,
+        :datetime_precision,
+        :interval_type,
+        :udt_schema,
+        :udt_name
+      ].freeze
 
       DATA_TYPES = {
         ARRAY: {
@@ -42,7 +60,12 @@ module DynamicMigrations
             :numeric_precision,
             :numeric_precision_radix,
             :numeric_scale
-          ]
+          ],
+          defaults: {
+            numeric_precision: 64,
+            numeric_precision_radix: 2,
+            numeric_scale: 0
+          }
         },
         # skipping this, in my tests it automatically turned into a bigint
         # bigserial: {
@@ -82,7 +105,10 @@ module DynamicMigrations
           args: "[ (n) ]",
           required: [
             :character_octet_length
-          ]
+          ],
+          defaults: {
+            character_octet_length: 1073741824
+          }
         },
         cidr: {
           description: "IPv4 or IPv6 network address"
@@ -112,7 +138,12 @@ module DynamicMigrations
             :numeric_precision,
             :numeric_precision_radix,
             :numeric_scale
-          ]
+          ],
+          defaults: {
+            numeric_precision: 32,
+            numeric_precision_radix: 2,
+            numeric_scale: 0
+          }
         },
         interval: {
           description: "time span",
@@ -193,7 +224,10 @@ module DynamicMigrations
           description: "variable-length character string",
           required: [
             :character_octet_length
-          ]
+          ],
+          defaults: {
+            character_octet_length: 1073741824
+          }
         },
         "time without time zone": {
           description: "time of day (no time zone)",
@@ -238,7 +272,20 @@ module DynamicMigrations
         xml: {
           description: "XML data"
         }
-      }
+      }.freeze
+
+      def self.default_for data_type, attribute
+        raise ExpectedSymbolError, data_type unless data_type.is_a? Symbol
+        raise ExpectedSymbolError, attribute unless attribute.is_a? Symbol
+        raise UnsupportedTypeError, data_type unless DATA_TYPES.key? data_type
+
+        unless ATTRIBUTE_NAMES.include? attribute
+          raise UnexpectedPropertyNameError.new attribute
+        end
+
+        defaults = DATA_TYPES[data_type][:defaults]
+        defaults && defaults[attribute] || nil
+      end
 
       def self.validate_type_exists! data_type
         raise ExpectedSymbolError, data_type unless data_type.is_a? Symbol

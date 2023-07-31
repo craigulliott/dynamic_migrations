@@ -48,6 +48,17 @@ module DynamicMigrations
                   @description = description
                 end
 
+                # apply any defaults for this data type
+                character_maximum_length = character_maximum_length.nil? ? DataTypes.default_for(data_type, :character_maximum_length) : character_maximum_length
+                character_octet_length = character_octet_length.nil? ? DataTypes.default_for(data_type, :character_octet_length) : character_octet_length
+                numeric_precision = numeric_precision.nil? ? DataTypes.default_for(data_type, :numeric_precision) : numeric_precision
+                numeric_precision_radix = numeric_precision_radix.nil? ? DataTypes.default_for(data_type, :numeric_precision_radix) : numeric_precision_radix
+                numeric_scale = numeric_scale.nil? ? DataTypes.default_for(data_type, :numeric_scale) : numeric_scale
+                datetime_precision = datetime_precision.nil? ? DataTypes.default_for(data_type, :datetime_precision) : datetime_precision
+                interval_type = interval_type.nil? ? DataTypes.default_for(data_type, :interval_type) : interval_type
+                udt_schema = udt_schema.nil? ? DataTypes.default_for(data_type, :udt_schema) : udt_schema
+                udt_name = udt_name.nil? ? DataTypes.default_for(data_type, :udt_name) : udt_name
+
                 DataTypes.validate_column_properties!(data_type,
                   character_maximum_length: character_maximum_length,
                   character_octet_length: character_octet_length,

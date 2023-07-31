@@ -3,6 +3,28 @@
 RSpec.describe DynamicMigrations::Postgres::DataTypes do
   let(:data_types_module) { DynamicMigrations::Postgres::DataTypes }
 
+  describe :default_for do
+    it "returns null for a valid type and attribute, but no default" do
+      expect(data_types_module.default_for(:integer, :datetime_precision)).to be nil
+    end
+
+    it "returns the expected value for a valid type and attribute which has a default" do
+      expect(data_types_module.default_for(:integer, :numeric_precision)).to eq 32
+    end
+
+    it "raises an error if the provided type does not exist" do
+      expect {
+        data_types_module.default_for(:not_a_real_type, :numeric_precision)
+      }.to raise_error DynamicMigrations::Postgres::DataTypes::UnsupportedTypeError
+    end
+
+    it "raises an error if the provided attribute is not a real attribute" do
+      expect {
+        data_types_module.default_for(:integer, :not_a_real_attribute)
+      }.to raise_error DynamicMigrations::Postgres::DataTypes::UnexpectedPropertyNameError
+    end
+  end
+
   describe :validate_type_exists! do
     it "returns true for a valid type" do
       expect(data_types_module.validate_type_exists!(:integer)).to be true
