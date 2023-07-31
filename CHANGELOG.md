@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.2.0](https://github.com/craigulliott/dynamic_migrations/compare/v2.1.0...v2.2.0) (2023-07-31)
+
+
+### Features
+
+* using postgres shorthand names such as `numeric(12,2)` for types, and removing the additional column metadata ([86d0113](https://github.com/craigulliott/dynamic_migrations/commit/86d0113aabd4350f278164d18e3c0a611fcf5595))
+
 ## [2.1.0](https://github.com/craigulliott/dynamic_migrations/compare/v2.0.0...v2.1.0) (2023-07-31)
 
 
