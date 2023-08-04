@@ -62,7 +62,7 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database do
                   expect(database.fetch_keys_and_unique_constraints).to eql({
                     my_schema: {
                       my_other_table: {
-                        UNIQUE: {
+                        unique: {
                           my_unique_constraint: {
                             column_names: [
                               :my_column,
@@ -71,9 +71,12 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database do
                             foreign_schema_name: nil,
                             foreign_table_name: nil,
                             foreign_column_names: nil,
+                            description: nil,
                             deferrable: false,
                             initially_deferred: false,
-                            index_type: :btree
+                            index_type: :btree,
+                            on_update: nil,
+                            on_delete: nil
                           }
                         }
                       }
@@ -91,28 +94,32 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database do
                     expect(database.fetch_keys_and_unique_constraints).to eql({
                       my_schema: {
                         my_other_table: {
-                          UNIQUE: {
+                          unique: {
                             my_unique_constraint: {
                               column_names: [
                                 :my_column,
                                 :my_second_column
                               ],
+                              description: nil,
                               foreign_schema_name: nil,
                               foreign_table_name: nil,
                               foreign_column_names: nil,
                               deferrable: false,
                               initially_deferred: false,
-                              index_type: :btree
+                              index_type: :btree,
+                              on_delete: nil,
+                              on_update: nil
                             }
                           }
                         },
                         my_table: {
-                          FOREIGN_KEY: {
+                          foreign_key: {
                             my_foreign_key: {
                               column_names: [
                                 :my_column,
                                 :my_second_column
                               ],
+                              description: nil,
                               foreign_schema_name: :my_schema,
                               foreign_table_name: :my_other_table,
                               foreign_column_names: [
@@ -121,7 +128,9 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database do
                               ],
                               deferrable: false,
                               initially_deferred: false,
-                              index_type: nil
+                              index_type: nil,
+                              on_update: :no_action,
+                              on_delete: :no_action
                             }
                           }
                         }
@@ -139,48 +148,57 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database do
                       expect(database.fetch_keys_and_unique_constraints).to eql({
                         my_schema: {
                           my_other_table: {
-                            UNIQUE: {
+                            unique: {
                               my_unique_constraint: {
                                 column_names: [
                                   :my_column,
                                   :my_second_column
                                 ],
+                                description: nil,
                                 foreign_schema_name: nil,
                                 foreign_table_name: nil,
                                 foreign_column_names: nil,
                                 deferrable: false,
                                 initially_deferred: false,
-                                index_type: :btree
+                                index_type: :btree,
+                                on_update: nil,
+                                on_delete: nil
                               }
                             }
                           },
                           my_table: {
-                            FOREIGN_KEY: {
+                            foreign_key: {
                               my_foreign_key: {
                                 column_names: [
                                   :my_column,
                                   :my_second_column
                                 ],
+                                description: nil,
                                 foreign_schema_name: :my_schema,
                                 foreign_table_name: :my_other_table,
                                 foreign_column_names: [:my_column, :my_second_column],
                                 deferrable: false,
                                 initially_deferred: false,
-                                index_type: nil
+                                index_type: nil,
+                                on_update: :no_action,
+                                on_delete: :no_action
                               }
                             },
-                            PRIMARY_KEY: {
+                            primary_key: {
                               my_primary_key: {
                                 column_names: [
                                   :my_column,
                                   :my_second_column
                                 ],
+                                description: nil,
                                 foreign_schema_name: nil,
                                 foreign_table_name: nil,
                                 foreign_column_names: nil,
                                 deferrable: false,
                                 initially_deferred: false,
-                                index_type: :btree
+                                index_type: :btree,
+                                on_update: nil,
+                                on_delete: nil
                               }
                             }
                           }

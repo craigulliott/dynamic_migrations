@@ -1,0 +1,21 @@
+# TypeProf 0.21.7
+
+# Classes
+module DynamicMigrations
+  class Generator
+    module Table
+      def create_table: (Postgres::Server::Database::Schema::Table table) -> String
+      def table_columns: (Array[Postgres::Server::Database::Schema::Table::Column] columns) -> String
+      def drop_table: (Postgres::Server::Database::Schema::Table table) -> String
+
+      private
+      def table_options: (Postgres::Server::Database::Schema::Table table) -> String
+
+      class NoTableCommentError < StandardError
+      end
+
+      class NoTableColumnCommentError < StandardError
+      end
+    end
+  end
+end

@@ -91,26 +91,6 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database::Schema::Table do
     it "adds and returns a primary key" do
       expect(table.add_primary_key(:pk_name, [:my_column])).to be_a DynamicMigrations::Postgres::Server::Database::Schema::Table::PrimaryKey
     end
-
-    describe "providing an optional type value" do
-      it "does not raise an error" do
-        expect {
-          table.add_primary_key :pk_name, [:my_column], index_type: :gin
-        }.to_not raise_error
-      end
-
-      it "raises an error if providing an unexpected index type" do
-        expect {
-          table.add_primary_key :pk_name, [:my_column], index_type: :not_a_valid_index_type
-        }.to raise_error DynamicMigrations::Postgres::Server::Database::Schema::Table::PrimaryKey::UnexpectedIndexTypeError
-      end
-
-      it "returns the expected value via a getter of the same name" do
-        primary_key = table.add_primary_key :pk_name, [:my_column], index_type: :gin
-
-        expect(primary_key.index_type).to be :gin
-      end
-    end
   end
 
   describe :has_primary_key? do

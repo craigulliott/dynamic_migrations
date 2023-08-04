@@ -33,9 +33,10 @@ module DynamicMigrations
               attr_reader :index_type
               attr_reader :deferrable
               attr_reader :initially_deferred
+              attr_reader :description
 
               # initialize a new object to represent a unique_constraint in a postgres table
-              def initialize source, table, columns, name, index_type: :btree, deferrable: false, initially_deferred: false
+              def initialize source, table, columns, name, description: nil, index_type: :btree, deferrable: false, initially_deferred: false
                 super source
                 raise ExpectedTableError, table unless table.is_a? Table
                 @table = table
@@ -53,6 +54,11 @@ module DynamicMigrations
                 raise ExpectedSymbolError, name unless name.is_a? Symbol
                 @name = name
 
+                unless description.nil?
+                  raise ExpectedStringError, description unless description.is_a? String
+                  @description = description
+                end
+
                 raise UnexpectedIndexTypeError, index_type unless INDEX_TYPES.include?(index_type)
                 @index_type = index_type
 
@@ -61,6 +67,11 @@ module DynamicMigrations
 
                 raise ExpectedBooleanError, initially_deferred unless [true, false].include?(initially_deferred)
                 @initially_deferred = initially_deferred
+              end
+
+              # return true if this has a description, otherwise false
+              def has_description?
+                !@description.nil?
               end
 
               # return an array of this unique_constraints columns

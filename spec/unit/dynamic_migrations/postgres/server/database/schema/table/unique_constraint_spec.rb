@@ -17,6 +17,19 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database::Schema::Table::Uni
       }.to_not raise_error
     end
 
+    describe "providing an optional description" do
+      it "does not raise an error" do
+        expect {
+          DynamicMigrations::Postgres::Server::Database::Schema::Table::UniqueConstraint.new :configuration, table, [column], :unique_constraint_name, description: "foo bar"
+        }.to_not raise_error
+      end
+
+      it "returns the expected value via a getter of the same name" do
+        unique_constraint = DynamicMigrations::Postgres::Server::Database::Schema::Table::UniqueConstraint.new :configuration, table, [column], :unique_constraint_name, description: "foo bar"
+        expect(unique_constraint.description).to be "foo bar"
+      end
+    end
+
     describe "providing an optional index_type value" do
       it "does not raise an error" do
         expect {
@@ -138,6 +151,21 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database::Schema::Table::Uni
   describe :initially_deferred do
     it "returns the expected initially_deferred" do
       expect(unique_constraint.initially_deferred).to eq(false)
+    end
+  end
+
+  describe :has_description? do
+    describe "when no description was provided at initialization" do
+      it "returns false" do
+        expect(unique_constraint.has_description?).to be(false)
+      end
+    end
+
+    describe "when a description was provided at initialization" do
+      let(:unique_constraint_with_description) { DynamicMigrations::Postgres::Server::Database::Schema::Table::UniqueConstraint.new :configuration, table, [column], :unique_constraint_name, description: "foo bar" }
+      it "returns true" do
+        expect(unique_constraint_with_description.has_description?).to be(true)
+      end
     end
   end
 end

@@ -18,7 +18,7 @@ module DynamicMigrations
               # error if the column does not exist
               def column name
                 raise ExpectedSymbolError, name unless name.is_a? Symbol
-                raise ColumnDoesNotExistError unless has_column? name
+                raise ColumnDoesNotExistError, name unless has_column? name
                 @columns[name]
               end
 

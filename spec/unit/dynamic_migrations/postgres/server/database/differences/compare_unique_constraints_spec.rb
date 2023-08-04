@@ -61,6 +61,10 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database::Differences do
                 value: [:column_name],
                 matches: false
               },
+              description: {
+                value: nil,
+                matches: false
+              },
               index_type: {
                 value: :btree,
                 matches: false
@@ -94,6 +98,10 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database::Differences do
                 value: [:column_name],
                 matches: true
               },
+              description: {
+                value: nil,
+                matches: true
+              },
               index_type: {
                 value: :btree,
                 matches: true
@@ -125,6 +133,10 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database::Differences do
               exists: true,
               column_names: {
                 value: [:column_name],
+                matches: true
+              },
+              description: {
+                value: nil,
                 matches: true
               },
               index_type: {

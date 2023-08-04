@@ -61,6 +61,10 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database::Differences do
                 value: [:column_name],
                 matches: false
               },
+              description: {
+                value: nil,
+                matches: false
+              },
               unique: {
                 value: false,
                 matches: false
@@ -71,14 +75,6 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database::Differences do
               },
               type: {
                 value: :btree,
-                matches: false
-              },
-              deferrable: {
-                value: false,
-                matches: false
-              },
-              initially_deferred: {
-                value: false,
                 matches: false
               },
               order: {
@@ -110,6 +106,10 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database::Differences do
                 value: [:column_name],
                 matches: true
               },
+              description: {
+                value: nil,
+                matches: true
+              },
               unique: {
                 value: false,
                 matches: true
@@ -120,14 +120,6 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database::Differences do
               },
               type: {
                 value: :btree,
-                matches: true
-              },
-              deferrable: {
-                value: false,
-                matches: true
-              },
-              initially_deferred: {
-                value: false,
                 matches: true
               },
               order: {
@@ -159,6 +151,10 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database::Differences do
                 value: [:column_name],
                 matches: true
               },
+              description: {
+                value: nil,
+                matches: true
+              },
               unique: {
                 value: false,
                 matches: true
@@ -170,14 +166,6 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database::Differences do
               type: {
                 value: :btree,
                 matches: false
-              },
-              deferrable: {
-                value: false,
-                matches: true
-              },
-              initially_deferred: {
-                value: false,
-                matches: true
               },
               order: {
                 value: :asc,

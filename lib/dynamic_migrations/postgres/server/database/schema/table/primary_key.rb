@@ -24,10 +24,10 @@ module DynamicMigrations
 
               attr_reader :table
               attr_reader :name
-              attr_reader :index_type
+              attr_reader :description
 
               # initialize a new object to represent a primary_key in a postgres table
-              def initialize source, table, columns, name, index_type: :btree
+              def initialize source, table, columns, name, description: nil
                 super source
                 raise ExpectedTableError, table unless table.is_a? Table
                 @table = table
@@ -45,13 +45,24 @@ module DynamicMigrations
                 raise ExpectedSymbolError, name unless name.is_a? Symbol
                 @name = name
 
-                raise UnexpectedIndexTypeError, index_type unless INDEX_TYPES.include?(index_type)
-                @index_type = index_type
+                unless description.nil?
+                  raise ExpectedStringError, description unless description.is_a? String
+                  @description = description
+                end
+              end
+
+              # return true if this has a description, otherwise false
+              def has_description?
+                !@description.nil?
               end
 
               # return an array of this primary keys columns
               def columns
                 @columns.values
+              end
+
+              def column_names
+                @columns.keys
               end
 
               private

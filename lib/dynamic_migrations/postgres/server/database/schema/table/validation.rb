@@ -22,9 +22,10 @@ module DynamicMigrations
               attr_reader :check_clause
               attr_reader :deferrable
               attr_reader :initially_deferred
+              attr_reader :description
 
               # initialize a new object to represent a validation in a postgres table
-              def initialize source, table, columns, name, check_clause, deferrable: false, initially_deferred: false
+              def initialize source, table, columns, name, check_clause, description: nil, deferrable: false, initially_deferred: false
                 super source
                 raise ExpectedTableError, table unless table.is_a? Table
                 @table = table
@@ -45,11 +46,21 @@ module DynamicMigrations
                 raise ExpectedStringError, check_clause unless check_clause.is_a? String
                 @check_clause = check_clause
 
+                unless description.nil?
+                  raise ExpectedStringError, description unless description.is_a? String
+                  @description = description
+                end
+
                 raise ExpectedBooleanError, deferrable unless [true, false].include?(deferrable)
                 @deferrable = deferrable
 
                 raise ExpectedBooleanError, initially_deferred unless [true, false].include?(initially_deferred)
                 @initially_deferred = initially_deferred
+              end
+
+              # return true if this has a description, otherwise false
+              def has_description?
+                !@description.nil?
               end
 
               # return an array of this validations columns

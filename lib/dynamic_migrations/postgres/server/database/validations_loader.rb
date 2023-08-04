@@ -12,7 +12,9 @@ module DynamicMigrations
                   table_constraints.table_name,
                   array_agg(col.column_name ORDER BY col.column_name) AS columns,
                   table_constraints.constraint_name as validation_name,
-                  check_constraints.check_clause,
+                  pg_get_expr(conbin, conrelid, true) as check_clause,
+                  obj_description(pgc.oid, 'pg_constraint') as description,
+                  -- in case we need to update this query in a later version of DynamicMigrations
                   1 as table_version
                 FROM information_schema.table_constraints
                 JOIN information_schema.check_constraints
@@ -30,6 +32,7 @@ module DynamicMigrations
                   AND table_constraints.constraint_schema != 'postgis'
                   AND left(table_constraints.constraint_schema, 3) != 'pg_'
                 GROUP BY
+                  pgc.oid,
                   table_constraints.table_schema,
                   table_constraints.table_name,
                   table_constraints.constraint_name,
@@ -69,7 +72,10 @@ module DynamicMigrations
 
               table[validation_name] = {
                 columns: row["columns"].gsub(/\A\{/, "").gsub(/\}\Z/, "").split(",").map { |column_name| column_name.to_sym },
-                check_clause: row["check_clause"]
+                check_clause: row["check_clause"],
+                description: row["description"],
+                deferrable: row["deferrable"] == "TRUE",
+                initially_deferred: row["initially_deferred"] == "TRUE"
               }
             end
             schemas

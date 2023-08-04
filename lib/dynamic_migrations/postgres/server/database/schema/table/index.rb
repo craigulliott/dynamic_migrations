@@ -35,13 +35,12 @@ module DynamicMigrations
               attr_reader :unique
               attr_reader :where
               attr_reader :type
-              attr_reader :deferrable
-              attr_reader :initially_deferred
               attr_reader :order
               attr_reader :nulls_position
+              attr_reader :description
 
               # initialize a new object to represent a index in a postgres table
-              def initialize source, table, columns, name, unique: false, where: nil, type: :btree, deferrable: false, initially_deferred: false, include_columns: [], order: :asc, nulls_position: :last
+              def initialize source, table, columns, name, description: nil, unique: false, where: nil, type: :btree, include_columns: [], order: :asc, nulls_position: :last
                 super source
                 raise ExpectedTableError, table unless table.is_a? Table
                 @table = table
@@ -60,6 +59,11 @@ module DynamicMigrations
                 raise ExpectedSymbolError, name unless name.is_a? Symbol
                 @name = name
 
+                unless description.nil?
+                  raise ExpectedStringError, description unless description.is_a? String
+                  @description = description
+                end
+
                 raise ExpectedBooleanError, unique unless [true, false].include?(unique)
                 @unique = unique
 
@@ -70,12 +74,6 @@ module DynamicMigrations
 
                 raise UnexpectedIndexTypeError, type unless INDEX_TYPES.include?(type)
                 @type = type
-
-                raise ExpectedBooleanError, deferrable unless [true, false].include?(deferrable)
-                @deferrable = deferrable
-
-                raise ExpectedBooleanError, initially_deferred unless [true, false].include?(initially_deferred)
-                @initially_deferred = initially_deferred
 
                 # assert that the include_columns is an array (it's optional, so can be an empty array)
                 unless include_columns.is_a?(Array)
@@ -91,6 +89,11 @@ module DynamicMigrations
 
                 raise UnexpectedNullsPositionError, nulls_position unless NULL_POSITIONS.include?(nulls_position)
                 @nulls_position = nulls_position
+              end
+
+              # return true if this has a description, otherwise false
+              def has_description?
+                !@description.nil?
               end
 
               # return an array of this indexes columns

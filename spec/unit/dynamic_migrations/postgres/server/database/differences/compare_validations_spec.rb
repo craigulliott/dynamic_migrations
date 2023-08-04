@@ -65,6 +65,10 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database::Differences do
                 value: [:column_name],
                 matches: false
               },
+              description: {
+                value: nil,
+                matches: false
+              },
               deferrable: {
                 value: false,
                 matches: false
@@ -98,6 +102,10 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database::Differences do
                 value: [:column_name],
                 matches: true
               },
+              description: {
+                value: nil,
+                matches: true
+              },
               deferrable: {
                 value: false,
                 matches: true
@@ -126,6 +134,10 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database::Differences do
               check_clause: {
                 value: "validation SQL",
                 matches: false
+              },
+              description: {
+                value: nil,
+                matches: true
               },
               column_names: {
                 value: [:column_name],

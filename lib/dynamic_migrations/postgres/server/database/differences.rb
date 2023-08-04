@@ -108,7 +108,7 @@ module DynamicMigrations
               },
               primary_key: compare_record(primary_key, comparison_primary_key, [
                 :name,
-                :index_type
+                :description
               ]),
               columns: compare_columns(table.columns_hash, comparison_columns),
               validations: compare_validations(table.validations_hash, comparison_validations),
@@ -154,6 +154,7 @@ module DynamicMigrations
               # compare this unique_constraint to the equivilent in the comparison list
               result[name] = compare_record unique_constraint, comparison_unique_constraints[name], [
                 :column_names,
+                :description,
                 :index_type,
                 :deferrable,
                 :initially_deferred
@@ -180,11 +181,10 @@ module DynamicMigrations
               # compare this index to the equivilent in the comparison list
               result[name] = compare_record index, comparison_indexes[name], [
                 :column_names,
+                :description,
                 :unique,
                 :where,
                 :type,
-                :deferrable,
-                :initially_deferred,
                 :order,
                 :nulls_position
               ]
@@ -211,6 +211,7 @@ module DynamicMigrations
               result[name] = compare_record validation, comparison_validations[name], [
                 :check_clause,
                 :column_names,
+                :description,
                 :deferrable,
                 :initially_deferred
               ]
@@ -239,8 +240,11 @@ module DynamicMigrations
                 :foreign_schema_name,
                 :foreign_table_name,
                 :foreign_column_names,
+                :description,
                 :deferrable,
-                :initially_deferred
+                :initially_deferred,
+                :on_delete,
+                :on_update
               ]
             end
             # look for any foreign_key_constraints in the comparison list which were not in the base list

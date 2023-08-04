@@ -1,0 +1,17 @@
+# TypeProf 0.21.7
+
+# Classes
+module DynamicMigrations
+  class Generator
+    @migrations: Hash[Symbol, Hash[Symbol, Hash[String, String]]]
+
+    def initialize: -> void
+    def schema_migrations: (Symbol schema_name) -> Array[Hash[Symbol, String]]
+
+    private
+    def add_migration: (Symbol schema_name, Symbol table_name, String migration_name, String migration) -> String
+
+    class ExpectedSymbolError < StandardError
+    end
+  end
+end

@@ -1,0 +1,10 @@
+# TypeProf 0.21.7
+
+# Classes
+module DynamicMigrations
+  class Generator
+    module FixIndentation
+      def fix_indentation: (String heredoc) -> String
+    end
+  end
+end

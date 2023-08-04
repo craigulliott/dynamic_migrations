@@ -1,0 +1,11 @@
+# TypeProf 0.21.7
+
+# Classes
+module DynamicMigrations
+  class Generator
+    module Schema
+      def create_schema: (Postgres::Server::Database::Schema schema) -> String
+      def drop_schema: (Postgres::Server::Database::Schema schema) -> String
+    end
+  end
+end

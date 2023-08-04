@@ -20,14 +20,20 @@ module DynamicMigrations
               class DuplicateColumnError < StandardError
               end
 
+              class UnexpectedReferentialActionError < StandardError
+              end
+
               attr_reader :table
               attr_reader :foreign_table
               attr_reader :name
               attr_reader :deferrable
               attr_reader :initially_deferred
+              attr_reader :on_delete
+              attr_reader :on_update
+              attr_reader :description
 
               # initialize a new object to represent a foreign_key_constraint in a postgres table
-              def initialize source, table, columns, foreign_table, foreign_columns, name, deferrable: false, initially_deferred: false
+              def initialize source, table, columns, foreign_table, foreign_columns, name, description: nil, deferrable: false, initially_deferred: false, on_delete: :no_action, on_update: :no_action
                 super source
 
                 raise ExpectedTableError, table unless table.is_a? Table
@@ -64,11 +70,27 @@ module DynamicMigrations
                 raise ExpectedSymbolError, name unless name.is_a? Symbol
                 @name = name
 
+                unless description.nil?
+                  raise ExpectedStringError, description unless description.is_a? String
+                  @description = description
+                end
+
                 raise ExpectedBooleanError, deferrable unless [true, false].include?(deferrable)
                 @deferrable = deferrable
 
                 raise ExpectedBooleanError, initially_deferred unless [true, false].include?(initially_deferred)
                 @initially_deferred = initially_deferred
+
+                raise UnexpectedReferentialActionError, on_delete unless [:no_action, :restrict, :cascade, :set_null, :set_default].include?(on_delete)
+                @on_delete = on_delete
+
+                raise UnexpectedReferentialActionError, on_update unless [:no_action, :restrict, :cascade, :set_null, :set_default].include?(on_update)
+                @on_update = on_update
+              end
+
+              # return true if this has a description, otherwise false
+              def has_description?
+                !@description.nil?
               end
 
               def columns

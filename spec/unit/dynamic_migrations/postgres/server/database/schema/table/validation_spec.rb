@@ -16,6 +16,19 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database::Schema::Table::Val
       }.to_not raise_error
     end
 
+    describe "providing an optional description" do
+      it "does not raise an error" do
+        expect {
+          DynamicMigrations::Postgres::Server::Database::Schema::Table::Validation.new :configuration, table, [column], :validation_name, "validation SQL", description: "foo bar"
+        }.to_not raise_error
+      end
+
+      it "returns the expected value via a getter of the same name" do
+        validation = DynamicMigrations::Postgres::Server::Database::Schema::Table::Validation.new :configuration, table, [column], :validation_name, "validation SQL", description: "foo bar"
+        expect(validation.description).to eq "foo bar"
+      end
+    end
+
     describe "providing an optional deferrable value" do
       it "does not raise an error" do
         expect {
@@ -124,6 +137,21 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database::Schema::Table::Val
   describe :initially_deferred do
     it "returns the expected initially_deferred" do
       expect(validation.initially_deferred).to eq(false)
+    end
+  end
+
+  describe :has_description? do
+    describe "when no description was provided at initialization" do
+      it "returns false" do
+        expect(validation.has_description?).to be(false)
+      end
+    end
+
+    describe "when a description was provided at initialization" do
+      let(:validation_with_description) { DynamicMigrations::Postgres::Server::Database::Schema::Table::Validation.new :configuration, table, [column], :validation_name, "validation SQL", description: "foo bar" }
+      it "returns true" do
+        expect(validation_with_description.has_description?).to be(true)
+      end
     end
   end
 end

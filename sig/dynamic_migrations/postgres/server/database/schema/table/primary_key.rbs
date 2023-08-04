@@ -5,14 +5,11 @@ module DynamicMigrations
         class Schema
           class Table
             class PrimaryKey < Source
-              type index_types = :btree | :gin
-              INDEX_TYPES: [:btree, :gin]
               @columns: Hash[Symbol, Column]
 
               attr_reader table: Table
               attr_reader name: Symbol
-              attr_reader index_type: index_types
-              def initialize: (database_or_configuration source, Table table, Array[Column] columns, Symbol name, ?index_type: index_types) -> void
+              def initialize: (database_or_configuration source, Table table, Array[Column] columns, Symbol name) -> void
               def columns: -> Array[Column]
 
               private

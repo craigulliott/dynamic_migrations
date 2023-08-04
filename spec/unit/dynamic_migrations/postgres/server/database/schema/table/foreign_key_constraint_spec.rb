@@ -18,6 +18,19 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database::Schema::Table::For
       }.to_not raise_error
     end
 
+    describe "providing an optional description" do
+      it "does not raise an error" do
+        expect {
+          DynamicMigrations::Postgres::Server::Database::Schema::Table::ForeignKeyConstraint.new :configuration, table, [column], foreign_table, [foreign_column], :foreign_key_constraint_name, description: "foo bar"
+        }.to_not raise_error
+      end
+
+      it "returns the expected value via a getter of the same name" do
+        foreign_key_constraint = DynamicMigrations::Postgres::Server::Database::Schema::Table::ForeignKeyConstraint.new :configuration, table, [column], foreign_table, [foreign_column], :foreign_key_constraint_name, description: "foo bar"
+        expect(foreign_key_constraint.description).to be "foo bar"
+      end
+    end
+
     describe "providing an optional deferrable value" do
       it "does not raise an error" do
         expect {
@@ -190,6 +203,21 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database::Schema::Table::For
   describe :initially_deferred do
     it "returns the expected initially_deferred" do
       expect(foreign_key_constraint.initially_deferred).to eq(false)
+    end
+  end
+
+  describe :has_description? do
+    describe "when no description was provided at initialization" do
+      it "returns false" do
+        expect(foreign_key_constraint.has_description?).to be(false)
+      end
+    end
+
+    describe "when a description was provided at initialization" do
+      let(:foreign_key_constraint_with_description) { DynamicMigrations::Postgres::Server::Database::Schema::Table::ForeignKeyConstraint.new :configuration, table, [column], foreign_table, [foreign_column], :foreign_key_constraint_name, description: "foo bar" }
+      it "returns true" do
+        expect(foreign_key_constraint_with_description.has_description?).to be(true)
+      end
     end
   end
 end

@@ -8,31 +8,25 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database::Schema::Table::Pri
   let(:table) { DynamicMigrations::Postgres::Server::Database::Schema::Table.new :configuration, schema, :my_table }
   let(:column) { table.add_column :my_column, :boolean }
   let(:column2) { table.add_column :my_other_column, :boolean }
-  let(:index) { DynamicMigrations::Postgres::Server::Database::Schema::Table::PrimaryKey.new :configuration, table, [column], :primary_key_name }
+  let(:primary_key) { DynamicMigrations::Postgres::Server::Database::Schema::Table::PrimaryKey.new :configuration, table, [column], :primary_key_name }
 
   describe :initialize do
-    it "instantiates a new index without raising an error" do
+    it "instantiates a new primary_key without raising an error" do
       expect {
         DynamicMigrations::Postgres::Server::Database::Schema::Table::PrimaryKey.new :configuration, table, [column], :primary_key_name
       }.to_not raise_error
     end
 
-    describe "providing an optional index_type value" do
+    describe "providing an optional description" do
       it "does not raise an error" do
         expect {
-          DynamicMigrations::Postgres::Server::Database::Schema::Table::PrimaryKey.new :configuration, table, [column], :primary_key_name, index_type: :gin
+          DynamicMigrations::Postgres::Server::Database::Schema::Table::PrimaryKey.new :configuration, table, [column], :primary_key_name, description: "foo bar"
         }.to_not raise_error
       end
 
-      it "raises an error if providing an unexpected index index_type" do
-        expect {
-          DynamicMigrations::Postgres::Server::Database::Schema::Table::PrimaryKey.new :configuration, table, [column], :primary_key_name, index_type: :unexpected_index_type
-        }.to raise_error DynamicMigrations::Postgres::Server::Database::Schema::Table::PrimaryKey::UnexpectedIndexTypeError
-      end
-
       it "returns the expected value via a getter of the same name" do
-        index = DynamicMigrations::Postgres::Server::Database::Schema::Table::PrimaryKey.new :configuration, table, [column], :primary_key_name, index_type: :gin
-        expect(index.index_type).to be :gin
+        primary_key = DynamicMigrations::Postgres::Server::Database::Schema::Table::PrimaryKey.new :configuration, table, [column], :primary_key_name, description: "foo bar"
+        expect(primary_key.description).to be "foo bar"
       end
     end
 
@@ -66,7 +60,7 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database::Schema::Table::Pri
       }.to raise_error DynamicMigrations::Postgres::Server::Database::Schema::Table::PrimaryKey::ExpectedArrayOfColumnsError
     end
 
-    it "raises an error if providing something other than a symbol for the index name" do
+    it "raises an error if providing something other than a symbol for the primary_key name" do
       expect {
         DynamicMigrations::Postgres::Server::Database::Schema::Table::PrimaryKey.new :configuration, table, [column], "invalid index name"
       }.to raise_error DynamicMigrations::ExpectedSymbolError
@@ -75,25 +69,40 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database::Schema::Table::Pri
 
   describe :table do
     it "returns the expected table" do
-      expect(index.table).to eq(table)
+      expect(primary_key.table).to eq(table)
     end
   end
 
   describe :columns do
     it "returns the expected columns" do
-      expect(index.columns).to eql([column])
+      expect(primary_key.columns).to eql([column])
+    end
+  end
+
+  describe :column_names do
+    it "returns the expected columns" do
+      expect(primary_key.column_names).to eql([:my_column])
     end
   end
 
   describe :name do
     it "returns the expected name" do
-      expect(index.name).to eq(:primary_key_name)
+      expect(primary_key.name).to eq(:primary_key_name)
     end
   end
 
-  describe :index_type do
-    it "returns the expected index_type" do
-      expect(index.index_type).to eq(:btree)
+  describe :has_description? do
+    describe "when no description was provided at initialization" do
+      it "returns false" do
+        expect(primary_key.has_description?).to be(false)
+      end
+    end
+
+    describe "when a description was provided at initialization" do
+      let(:primary_key_with_description) { DynamicMigrations::Postgres::Server::Database::Schema::Table::PrimaryKey.new :configuration, table, [column], :primary_key_name, description: "foo bar" }
+      it "returns true" do
+        expect(primary_key_with_description.has_description?).to be(true)
+      end
     end
   end
 end

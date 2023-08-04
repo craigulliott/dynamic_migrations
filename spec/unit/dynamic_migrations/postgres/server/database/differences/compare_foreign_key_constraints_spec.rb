@@ -82,12 +82,24 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database::Differences do
               value: [:foreign_column],
               matches: false
             },
+            description: {
+              value: nil,
+              matches: false
+            },
             deferrable: {
               value: false,
               matches: false
             },
             initially_deferred: {
               value: false,
+              matches: false
+            },
+            on_delete: {
+              value: :no_action,
+              matches: false
+            },
+            on_update: {
+              value: :no_action,
               matches: false
             }
           }})
@@ -126,12 +138,24 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database::Differences do
               value: [:foreign_column],
               matches: true
             },
+            description: {
+              value: nil,
+              matches: true
+            },
             deferrable: {
               value: false,
               matches: true
             },
             initially_deferred: {
               value: false,
+              matches: true
+            },
+            on_delete: {
+              value: :no_action,
+              matches: true
+            },
+            on_update: {
+              value: :no_action,
               matches: true
             }
           }})
@@ -170,12 +194,24 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database::Differences do
               value: [:foreign_column],
               matches: false
             },
+            description: {
+              value: nil,
+              matches: true
+            },
             deferrable: {
               value: false,
               matches: true
             },
             initially_deferred: {
               value: false,
+              matches: true
+            },
+            on_delete: {
+              value: :no_action,
+              matches: true
+            },
+            on_update: {
+              value: :no_action,
               matches: true
             }
           }})

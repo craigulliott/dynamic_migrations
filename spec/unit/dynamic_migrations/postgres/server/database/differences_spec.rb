@@ -376,8 +376,8 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database::Differences do
                                   value: :my_primary_key,
                                   matches: false
                                 },
-                                index_type: {
-                                  value: :btree,
+                                description: {
+                                  value: nil,
                                   matches: false
                                 }
                               },
@@ -484,8 +484,8 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database::Differences do
                                     value: :my_primary_key,
                                     matches: true
                                   },
-                                  index_type: {
-                                    value: :btree,
+                                  description: {
+                                    value: nil,
                                     matches: true
                                   }
                                 },
@@ -537,8 +537,8 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database::Differences do
                                     value: :my_primary_key,
                                     matches: true
                                   },
-                                  index_type: {
-                                    value: :btree,
+                                  description: {
+                                    value: nil,
                                     matches: true
                                   }
                                 },

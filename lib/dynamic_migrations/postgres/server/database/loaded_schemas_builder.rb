@@ -31,7 +31,7 @@ module DynamicMigrations
 
                 # add any validations
                 table_validations&.each do |validation_name, validation_definition|
-                  table.add_validation validation_name, validation_definition[:columns], validation_definition[:check_clause]
+                  table.add_validation validation_name, validation_definition[:columns], validation_definition[:check_clause], description: validation_definition[:description], deferrable: validation_definition[:deferrable], initially_deferred: validation_definition[:initially_deferred]
                 end
               end
             end
@@ -45,14 +45,14 @@ module DynamicMigrations
                 keys_and_unique_constraints.each do |constraint_type, constraint_definitions|
                   constraint_definitions.each do |constraint_name, constraint_definition|
                     case constraint_type
-                    when :PRIMARY_KEY
-                      table.add_primary_key constraint_name, constraint_definition[:column_names], index_type: constraint_definition[:index_type]
+                    when :primary_key
+                      table.add_primary_key constraint_name, constraint_definition[:column_names], description: constraint_definition[:description]
 
-                    when :FOREIGN_KEY
-                      table.add_foreign_key_constraint constraint_name, constraint_definition[:column_names], constraint_definition[:foreign_schema_name], constraint_definition[:foreign_table_name], constraint_definition[:foreign_column_names], deferrable: constraint_definition[:deferrable], initially_deferred: constraint_definition[:initially_deferred]
+                    when :foreign_key
+                      table.add_foreign_key_constraint constraint_name, constraint_definition[:column_names], constraint_definition[:foreign_schema_name], constraint_definition[:foreign_table_name], constraint_definition[:foreign_column_names], description: constraint_definition[:description], deferrable: constraint_definition[:deferrable], initially_deferred: constraint_definition[:initially_deferred], on_delete: constraint_definition[:on_delete], on_update: constraint_definition[:on_update]
 
-                    when :UNIQUE
-                      table.add_unique_constraint constraint_name, constraint_definition[:column_names], deferrable: constraint_definition[:deferrable], initially_deferred: constraint_definition[:initially_deferred], index_type: constraint_definition[:index_type]
+                    when :unique
+                      table.add_unique_constraint constraint_name, constraint_definition[:column_names], description: constraint_definition[:description], deferrable: constraint_definition[:deferrable], initially_deferred: constraint_definition[:initially_deferred], index_type: constraint_definition[:index_type]
 
                     else
                       raise UnexpectedConstrintTypeError, constraint_type

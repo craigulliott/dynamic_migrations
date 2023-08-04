@@ -1,0 +1,9 @@
+# TypeProf 0.21.7
+
+# Classes
+module DynamicMigrations
+  module ActiveRecord
+    module Migrators
+    end
+  end
+end

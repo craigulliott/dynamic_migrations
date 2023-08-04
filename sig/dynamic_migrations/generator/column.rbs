@@ -1,0 +1,14 @@
+# TypeProf 0.21.7
+
+# Classes
+module DynamicMigrations
+  class Generator
+    module Column
+      def add_column: (Postgres::Server::Database::Schema::Table::Column column) -> String
+      def remove_column: (Postgres::Server::Database::Schema::Table::Column column) -> String
+
+      class NoColumnCommentError < StandardError
+      end
+    end
+  end
+end

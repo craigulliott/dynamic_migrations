@@ -37,6 +37,24 @@ require "dynamic_migrations/postgres/server/database/schema/table/unique_constra
 require "dynamic_migrations/postgres/server"
 require "dynamic_migrations/postgres/connections"
 
+require "dynamic_migrations/generator/schema"
+require "dynamic_migrations/generator/table"
+require "dynamic_migrations/generator/column"
+require "dynamic_migrations/generator/foreign_key_constraint"
+require "dynamic_migrations/generator/index"
+require "dynamic_migrations/generator/primary_key"
+require "dynamic_migrations/generator/unique_constraint"
+require "dynamic_migrations/generator/validation"
+require "dynamic_migrations/generator/fix_indentation"
+require "dynamic_migrations/generator"
+
+require "dynamic_migrations/active_record/migrators/schema"
+require "dynamic_migrations/active_record/migrators/check_constraint"
+require "dynamic_migrations/active_record/migrators/foreign_key_constraint"
+require "dynamic_migrations/active_record/migrators/unique_constraint"
+require "dynamic_migrations/active_record/migrators/constraint_comment"
+require "dynamic_migrations/active_record/migrators"
+
 module DynamicMigrations
   class Error < StandardError
   end

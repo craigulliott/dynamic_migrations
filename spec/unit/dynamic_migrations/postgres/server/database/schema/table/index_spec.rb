@@ -17,6 +17,19 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database::Schema::Table::Ind
       }.to_not raise_error
     end
 
+    describe "providing an optional description" do
+      it "does not raise an error" do
+        expect {
+          DynamicMigrations::Postgres::Server::Database::Schema::Table::Index.new :configuration, table, [column], :index_name, description: "foo bar"
+        }.to_not raise_error
+      end
+
+      it "returns the expected value via a getter of the same name" do
+        index = DynamicMigrations::Postgres::Server::Database::Schema::Table::Index.new :configuration, table, [column], :index_name, description: "foo bar"
+        expect(index.description).to be "foo bar"
+      end
+    end
+
     describe "providing an optional unique value" do
       it "does not raise an error" do
         expect {
@@ -71,32 +84,6 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database::Schema::Table::Ind
       it "returns the expected value via a getter of the same name" do
         index = DynamicMigrations::Postgres::Server::Database::Schema::Table::Index.new :configuration, table, [column], :index_name, type: :gist
         expect(index.type).to be :gist
-      end
-    end
-
-    describe "providing an optional deferrable value" do
-      it "does not raise an error" do
-        expect {
-          DynamicMigrations::Postgres::Server::Database::Schema::Table::Index.new :configuration, table, [column], :index_name, deferrable: true
-        }.to_not raise_error
-      end
-
-      it "returns the expected value via a getter of the same name" do
-        index = DynamicMigrations::Postgres::Server::Database::Schema::Table::Index.new :configuration, table, [column], :index_name, deferrable: true
-        expect(index.deferrable).to be true
-      end
-    end
-
-    describe "providing an optional initially_deferred value" do
-      it "does not raise an error" do
-        expect {
-          DynamicMigrations::Postgres::Server::Database::Schema::Table::Index.new :configuration, table, [column], :index_name, initially_deferred: true
-        }.to_not raise_error
-      end
-
-      it "returns the expected value via a getter of the same name" do
-        index = DynamicMigrations::Postgres::Server::Database::Schema::Table::Index.new :configuration, table, [column], :index_name, initially_deferred: true
-        expect(index.initially_deferred).to be true
       end
     end
 
@@ -252,18 +239,6 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database::Schema::Table::Ind
     end
   end
 
-  describe :deferrable do
-    it "returns the expected deferrable" do
-      expect(index.deferrable).to eq(false)
-    end
-  end
-
-  describe :initially_deferred do
-    it "returns the expected initially_deferred" do
-      expect(index.initially_deferred).to eq(false)
-    end
-  end
-
   describe :include_columns do
     it "returns the expected include_columns" do
       expect(index.include_columns).to eql([])
@@ -285,6 +260,21 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database::Schema::Table::Ind
   describe :nulls_position do
     it "returns the expected nulls_position" do
       expect(index.nulls_position).to eq(:last)
+    end
+  end
+
+  describe :has_description? do
+    describe "when no description was provided at initialization" do
+      it "returns false" do
+        expect(index.has_description?).to be(false)
+      end
+    end
+
+    describe "when a description was provided at initialization" do
+      let(:index_with_description) { DynamicMigrations::Postgres::Server::Database::Schema::Table::Index.new :configuration, table, [column], :index_name, description: "foo bar" }
+      it "returns true" do
+        expect(index_with_description.has_description?).to be(true)
+      end
     end
   end
 end
