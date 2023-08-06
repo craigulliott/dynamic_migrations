@@ -263,6 +263,21 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database::Schema::Table::Ind
     end
   end
 
+  describe :description do
+    describe "when no description was provided at initialization" do
+      it "returns nil" do
+        expect(index.description).to be_nil
+      end
+    end
+
+    describe "when a description was provided at initialization" do
+      let(:index_with_description) { DynamicMigrations::Postgres::Server::Database::Schema::Table::Index.new :configuration, table, [column], :index_name, description: "foo bar" }
+      it "returns the expected description" do
+        expect(index_with_description.description).to eq("foo bar")
+      end
+    end
+  end
+
   describe :has_description? do
     describe "when no description was provided at initialization" do
       it "returns false" do

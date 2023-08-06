@@ -8,7 +8,7 @@ RSpec.describe DynamicMigrations::Generator do
     let(:server) { DynamicMigrations::Postgres::Server.new pg_helper.host, pg_helper.port, pg_helper.username, pg_helper.password }
     let(:database) { DynamicMigrations::Postgres::Server::Database.new server, :my_database }
     let(:schema) { DynamicMigrations::Postgres::Server::Database::Schema.new :configuration, database, :my_schema }
-    let(:table) { DynamicMigrations::Postgres::Server::Database::Schema::Table.new :configuration, schema, :my_table, "Comment for this table" }
+    let(:table) { DynamicMigrations::Postgres::Server::Database::Schema::Table.new :configuration, schema, :my_table, description: "Comment for this table" }
     let(:column) { table.add_column :my_column, :integer, null: true, description: "Comment for this column" }
     let(:second_column) { table.add_column :my_second_column, :integer, null: true, description: "Comment for this column" }
 

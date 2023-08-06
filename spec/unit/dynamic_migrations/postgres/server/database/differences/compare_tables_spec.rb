@@ -102,7 +102,7 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database::Differences do
         let(:comparison) { loaded_schema }
 
         before(:each) {
-          comparison.add_table :table_name, "this table has a description"
+          comparison.add_table :table_name, description: "this table has a description"
         }
 
         it "returns the expected object" do

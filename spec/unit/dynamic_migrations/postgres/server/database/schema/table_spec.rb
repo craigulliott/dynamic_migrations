@@ -29,13 +29,13 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database::Schema::Table do
     describe "when providing an optional description" do
       it "instantiates a new table without raising an error" do
         expect {
-          DynamicMigrations::Postgres::Server::Database::Schema::Table.new :configuration, schema, :my_table, "a valid description of my table"
+          DynamicMigrations::Postgres::Server::Database::Schema::Table.new :configuration, schema, :my_table, description: "a valid description of my table"
         }.to_not raise_error
       end
 
-      it "raises an error if providing an invalid schema" do
+      it "raises an error if providing an invalid description" do
         expect {
-          DynamicMigrations::Postgres::Server::Database::Schema::Table.new :configuration, schema, :my_table, :an_invalid_description_type
+          DynamicMigrations::Postgres::Server::Database::Schema::Table.new :configuration, schema, :my_table, description: :an_invalid_description_type
         }.to raise_error DynamicMigrations::ExpectedStringError
       end
     end
@@ -61,7 +61,7 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database::Schema::Table do
     end
 
     describe "when a description was provided at initialization" do
-      let(:table_with_description) { DynamicMigrations::Postgres::Server::Database::Schema::Table.new :configuration, schema, :my_table, "a valid description of my table" }
+      let(:table_with_description) { DynamicMigrations::Postgres::Server::Database::Schema::Table.new :configuration, schema, :my_table, description: "a valid description of my table" }
       it "returns the expected description" do
         expect(table_with_description.description).to eq("a valid description of my table")
       end
@@ -76,7 +76,7 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database::Schema::Table do
     end
 
     describe "when a description was provided at initialization" do
-      let(:table_with_description) { DynamicMigrations::Postgres::Server::Database::Schema::Table.new :configuration, schema, :my_table, "a valid description of my table" }
+      let(:table_with_description) { DynamicMigrations::Postgres::Server::Database::Schema::Table.new :configuration, schema, :my_table, description: "a valid description of my table" }
       it "returns true" do
         expect(table_with_description.has_description?).to be(true)
       end

@@ -17,7 +17,7 @@ module DynamicMigrations
               schema_validations = validations[schema_name]
 
               schema_definition[:tables].each do |table_name, table_definition|
-                table = schema.add_table table_name, table_definition[:description]
+                table = schema.add_table table_name, description: table_definition[:description]
                 table_validations = schema_validations && schema_validations[table_name]
 
                 # add each table column

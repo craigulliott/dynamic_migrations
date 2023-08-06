@@ -16,6 +16,8 @@ module DynamicMigrations
       include CheckConstraint
       include ForeignKeyConstraint
       include ConstraintComment
+      include Function
+      include Trigger
 
       @current_schema = nil
 

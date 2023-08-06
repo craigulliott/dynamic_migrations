@@ -154,6 +154,21 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database::Schema::Table::Uni
     end
   end
 
+  describe :description do
+    describe "when no description was provided at initialization" do
+      it "returns nil" do
+        expect(unique_constraint.description).to be_nil
+      end
+    end
+
+    describe "when a description was provided at initialization" do
+      let(:unique_constraint_with_description) { DynamicMigrations::Postgres::Server::Database::Schema::Table::UniqueConstraint.new :configuration, table, [column], :unique_constraint_name, description: "foo bar" }
+      it "returns the expected description" do
+        expect(unique_constraint_with_description.description).to eq("foo bar")
+      end
+    end
+  end
+
   describe :has_description? do
     describe "when no description was provided at initialization" do
       it "returns false" do

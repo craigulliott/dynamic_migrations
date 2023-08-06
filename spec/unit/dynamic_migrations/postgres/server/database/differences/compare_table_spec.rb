@@ -83,7 +83,7 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database::Differences do
       end
 
       describe "when comparison is a different table" do
-        let(:comparison) { loaded_schema.add_table :my_table, "a different description" }
+        let(:comparison) { loaded_schema.add_table :my_table, description: "a different description" }
 
         it "returns the expected object" do
           expect(differences_class.compare_table(base, comparison)).to eql({

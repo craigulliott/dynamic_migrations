@@ -206,6 +206,21 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database::Schema::Table::For
     end
   end
 
+  describe :description do
+    describe "when no description was provided at initialization" do
+      it "returns nil" do
+        expect(foreign_key_constraint.description).to be_nil
+      end
+    end
+
+    describe "when a description was provided at initialization" do
+      let(:foreign_key_constraint_with_description) { DynamicMigrations::Postgres::Server::Database::Schema::Table::ForeignKeyConstraint.new :configuration, table, [column], foreign_table, [foreign_column], :foreign_key_constraint_name, description: "foo bar" }
+      it "returns the expected description" do
+        expect(foreign_key_constraint_with_description.description).to eq("foo bar")
+      end
+    end
+  end
+
   describe :has_description? do
     describe "when no description was provided at initialization" do
       it "returns false" do

@@ -13,6 +13,7 @@ module DynamicMigrations
         include StructureLoader
         include ValidationsLoader
         include KeysAndUniqueConstraintsLoader
+        include TriggersAndFunctionsLoader
         include LoadedSchemas
         include ConfiguredSchemas
         include LoadedSchemasBuilder

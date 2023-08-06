@@ -124,7 +124,7 @@ module DynamicMigrations
 
           # returns a list of the schema names in this database
           def fetch_schema_names
-            rows = connection.exec(<<-SQL)
+            rows = connection.exec(<<~SQL)
               SELECT schema_name
                 FROM information_schema.schemata;
             SQL
@@ -137,9 +137,9 @@ module DynamicMigrations
 
           # returns a list of the table names in the provided schema
           def fetch_table_names schema_name
-            rows = connection.exec_params(<<-SQL, [schema_name.to_s])
-                  SELECT table_name FROM information_schema.tables
-                    WHERE table_schema = $1
+            rows = connection.exec_params(<<~SQL, [schema_name.to_s])
+              SELECT table_name FROM information_schema.tables
+                WHERE table_schema = $1
             SQL
             table_names = rows.map { |row| row["table_name"] }
             table_names.reject! { |table_name| table_name.start_with? "pg_" }

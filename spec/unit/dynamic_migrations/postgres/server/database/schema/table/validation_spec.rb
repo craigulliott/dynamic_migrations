@@ -140,6 +140,12 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database::Schema::Table::Val
     end
   end
 
+  describe :description do
+    it "returns the expected description" do
+      expect(validation.description).to eq(nil)
+    end
+  end
+
   describe :has_description? do
     describe "when no description was provided at initialization" do
       it "returns false" do

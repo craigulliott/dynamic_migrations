@@ -34,7 +34,7 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database::Schema::Table::Col
         }.to_not raise_error
       end
 
-      it "raises an error if providing an invalid schema" do
+      it "raises an error if providing an invalid description" do
         expect {
           DynamicMigrations::Postgres::Server::Database::Schema::Table::Column.new :configuration, table, :my_column, :boolean, description: :an_invalid_description_type
         }.to raise_error DynamicMigrations::ExpectedStringError

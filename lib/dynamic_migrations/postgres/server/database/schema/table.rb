@@ -17,6 +17,7 @@ module DynamicMigrations
             include Validations
             include Indexes
             include ForeignKeyConstraints
+            include Triggers
             include UniqueConstraints
 
             attr_reader :schema
@@ -24,20 +25,25 @@ module DynamicMigrations
             attr_reader :description
 
             # initialize a new object to represent a postgres table
-            def initialize source, schema, name, description = nil
+            def initialize source, schema, name, description: nil
               super source
+
               raise ExpectedSchemaError, schema unless schema.is_a? Schema
+              @schema = schema
+
               raise ExpectedSymbolError, name unless name.is_a? Symbol
+              @name = name
+
               unless description.nil?
                 raise ExpectedStringError, description unless description.is_a? String
                 @description = description
               end
-              @schema = schema
-              @name = name
+
               @columns = {}
               @validations = {}
               @indexes = {}
               @foreign_key_constraints = {}
+              @triggers = {}
               @unique_constraints = {}
             end
 

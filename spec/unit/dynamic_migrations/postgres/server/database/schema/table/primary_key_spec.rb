@@ -91,6 +91,21 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database::Schema::Table::Pri
     end
   end
 
+  describe :description do
+    describe "when no description was provided at initialization" do
+      it "returns nil" do
+        expect(primary_key.description).to be_nil
+      end
+    end
+
+    describe "when a description was provided at initialization" do
+      let(:primary_key_with_description) { DynamicMigrations::Postgres::Server::Database::Schema::Table::PrimaryKey.new :configuration, table, [column], :primary_key_name, description: "foo bar" }
+      it "returns the expected description" do
+        expect(primary_key_with_description.description).to eq("foo bar")
+      end
+    end
+  end
+
   describe :has_description? do
     describe "when no description was provided at initialization" do
       it "returns false" do
