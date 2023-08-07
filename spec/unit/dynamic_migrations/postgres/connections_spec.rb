@@ -19,9 +19,9 @@ RSpec.describe DynamicMigrations::Postgres::Connections do
     end
 
     describe "after a connection has been added" do
-      before(:each) {
+      before(:each) do
         connection
-      }
+      end
 
       it "returns an array of the expected connections" do
         expect(connections_module.connections).to be_a Array
@@ -29,9 +29,9 @@ RSpec.describe DynamicMigrations::Postgres::Connections do
       end
 
       describe "after another connection has been added" do
-        before(:each) {
+        before(:each) do
           connection2
-        }
+        end
 
         it "returns an array of the expected connections" do
           expect(connections_module.connections).to be_a Array
@@ -42,9 +42,9 @@ RSpec.describe DynamicMigrations::Postgres::Connections do
   end
 
   describe :disconnect do
-    before(:each) {
+    before(:each) do
       connection
-    }
+    end
 
     it "disconnects a provided connection" do
       # has a connection
@@ -71,9 +71,9 @@ RSpec.describe DynamicMigrations::Postgres::Connections do
     end
 
     describe "after creating a connection" do
-      before(:each) {
+      before(:each) do
         connection
-      }
+      end
 
       it "disconnects all the connections" do
         # has a connection

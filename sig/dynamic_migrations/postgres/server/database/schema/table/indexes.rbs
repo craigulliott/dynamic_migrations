@@ -13,6 +13,10 @@ module DynamicMigrations
               def indexes_hash: -> Hash[Symbol, Index]
               def add_index: (Symbol name, Array[Symbol] column_names, ?include_column_names: Array[Symbol], **untyped) -> Index
 
+              # these come from the table object (which this module is included into)
+              def source: -> database_or_configuration
+              def column: (Symbol column_name) -> Column
+
               class IndexDoesNotExistError < StandardError
               end
 

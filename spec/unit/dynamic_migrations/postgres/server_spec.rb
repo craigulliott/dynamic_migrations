@@ -72,9 +72,9 @@ RSpec.describe DynamicMigrations::Postgres::Server do
     end
 
     describe "after a database has been added" do
-      before(:each) {
+      before(:each) do
         server.add_database(:name)
-      }
+      end
 
       it "returns the expected database" do
         expect(server.database(:name)).to be_a DynamicMigrations::Postgres::Server::Database

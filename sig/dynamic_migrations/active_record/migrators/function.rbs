@@ -1,0 +1,20 @@
+# TypeProf 0.21.7
+
+# Classes
+module DynamicMigrations
+  module ActiveRecord
+    module Migrators
+      module Function
+        def create_function: (Symbol table_name, Symbol function_name, String fn_sql, ?comment: nil | String) -> void
+        def drop_function: (Symbol function_name) -> void
+        def set_function_comment: (Symbol function_name, String comment) -> void
+        def remove_function_comment: (Symbol function_name) -> void
+
+        # stubbing these out, as they are available on the module which includes this module
+        def execute: (String sql) -> void
+        def schema_name: () -> Symbol
+        def quote: (String str) -> String
+      end
+    end
+  end
+end

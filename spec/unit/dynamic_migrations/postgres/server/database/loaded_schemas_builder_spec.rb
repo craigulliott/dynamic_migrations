@@ -128,6 +128,24 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database do
 
                         expect(table.primary_key).to be_a DynamicMigrations::Postgres::Server::Database::Schema::Table::PrimaryKey
                       end
+
+                      describe "after a function and corresponding trigger has been added" do
+                        before :each do
+                          pg_helper.create_function :my_schema, :my_function, <<~SQL
+                            -- example function
+                            NEW.my_column = TRUE
+                          SQL
+                          pg_helper.create_trigger :my_schema, :my_table, :my_trigger, action_timing: :before, event_manipulation: :insert, action_orientation: :row, function_schema: :my_schema, function_name: :my_function, action_condition: "NEW.my_column IS FALSE"
+                        end
+
+                        it "creates the expected trigger and function" do
+                          database.recursively_build_schemas_from_database
+
+                          table = database.loaded_schema(:my_schema).table(:my_table)
+
+                          expect(table.trigger(:my_trigger)).to be_a DynamicMigrations::Postgres::Server::Database::Schema::Table::Trigger
+                        end
+                      end
                     end
                   end
                 end

@@ -1,7 +1,20 @@
 module PG
   class Connection
-
     def close: () -> void
+    def exec: (String sql) -> Array[Hash[String, String]]
+    def exec_params: (String sql, *untyped) -> Array[Hash[String, String]]
+  end
 
+  def self.connect: (
+    host: String,
+    port: Integer,
+    user: String,
+    password: String | nil,
+    dbname: Symbol,
+    sslmode: "prefer"
+
+  ) -> Connection
+
+  class UndefinedTable < StandardError
   end
 end

@@ -8,6 +8,9 @@ module DynamicMigrations
       def table_columns: (Array[Postgres::Server::Database::Schema::Table::Column] columns) -> String
       def drop_table: (Postgres::Server::Database::Schema::Table table) -> String
 
+      # these come from the generator object (which this module is included into)
+      def add_migration: (Symbol schema_name, Symbol table_name, String name, String sql) -> String
+
       private
       def table_options: (Postgres::Server::Database::Schema::Table table) -> String
 

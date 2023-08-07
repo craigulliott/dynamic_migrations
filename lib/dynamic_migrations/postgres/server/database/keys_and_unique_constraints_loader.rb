@@ -103,12 +103,12 @@ module DynamicMigrations
           # useful hash representing the keys and indexes of your database
           def fetch_keys_and_unique_constraints
             begin
-              rows = connection.exec_params(<<~SQL)
+              rows = connection.exec(<<~SQL)
                 SELECT * FROM public.dynamic_migrations_keys_and_unique_constraints_cache
               SQL
             rescue PG::UndefinedTable
               create_database_keys_and_unique_constraints_cache
-              rows = connection.exec_params(<<~SQL)
+              rows = connection.exec(<<~SQL)
                 SELECT * FROM public.dynamic_migrations_keys_and_unique_constraints_cache
               SQL
             end

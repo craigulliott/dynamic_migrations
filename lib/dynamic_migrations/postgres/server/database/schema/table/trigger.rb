@@ -32,23 +32,24 @@ module DynamicMigrations
               class ExpectedNewRecordsTableError < StandardError
               end
 
+              class ExpectedFunctionError < StandardError
+              end
+
               attr_reader :table
               attr_reader :name
-              attr_reader :action_timing
               attr_reader :event_manipulation
+              attr_reader :action_timing
               attr_reader :action_order
               attr_reader :action_condition
               attr_reader :action_statement
               attr_reader :action_orientation
-              attr_reader :function_schema
-              attr_reader :function_name
-              attr_reader :function_definition
+              attr_reader :function
               attr_reader :action_reference_old_table
               attr_reader :action_reference_new_table
               attr_reader :description
 
               # initialize a new object to represent a validation in a postgres table
-              def initialize source, table, name, action_timing:, event_manipulation:, action_order:, action_statement:, action_orientation:, function_schema:, function_name:, function_definition:, action_condition: nil, action_reference_old_table: nil, action_reference_new_table: nil, function_description: nil, description: nil
+              def initialize source, table, name, action_timing:, event_manipulation:, action_order:, action_statement:, action_orientation:, function:, action_condition: nil, action_reference_old_table: nil, action_reference_new_table: nil, description: nil
                 super source
 
                 unless table.is_a? Table
@@ -91,20 +92,14 @@ module DynamicMigrations
                 end
                 @action_orientation = action_orientation
 
-                unless function_schema.is_a? Symbol
-                  raise ExpectedSymbolError, function_schema
+                unless function.is_a? Function
+                  raise ExpectedFunctionError, function
                 end
-                @function_schema = function_schema
-
-                unless function_name.is_a? Symbol
-                  raise ExpectedSymbolError, function_name
+                # this should never happen, but adding it just in case
+                unless function.schema.source == source
+                  raise "Internal error - function schema source `#{function.schema.source}` does not match trigger schema source `#{source}`"
                 end
-                @function_name = function_name
-
-                unless function_definition.is_a? String
-                  raise ExpectedStringError, function_definition
-                end
-                @function_definition = function_definition
+                @function = function
 
                 unless action_reference_old_table.nil? || action_reference_old_table == :old_records
                   raise ExpectedOldRecordsTableError, "expected :old_records or nil, but got #{action_reference_old_table}"

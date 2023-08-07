@@ -18,17 +18,17 @@ RSpec.describe DynamicMigrations::Generator do
 
         it "should return the expected ruby syntax to add a unique_constraint" do
           expect(generator.add_unique_constraint(unique_constraint)).to eq <<~RUBY
-            add_unique_constraint :my_table, :my_column, name: :unique_constraint_name, index_type: :btree, deferrable: false, initially_deferred: false
+            add_unique_constraint :my_table, :my_column, name: :unique_constraint_name, deferrable: false, initially_deferred: false
           RUBY
         end
       end
 
-      describe "for compound unique unique_constraint with a custom type, order, nulls_position and a comment" do
-        let(:unique_constraint) { DynamicMigrations::Postgres::Server::Database::Schema::Table::UniqueConstraint.new :configuration, table, [column, second_column], :unique_constraint_name, index_type: :gin, deferrable: true, initially_deferred: true, description: "Comment for this unique_constraint" }
+      describe "for compound unique unique_constraint with a custom order, nulls_position and a comment" do
+        let(:unique_constraint) { DynamicMigrations::Postgres::Server::Database::Schema::Table::UniqueConstraint.new :configuration, table, [column, second_column], :unique_constraint_name, deferrable: true, initially_deferred: true, description: "Comment for this unique_constraint" }
 
         it "should return the expected ruby syntax to add a unique_constraint" do
           expect(generator.add_unique_constraint(unique_constraint)).to eq <<~RUBY
-            add_unique_constraint :my_table, [:my_column, :my_second_column], name: :unique_constraint_name, index_type: :gin, deferrable: true, initially_deferred: true, comment: <<~COMMENT
+            add_unique_constraint :my_table, [:my_column, :my_second_column], name: :unique_constraint_name, deferrable: true, initially_deferred: true, comment: <<~COMMENT
               Comment for this unique_constraint
             COMMENT
           RUBY

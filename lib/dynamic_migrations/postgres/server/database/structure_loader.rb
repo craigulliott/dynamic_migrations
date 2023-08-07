@@ -63,12 +63,12 @@ module DynamicMigrations
           # useful hash representing the structure of your database
           def fetch_structure
             begin
-              rows = connection.exec_params(<<~SQL)
+              rows = connection.exec(<<~SQL)
                 SELECT * FROM public.dynamic_migrations_structure_cache
               SQL
             rescue PG::UndefinedTable
               create_database_structure_cache
-              rows = connection.exec_params(<<~SQL)
+              rows = connection.exec(<<~SQL)
                 SELECT * FROM public.dynamic_migrations_structure_cache
               SQL
             end

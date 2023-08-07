@@ -4,7 +4,12 @@ require "byebug"
 require "yaml"
 require "dynamic_migrations"
 require "pg_spec_helper"
+
+# require our custom helpers
 require_relative "helpers/database_configuration"
+
+# require our custom matchers
+require_relative "matchers/executed_sql"
 
 RSpec.configure do |config|
   # Enable flags like --only-failures and --next-failure

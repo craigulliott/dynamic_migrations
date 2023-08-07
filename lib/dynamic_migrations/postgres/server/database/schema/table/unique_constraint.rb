@@ -8,15 +8,10 @@ module DynamicMigrations
           class Table
             # This class represents a postgres table unique_constraint
             class UniqueConstraint < Source
-              INDEX_TYPES = [:btree, :hash, :gist, :gin, :bring, :spgist]
-
               class ExpectedTableError < StandardError
               end
 
               class ExpectedArrayOfColumnsError < StandardError
-              end
-
-              class UnexpectedIndexTypeError < StandardError
               end
 
               class UnexpectedOrderError < StandardError
@@ -30,13 +25,12 @@ module DynamicMigrations
 
               attr_reader :table
               attr_reader :name
-              attr_reader :index_type
               attr_reader :deferrable
               attr_reader :initially_deferred
               attr_reader :description
 
               # initialize a new object to represent a unique_constraint in a postgres table
-              def initialize source, table, columns, name, description: nil, index_type: :btree, deferrable: false, initially_deferred: false
+              def initialize source, table, columns, name, description: nil, deferrable: false, initially_deferred: false
                 super source
                 raise ExpectedTableError, table unless table.is_a? Table
                 @table = table
@@ -58,9 +52,6 @@ module DynamicMigrations
                   raise ExpectedStringError, description unless description.is_a? String
                   @description = description
                 end
-
-                raise UnexpectedIndexTypeError, index_type unless INDEX_TYPES.include?(index_type)
-                @index_type = index_type
 
                 raise ExpectedBooleanError, deferrable unless [true, false].include?(deferrable)
                 @deferrable = deferrable

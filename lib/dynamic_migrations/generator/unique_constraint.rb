@@ -9,7 +9,6 @@ module DynamicMigrations
 
         options = {
           name: ":#{unique_constraint.name}",
-          index_type: ":#{unique_constraint.index_type}",
           deferrable: unique_constraint.deferrable,
           initially_deferred: unique_constraint.initially_deferred
         }

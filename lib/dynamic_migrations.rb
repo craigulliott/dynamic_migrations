@@ -21,6 +21,8 @@ require "dynamic_migrations/postgres/server/database/loaded_schemas"
 require "dynamic_migrations/postgres/server/database/configured_schemas"
 require "dynamic_migrations/postgres/server/database"
 require "dynamic_migrations/postgres/server/database/source"
+require "dynamic_migrations/postgres/server/database/schema/tables"
+require "dynamic_migrations/postgres/server/database/schema/functions"
 require "dynamic_migrations/postgres/server/database/schema"
 require "dynamic_migrations/postgres/server/database/schema/function"
 require "dynamic_migrations/postgres/server/database/schema/table/validations"
@@ -62,6 +64,4 @@ require "dynamic_migrations/active_record/migrators/constraint_comment"
 require "dynamic_migrations/active_record/migrators"
 
 module DynamicMigrations
-  class Error < StandardError
-  end
 end

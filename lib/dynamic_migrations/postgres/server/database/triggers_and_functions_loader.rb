@@ -13,7 +13,7 @@ module DynamicMigrations
           #
           # this query is very fast, so does not need cached (a materialized view)
           def fetch_triggers_and_functions
-            rows = connection.exec_params(<<~SQL)
+            rows = connection.exec(<<~SQL)
               SELECT
                 n.nspname AS trigger_schema,
                 t.tgname AS trigger_name,
@@ -111,7 +111,7 @@ module DynamicMigrations
                 action_condition: row["action_condition"],
                 function_schema: row["function_schema"].to_sym,
                 function_name: row["function_name"].to_sym,
-                function_definition: row["function_definition"].to_sym,
+                function_definition: row["function_definition"],
                 action_statement: row["action_statement"],
                 action_orientation: row["action_orientation"].to_sym,
                 action_timing: row["action_timing"].to_sym,

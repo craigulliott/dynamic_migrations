@@ -13,6 +13,9 @@ module DynamicMigrations
               def columns_hash: -> Hash[Symbol, Column]
               def add_column: (Symbol name, Symbol data_type, **untyped) -> untyped
 
+              # these come from the table object (which this module is included into)
+              def source: -> database_or_configuration
+
               class ColumnDoesNotExistError < StandardError
               end
 

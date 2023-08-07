@@ -1,0 +1,20 @@
+# TypeProf 0.21.7
+
+# Classes
+module DynamicMigrations
+  module Postgres
+    class Server
+      class Database
+        module TriggersAndFunctionsLoader
+          def fetch_triggers_and_functions: -> Hash[untyped, untyped]
+
+          # these come from the database object (which this module is included into)
+          def connection: -> PG::Connection
+
+          class EventTriggerProcedureSchemaMismatchError < StandardError
+          end
+        end
+      end
+    end
+  end
+end

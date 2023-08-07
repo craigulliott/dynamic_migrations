@@ -27,10 +27,10 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database::Differences do
       describe "when comparison table has a index" do
         let(:comparison) { loaded_table }
 
-        before(:each) {
+        before(:each) do
           comparison.add_column :column_name, :boolean
           comparison.add_index :index_name, [:column_name]
-        }
+        end
 
         it "returns the expected object" do
           expect(differences_class.compare_indexes(base.indexes_hash, comparison.indexes_hash)).to eql({
@@ -45,10 +45,10 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database::Differences do
     describe "when base table has a index" do
       let(:base) { configured_table }
 
-      before(:each) {
+      before(:each) do
         base.add_column :column_name, :boolean
         base.add_index :index_name, [:column_name]
-      }
+      end
 
       describe "when comparison table has no indexes" do
         let(:comparison) { loaded_table }
@@ -93,10 +93,10 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database::Differences do
       describe "when comparison table has an equivilent index" do
         let(:comparison) { loaded_table }
 
-        before(:each) {
+        before(:each) do
           comparison.add_column :column_name, :boolean
           comparison.add_index :index_name, [:column_name]
-        }
+        end
 
         it "returns the expected object" do
           expect(differences_class.compare_indexes(base.indexes_hash, comparison.indexes_hash)).to eql({
@@ -138,10 +138,10 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database::Differences do
       describe "when comparison table has a different index" do
         let(:comparison) { loaded_table }
 
-        before(:each) {
+        before(:each) do
           comparison.add_column :column_name, :boolean
           comparison.add_index :index_name, [:column_name], where: "column_name IS TRUE", type: :gin
-        }
+        end
 
         it "returns the expected object" do
           expect(differences_class.compare_indexes(base.indexes_hash, comparison.indexes_hash)).to eql({

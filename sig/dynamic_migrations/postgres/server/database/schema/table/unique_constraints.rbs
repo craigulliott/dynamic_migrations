@@ -13,6 +13,10 @@ module DynamicMigrations
               def unique_constraints_hash: -> Hash[Symbol, UniqueConstraint]
               def add_unique_constraint: (Symbol name, Array[Symbol] column_names, **untyped) -> UniqueConstraint
 
+              # these come from the table object (which this module is included into)
+              def source: -> database_or_configuration
+              def column: (Symbol column_name) -> Column
+
               class UniqueConstraintDoesNotExistError < StandardError
               end
 

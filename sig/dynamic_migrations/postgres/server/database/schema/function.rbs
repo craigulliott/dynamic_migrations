@@ -1,0 +1,27 @@
+# TypeProf 0.21.7
+
+# Classes
+module DynamicMigrations
+  module Postgres
+    class Server
+      class Database
+        class Schema
+          class Function < Source
+            attr_reader schema: untyped
+            attr_reader name: untyped
+            attr_reader definition: untyped
+            attr_reader description: nil
+            def initialize: (untyped source, untyped schema, untyped name, untyped definition, ?description: nil) -> void
+            def has_description?: -> false
+
+            class ExpectedSchemaError < StandardError
+            end
+
+            class ExpectedDefinitionError < StandardError
+            end
+          end
+        end
+      end
+    end
+  end
+end

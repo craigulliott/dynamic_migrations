@@ -27,9 +27,9 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database::Differences do
       describe "when comparison table has a column" do
         let(:comparison) { loaded_table }
 
-        before(:each) {
+        before(:each) do
           comparison.add_column :column_name, :integer
-        }
+        end
 
         it "returns the expected object" do
           expect(differences_class.compare_columns(base.columns_hash, comparison.columns_hash)).to eql({
@@ -44,9 +44,9 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database::Differences do
     describe "when base table has a column" do
       let(:base) { configured_table }
 
-      before(:each) {
+      before(:each) do
         base.add_column :column_name, :boolean
-      }
+      end
 
       describe "when comparison table has no columns" do
         let(:comparison) { loaded_table }
@@ -83,9 +83,9 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database::Differences do
       describe "when comparison table has an equivilent column" do
         let(:comparison) { loaded_table }
 
-        before(:each) {
+        before(:each) do
           comparison.add_column :column_name, :boolean
-        }
+        end
 
         it "returns the expected object" do
           expect(differences_class.compare_columns(base.columns_hash, comparison.columns_hash)).to eql({
@@ -119,9 +119,9 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database::Differences do
       describe "when comparison table has a different column" do
         let(:comparison) { loaded_table }
 
-        before(:each) {
+        before(:each) do
           comparison.add_column :column_name, :character
-        }
+        end
 
         it "returns the expected object" do
           expect(differences_class.compare_columns(base.columns_hash, comparison.columns_hash)).to eql({

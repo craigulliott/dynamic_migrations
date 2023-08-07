@@ -13,6 +13,9 @@ module DynamicMigrations
             class PrimaryKeyDoesNotExistError < StandardError
             end
 
+            class PrimaryKeyAlreadyExistsError < StandardError
+            end
+
             include Columns
             include Validations
             include Indexes
@@ -66,10 +69,11 @@ module DynamicMigrations
 
             # returns a primary key if one exists, else raises an error
             def primary_key
-              unless @primary_key
+              pk = @primary_key
+              unless pk
                 raise PrimaryKeyDoesNotExistError
               end
-              @primary_key
+              pk
             end
           end
         end

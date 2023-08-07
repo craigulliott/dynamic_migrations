@@ -5,6 +5,7 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database::Schema::Table do
   let(:server) { DynamicMigrations::Postgres::Server.new pg_helper.host, pg_helper.port, pg_helper.username, pg_helper.password }
   let(:database) { DynamicMigrations::Postgres::Server::Database.new server, :my_database }
   let(:schema) { DynamicMigrations::Postgres::Server::Database::Schema.new :configuration, database, :my_schema }
+  let(:function) { DynamicMigrations::Postgres::Server::Database::Schema::Function.new :configuration, schema, :function_name, "NEW.column = 0" }
   let(:table) { DynamicMigrations::Postgres::Server::Database::Schema::Table.new :configuration, schema, :my_table }
 
   describe :Triggers do
@@ -14,17 +15,17 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database::Schema::Table do
       end
 
       it "creates a new trigger object" do
-        expect(table.add_trigger(:trigger_name, event_manipulation: :insert, action_order: 1, action_condition: nil, action_statement: "EXECUTE FUNCTION checklists.foo()", action_orientation: :row, action_timing: :before, function_schema: :my_schemam, function_name: :my_function, function_definition: "SQL")).to be_a DynamicMigrations::Postgres::Server::Database::Schema::Table::Trigger
+        expect(table.add_trigger(:trigger_name, event_manipulation: :insert, action_order: 1, action_condition: nil, action_statement: "EXECUTE FUNCTION checklists.foo()", action_orientation: :row, action_timing: :before, function: function)).to be_a DynamicMigrations::Postgres::Server::Database::Schema::Table::Trigger
       end
 
       describe "when a trigger already exists" do
         before(:each) do
-          table.add_trigger(:trigger_name, event_manipulation: :insert, action_order: 1, action_condition: nil, action_statement: "EXECUTE FUNCTION checklists.foo()", action_orientation: :row, action_timing: :before, function_schema: :my_schemam, function_name: :my_function, function_definition: "SQL")
+          table.add_trigger(:trigger_name, event_manipulation: :insert, action_order: 1, action_condition: nil, action_statement: "EXECUTE FUNCTION checklists.foo()", action_orientation: :row, action_timing: :before, function: function)
         end
 
         it "raises an error if using the same trigger name" do
           expect {
-            table.add_trigger(:trigger_name, event_manipulation: :insert, action_order: 1, action_condition: nil, action_statement: "EXECUTE FUNCTION checklists.foo()", action_orientation: :row, action_timing: :before, function_schema: :my_schemam, function_name: :my_function, function_definition: "SQL")
+            table.add_trigger(:trigger_name, event_manipulation: :insert, action_order: 1, action_condition: nil, action_statement: "EXECUTE FUNCTION checklists.foo()", action_orientation: :row, action_timing: :before, function: function)
           }.to raise_error DynamicMigrations::Postgres::Server::Database::Schema::Table::TriggerAlreadyExistsError
         end
       end
@@ -39,7 +40,7 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database::Schema::Table do
 
       describe "after the expected trigger has been added" do
         let(:column) { table.add_column :column_name, :boolean }
-        let(:trigger) { table.add_trigger :trigger_name, event_manipulation: :insert, action_order: 1, action_condition: nil, action_statement: "EXECUTE FUNCTION checklists.foo()", action_orientation: :row, action_timing: :before, function_schema: :my_schemam, function_name: :my_function, function_definition: "SQL" }
+        let(:trigger) { table.add_trigger :trigger_name, event_manipulation: :insert, action_order: 1, action_condition: nil, action_statement: "EXECUTE FUNCTION checklists.foo()", action_orientation: :row, action_timing: :before, function: function }
 
         before(:each) do
           column
@@ -59,7 +60,7 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database::Schema::Table do
 
       describe "after the expected trigger has been added" do
         let(:column) { table.add_column :column_name, :boolean }
-        let(:trigger) { table.add_trigger :trigger_name, event_manipulation: :insert, action_order: 1, action_condition: nil, action_statement: "EXECUTE FUNCTION checklists.foo()", action_orientation: :row, action_timing: :before, function_schema: :my_schemam, function_name: :my_function, function_definition: "SQL" }
+        let(:trigger) { table.add_trigger :trigger_name, event_manipulation: :insert, action_order: 1, action_condition: nil, action_statement: "EXECUTE FUNCTION checklists.foo()", action_orientation: :row, action_timing: :before, function: function }
 
         before(:each) do
           column
@@ -80,7 +81,7 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database::Schema::Table do
 
       describe "after the expected trigger has been added" do
         let(:column) { table.add_column :column_name, :boolean }
-        let(:trigger) { table.add_trigger :trigger_name, event_manipulation: :insert, action_order: 1, action_condition: nil, action_statement: "EXECUTE FUNCTION checklists.foo()", action_orientation: :row, action_timing: :before, function_schema: :my_schemam, function_name: :my_function, function_definition: "SQL" }
+        let(:trigger) { table.add_trigger :trigger_name, event_manipulation: :insert, action_order: 1, action_condition: nil, action_statement: "EXECUTE FUNCTION checklists.foo()", action_orientation: :row, action_timing: :before, function: function }
 
         before(:each) do
           column
@@ -100,7 +101,7 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database::Schema::Table do
 
       describe "after the expected trigger has been added" do
         let(:column) { table.add_column :column_name, :boolean }
-        let(:trigger) { table.add_trigger :trigger_name, event_manipulation: :insert, action_order: 1, action_condition: nil, action_statement: "EXECUTE FUNCTION checklists.foo()", action_orientation: :row, action_timing: :before, function_schema: :my_schemam, function_name: :my_function, function_definition: "SQL" }
+        let(:trigger) { table.add_trigger :trigger_name, event_manipulation: :insert, action_order: 1, action_condition: nil, action_statement: "EXECUTE FUNCTION checklists.foo()", action_orientation: :row, action_timing: :before, function: function }
 
         before(:each) do
           column

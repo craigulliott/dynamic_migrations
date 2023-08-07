@@ -5,6 +5,16 @@ module DynamicMigrations
   class Generator
     @migrations: Hash[Symbol, Hash[Symbol, Hash[String, String]]]
 
+    include Schema
+    include Table
+    include Column
+    include ForeignKeyConstraint
+    include Index
+    include PrimaryKey
+    include UniqueConstraint
+    include Validation
+    include FixIndentation
+
     def initialize: -> void
     def schema_migrations: (Symbol schema_name) -> Array[Hash[Symbol, String]]
 
@@ -13,5 +23,9 @@ module DynamicMigrations
 
     class ExpectedSymbolError < StandardError
     end
+
+    class DeferrableOptionsError < StandardError
+    end
+
   end
 end

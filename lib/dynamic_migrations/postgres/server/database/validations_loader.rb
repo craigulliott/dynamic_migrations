@@ -50,12 +50,12 @@ module DynamicMigrations
           # useful hash representing the validations of your database
           def fetch_validations
             begin
-              rows = connection.exec_params(<<~SQL)
+              rows = connection.exec(<<~SQL)
                 SELECT * FROM public.dynamic_migrations_validations_cache
               SQL
             rescue PG::UndefinedTable
               create_database_validations_cache
-              rows = connection.exec_params(<<~SQL)
+              rows = connection.exec(<<~SQL)
                 SELECT * FROM public.dynamic_migrations_validations_cache
               SQL
             end

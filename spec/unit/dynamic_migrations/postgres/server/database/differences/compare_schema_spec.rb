@@ -44,7 +44,8 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database::Differences do
         it "returns the expected object" do
           expect(differences_class.compare_schema(base, comparison)).to eql({
             exists: true,
-            tables: {}
+            tables: {},
+            functions: {}
           })
         end
       end
@@ -55,7 +56,8 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database::Differences do
         it "returns the expected object" do
           expect(differences_class.compare_schema(base, comparison)).to eql({
             exists: true,
-            tables: {}
+            tables: {},
+            functions: {}
           })
         end
       end
@@ -65,6 +67,7 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database::Differences do
 
         before(:each) do
           comparison.add_table :my_table
+          comparison.add_function :my_function, "NEW.my_column = 0"
         end
 
         it "returns the expected object" do
@@ -72,6 +75,11 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database::Differences do
             exists: true,
             tables: {
               my_table: {
+                exists: false
+              }
+            },
+            functions: {
+              my_function: {
                 exists: false
               }
             }

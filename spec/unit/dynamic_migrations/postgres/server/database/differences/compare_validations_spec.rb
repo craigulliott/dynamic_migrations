@@ -27,10 +27,10 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database::Differences do
       describe "when comparison table has a validation" do
         let(:comparison) { loaded_table }
 
-        before(:each) {
+        before(:each) do
           comparison.add_column :column_name, :boolean
           comparison.add_validation :validation_name, [:column_name], "validation SQL"
-        }
+        end
 
         it "returns the expected object" do
           expect(differences_class.compare_validations(base.validations_hash, comparison.validations_hash)).to eql({
@@ -45,10 +45,10 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database::Differences do
     describe "when base table has a validation" do
       let(:base) { configured_table }
 
-      before(:each) {
+      before(:each) do
         base.add_column :column_name, :boolean
         base.add_validation :validation_name, [:column_name], "validation SQL"
-      }
+      end
 
       describe "when comparison table has no validations" do
         let(:comparison) { loaded_table }
@@ -85,10 +85,10 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database::Differences do
       describe "when comparison table has an equivilent validation" do
         let(:comparison) { loaded_table }
 
-        before(:each) {
+        before(:each) do
           comparison.add_column :column_name, :boolean
           comparison.add_validation :validation_name, [:column_name], "validation SQL"
-        }
+        end
 
         it "returns the expected object" do
           expect(differences_class.compare_validations(base.validations_hash, comparison.validations_hash)).to eql({
@@ -122,10 +122,10 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database::Differences do
       describe "when comparison table has a different validation" do
         let(:comparison) { loaded_table }
 
-        before(:each) {
+        before(:each) do
           comparison.add_column :column_name, :boolean
           comparison.add_validation :validation_name, [:column_name], "different validation SQL"
-        }
+        end
 
         it "returns the expected object" do
           expect(differences_class.compare_validations(base.validations_hash, comparison.validations_hash)).to eql({

@@ -27,10 +27,10 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database::Differences do
       describe "when comparison table has a unique_constraint" do
         let(:comparison) { loaded_table }
 
-        before(:each) {
+        before(:each) do
           comparison.add_column :column_name, :boolean
           comparison.add_unique_constraint :unique_constraint_name, [:column_name]
-        }
+        end
 
         it "returns the expected object" do
           expect(differences_class.compare_unique_constraints(base.unique_constraints_hash, comparison.unique_constraints_hash)).to eql({
@@ -45,10 +45,10 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database::Differences do
     describe "when base table has a unique_constraint" do
       let(:base) { configured_table }
 
-      before(:each) {
+      before(:each) do
         base.add_column :column_name, :boolean
         base.add_unique_constraint :unique_constraint_name, [:column_name]
-      }
+      end
 
       describe "when comparison table has no unique_constraints" do
         let(:comparison) { loaded_table }
@@ -63,10 +63,6 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database::Differences do
               },
               description: {
                 value: nil,
-                matches: false
-              },
-              index_type: {
-                value: :btree,
                 matches: false
               },
               deferrable: {
@@ -85,10 +81,10 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database::Differences do
       describe "when comparison table has an equivilent unique_constraint" do
         let(:comparison) { loaded_table }
 
-        before(:each) {
+        before(:each) do
           comparison.add_column :column_name, :boolean
           comparison.add_unique_constraint :unique_constraint_name, [:column_name]
-        }
+        end
 
         it "returns the expected object" do
           expect(differences_class.compare_unique_constraints(base.unique_constraints_hash, comparison.unique_constraints_hash)).to eql({
@@ -100,10 +96,6 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database::Differences do
               },
               description: {
                 value: nil,
-                matches: true
-              },
-              index_type: {
-                value: :btree,
                 matches: true
               },
               deferrable: {
@@ -122,10 +114,10 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database::Differences do
       describe "when comparison table has a different unique_constraint" do
         let(:comparison) { loaded_table }
 
-        before(:each) {
+        before(:each) do
           comparison.add_column :column_name, :boolean
-          comparison.add_unique_constraint :unique_constraint_name, [:column_name], deferrable: true, index_type: :gin
-        }
+          comparison.add_unique_constraint :unique_constraint_name, [:column_name], deferrable: true
+        end
 
         it "returns the expected object" do
           expect(differences_class.compare_unique_constraints(base.unique_constraints_hash, comparison.unique_constraints_hash)).to eql({
@@ -138,10 +130,6 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database::Differences do
               description: {
                 value: nil,
                 matches: true
-              },
-              index_type: {
-                value: :btree,
-                matches: false
               },
               deferrable: {
                 value: false,

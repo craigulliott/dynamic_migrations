@@ -12,9 +12,12 @@ module DynamicMigrations
               attr_reader check_clause: String
               attr_reader deferrable: bool
               attr_reader initially_deferred: bool
-              def initialize: (database_or_configuration source, Table table, Array[Column] columns, Symbol name, String check_clause, ?deferrable: bool, ?initially_deferred: bool) -> void
+              attr_reader description: String | nil
+
+              def initialize: (database_or_configuration source, Table table, Array[Column] columns, Symbol name, String check_clause, ?deferrable: bool, ?initially_deferred: bool, ?description: String | nil) -> void
               def columns: -> Array[Column]
               def column_names: -> Array[Symbol]
+              def has_description?: -> bool
 
               private
               def add_column: (Column column) -> void
@@ -26,6 +29,9 @@ module DynamicMigrations
               end
 
               class DuplicateColumnError < StandardError
+              end
+
+              class ModuleIncludedIntoUnexpectedTargetError < StandardError
               end
             end
           end

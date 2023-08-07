@@ -30,25 +30,6 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database::Schema::Table::Uni
       end
     end
 
-    describe "providing an optional index_type value" do
-      it "does not raise an error" do
-        expect {
-          DynamicMigrations::Postgres::Server::Database::Schema::Table::UniqueConstraint.new :configuration, table, [column], :unique_constraint_name, index_type: :gist
-        }.to_not raise_error
-      end
-
-      it "raises an error if providing an unexpected unique_constraint index_type" do
-        expect {
-          DynamicMigrations::Postgres::Server::Database::Schema::Table::UniqueConstraint.new :configuration, table, [column], :unique_constraint_name, index_type: :unexpected_index_type
-        }.to raise_error DynamicMigrations::Postgres::Server::Database::Schema::Table::UniqueConstraint::UnexpectedIndexTypeError
-      end
-
-      it "returns the expected value via a getter of the same name" do
-        unique_constraint = DynamicMigrations::Postgres::Server::Database::Schema::Table::UniqueConstraint.new :configuration, table, [column], :unique_constraint_name, index_type: :gist
-        expect(unique_constraint.index_type).to be :gist
-      end
-    end
-
     describe "providing an optional deferrable value" do
       it "does not raise an error" do
         expect {
@@ -133,12 +114,6 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database::Schema::Table::Uni
   describe :name do
     it "returns the expected name" do
       expect(unique_constraint.name).to eq(:unique_constraint_name)
-    end
-  end
-
-  describe :index_type do
-    it "returns the expected index_type" do
-      expect(unique_constraint.index_type).to eq(:btree)
     end
   end
 

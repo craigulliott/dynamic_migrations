@@ -1,0 +1,14 @@
+# TypeProf 0.21.7
+
+# Classes
+module DynamicMigrations
+  class Generator
+    module ForeignKeyConstraint
+      def add_foreign_key_constraint: (untyped foreign_key_constraint) -> untyped
+      def remove_foreign_key_constraint: (untyped foreign_key_constraint) -> untyped
+
+      # these come from the generator object (which this module is included into)
+      def add_migration: (Symbol schema_name, Symbol table_name, String name, String sql) -> String
+    end
+  end
+end

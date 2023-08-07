@@ -9,9 +9,9 @@ module DynamicMigrations
           raise NoColumnCommentError, "Refusing to generate add_column migration, no description was provided for `#{column.table.name}`.`#{column.table.schema.name}` column `#{column.name}`"
         end
 
-        options = {
-          null: column.null
-        }
+        options = {}
+        options[:null] = column.null
+
         unless column.default.nil?
           options[:default] = "\"#{column.default}\""
         end

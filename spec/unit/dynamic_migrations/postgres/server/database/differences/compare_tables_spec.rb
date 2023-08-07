@@ -27,9 +27,9 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database::Differences do
       describe "when comparison schema has a table" do
         let(:comparison) { loaded_schema }
 
-        before(:each) {
+        before(:each) do
           comparison.add_table :table_name
-        }
+        end
 
         it "returns the expected object" do
           expect(differences_class.compare_tables(base.tables_hash, comparison.tables_hash)).to eql({
@@ -44,9 +44,9 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database::Differences do
     describe "when base schema has a table" do
       let(:base) { configured_schema }
 
-      before(:each) {
+      before(:each) do
         base.add_table :table_name
-      }
+      end
 
       describe "when comparison schema has no tables" do
         let(:comparison) { loaded_schema }
@@ -63,6 +63,7 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database::Differences do
                 exists: false
               },
               columns: {},
+              triggers: {},
               validations: {},
               foreign_key_constraints: {},
               unique_constraints: {}
@@ -74,9 +75,9 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database::Differences do
       describe "when comparison schema has an equivilent table" do
         let(:comparison) { loaded_schema }
 
-        before(:each) {
+        before(:each) do
           comparison.add_table :table_name
-        }
+        end
 
         it "returns the expected object" do
           expect(differences_class.compare_tables(base.tables_hash, comparison.tables_hash)).to eql({
@@ -90,6 +91,7 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database::Differences do
                 exists: false
               },
               columns: {},
+              triggers: {},
               validations: {},
               foreign_key_constraints: {},
               unique_constraints: {}
@@ -101,9 +103,9 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database::Differences do
       describe "when comparison schema has a different table" do
         let(:comparison) { loaded_schema }
 
-        before(:each) {
+        before(:each) do
           comparison.add_table :table_name, description: "this table has a description"
-        }
+        end
 
         it "returns the expected object" do
           expect(differences_class.compare_tables(base.tables_hash, comparison.tables_hash)).to eql({
@@ -117,6 +119,7 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database::Differences do
                 exists: false
               },
               columns: {},
+              triggers: {},
               validations: {},
               foreign_key_constraints: {},
               unique_constraints: {}

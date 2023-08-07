@@ -11,6 +11,9 @@ module DynamicMigrations
           class TableRequiredError < StandardError
           end
 
+          class FunctionRequiredError < StandardError
+          end
+
           class SchemaRequiredError < StandardError
           end
 
@@ -53,9 +56,11 @@ module DynamicMigrations
             raise SchemaRequiredError if schema.nil?
 
             comparison_tables = comparison_schema.nil? ? {} : comparison_schema.tables_hash
+            comparison_functions = comparison_schema.nil? ? {} : comparison_schema.functions_hash
             {
               exists: true,
-              tables: compare_tables(schema.tables_hash, comparison_tables)
+              tables: compare_tables(schema.tables_hash, comparison_tables),
+              functions: compare_functions(schema.functions_hash, comparison_functions)
             }
           end
 
@@ -90,12 +95,14 @@ module DynamicMigrations
             if comparison_table
               comparison_primary_key = comparison_table.has_primary_key? ? comparison_table.primary_key : nil
               comparison_columns = comparison_table.columns_hash
+              comparison_triggers = comparison_table.triggers_hash
               comparison_validations = comparison_table.validations_hash
               comparison_foreign_key_constraints = comparison_table.foreign_key_constraints_hash
               comparison_unique_constraints = comparison_table.unique_constraints_hash
             else
               comparison_primary_key = {}
               comparison_columns = {}
+              comparison_triggers = {}
               comparison_validations = {}
               comparison_foreign_key_constraints = {}
               comparison_unique_constraints = {}
@@ -111,10 +118,34 @@ module DynamicMigrations
                 :description
               ]),
               columns: compare_columns(table.columns_hash, comparison_columns),
+              triggers: compare_triggers(table.triggers_hash, comparison_triggers),
               validations: compare_validations(table.validations_hash, comparison_validations),
               foreign_key_constraints: compare_foreign_key_constraints(table.foreign_key_constraints_hash, comparison_foreign_key_constraints),
               unique_constraints: compare_unique_constraints(table.unique_constraints_hash, comparison_unique_constraints)
             }
+          end
+
+          # compare two hash representations of a set of functions and return
+          # an object which represents the provided `functions` and any differences
+          # between it and the `comparison_functions`
+          def self.compare_functions functions, comparison_functions
+            result = {}
+            # the base functions
+            functions.each do |function_name, function|
+              result[function_name] = compare_record function, comparison_functions[function_name], [
+                :definition,
+                :description
+              ]
+            end
+            # look for any in the comparison list which were not in the base list
+            comparison_functions.each do |function_name, function|
+              unless result.key? function_name
+                result[function_name] = {
+                  exists: false
+                }
+              end
+            end
+            result
           end
 
           # compare two hash representations of a set of columns and return
@@ -144,6 +175,37 @@ module DynamicMigrations
             result
           end
 
+          # compare two hash representations of a set of triggers and return
+          # an object which represents the provided `triggers` and any differences
+          # between it and the `comparison_triggers`
+          def self.compare_triggers triggers, comparison_triggers
+            result = {}
+            # the base triggers
+            triggers.each do |trigger_name, trigger|
+              # compare this trigger to the equivilent in the comparison list
+              result[trigger_name] = compare_record trigger, comparison_triggers[trigger_name], [
+                :action_timing,
+                :event_manipulation,
+                :action_order,
+                :action_condition,
+                :action_statement,
+                :action_orientation,
+                :action_reference_old_table,
+                :action_reference_new_table,
+                :description
+              ]
+            end
+            # look for any triggers in the comparison list which were not in the base list
+            comparison_triggers.each do |trigger_name, trigger|
+              unless result.key? trigger_name
+                result[trigger_name] = {
+                  exists: false
+                }
+              end
+            end
+            result
+          end
+
           # compare two hash representations of a set of unique_constraints and return
           # an object which represents the provided `unique_constraints` and any differences
           # between it and the `comparison_unique_constraints`
@@ -155,7 +217,6 @@ module DynamicMigrations
               result[name] = compare_record unique_constraint, comparison_unique_constraints[name], [
                 :column_names,
                 :description,
-                :index_type,
                 :deferrable,
                 :initially_deferred
               ]

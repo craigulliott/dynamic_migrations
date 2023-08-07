@@ -5,6 +5,8 @@ module DynamicMigrations
         class Schema
           class Table
             class ForeignKeyConstraint < Source
+              type referential_actions = :no_action | :restrict | :cascade | :set_null | :set_default
+
               @columns: Hash[Symbol, Column]
               @foreign_columns: Hash[Symbol, Column]
 
@@ -13,13 +15,18 @@ module DynamicMigrations
               attr_reader name: Symbol
               attr_reader deferrable: bool
               attr_reader initially_deferred: bool
-              def initialize: (database_or_configuration source, Table table, Array[Column] columns, Table foreign_table, Array[Column] foreign_columns, Symbol name, ?deferrable: bool, ?initially_deferred: bool) -> void
+              attr_reader on_delete: referential_actions
+              attr_reader on_update: referential_actions
+              attr_reader description: String | nil
+
+              def initialize: (database_or_configuration source, Table table, Array[Column] columns, Table foreign_table, Array[Column] foreign_columns, Symbol name, ?deferrable: bool, ?initially_deferred: bool, ?description: String | nil, ?on_delete: referential_actions, ?on_update: referential_actions) -> void
               def columns: -> Array[Column]
               def column_names: -> Array[Symbol]
               def foreign_columns: -> Array[Column]
               def foreign_column_names: -> Array[Symbol]
               def foreign_schema_name: -> Symbol
               def foreign_table_name: -> Symbol
+              def has_description?: -> bool
 
               private
               def add_column: (Column column, ?bool foreign) -> void
@@ -34,6 +41,9 @@ module DynamicMigrations
               end
 
               class DuplicateColumnError < StandardError
+              end
+
+              class UnexpectedReferentialActionError < StandardError
               end
             end
           end

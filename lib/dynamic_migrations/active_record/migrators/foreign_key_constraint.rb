@@ -11,7 +11,7 @@ module DynamicMigrations
         # because rails migrations don't support composite (multiple column) foreign keys
         # column_names and foreign_column_names can be a single column name or
         # an array of column names
-        def add_foreign_key_constraint table_name, column_names, foreign_table_name, foreign_column_names, name:, initially_deferred: false, deferrable: false, on_delete: :no_action, on_update: :no_action, comment: nil
+        def add_foreign_key_constraint table_name, column_names, foreign_schema_name, foreign_table_name, foreign_column_names, name:, initially_deferred: false, deferrable: false, on_delete: :no_action, on_update: :no_action, comment: nil
           if initially_deferred == true && deferrable == false
             raise DeferrableOptionsError, "A constraint can only be initially deferred if it is also deferrable"
           end
@@ -37,21 +37,21 @@ module DynamicMigrations
             ALTER TABLE #{table_name}
               ADD CONSTRAINT #{name}
                 FOREIGN KEY (#{column_names.join(", ")})
-                  REFERENCES  #{foreign_table_name} (#{foreign_column_names.join(", ")})
+                  REFERENCES  #{foreign_schema_name}.#{foreign_table_name} (#{foreign_column_names.join(", ")})
               ON DELETE #{referential_action_to_sql on_delete}
               ON UPDATE #{referential_action_to_sql on_update}
               #{deferrable_sql};
           SQL
 
-          unless comment.nil?
-            add_constraint_comment table_name, name, comment
+          if comment.is_a? String
+            set_constraint_comment table_name, name, comment
           end
         end
 
         private
 
-        def referential_action_to_sql referential_action_to_sql
-          case on_delete
+        def referential_action_to_sql referential_action
+          case referential_action
             #  Produce an error indicating that the deletion or update would create a
             # foreign key constraint violation. If the constraint is deferred, this
             # error will be produced at constraint check time if there still exist
@@ -82,7 +82,7 @@ module DynamicMigrations
             "SET DEFAULT"
 
           else
-            raise UnexpectedReferentialActionError, on_delete
+            raise UnexpectedReferentialActionError, referential_action
           end
         end
       end

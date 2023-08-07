@@ -8,8 +8,6 @@ module DynamicMigrations
           class Table
             # This class represents a postgres table primary_key
             class PrimaryKey < Source
-              INDEX_TYPES = [:btree, :gin]
-
               class ExpectedTableError < StandardError
               end
 

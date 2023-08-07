@@ -1,0 +1,59 @@
+# TypeProf 0.21.7
+
+# Classes
+module DynamicMigrations
+  module Postgres
+    class Server
+      class Database
+        class Schema
+          class Table
+            class Trigger < Source
+              attr_reader table: Table
+              attr_reader name: Symbol
+              attr_reader event_manipulation: Symbol
+              attr_reader action_timing: Symbol
+              attr_reader action_order: Integer
+              attr_reader action_condition: nil | String
+              attr_reader action_statement: String
+              attr_reader action_orientation: Symbol
+              attr_reader function: Function
+              attr_reader action_reference_old_table: nil | Symbol
+              attr_reader action_reference_new_table: nil | Symbol
+              attr_reader description: nil | String
+
+              def initialize: (database_or_configuration source, Table table, Symbol name, action_timing: Symbol, event_manipulation: Symbol, action_order: Integer, action_statement: String, action_orientation: Symbol, function: Function, ?action_condition: String | nil, ?action_reference_old_table: nil | Symbol, ?action_reference_new_table: nil | Symbol, ?description: nil | String) -> void
+              def has_description?: -> false
+
+              class ExpectedTableError < StandardError
+              end
+
+              class UnexpectedEventManipulationError < StandardError
+              end
+
+              class UnexpectedActionOrderError < StandardError
+              end
+
+              class UnexpectedActionStatementError < StandardError
+              end
+
+              class UnexpectedActionOrientationError < StandardError
+              end
+
+              class UnexpectedActionTimingError < StandardError
+              end
+
+              class ExpectedOldRecordsTableError < StandardError
+              end
+
+              class ExpectedNewRecordsTableError < StandardError
+              end
+
+              class ExpectedFunctionError < StandardError
+              end
+            end
+          end
+        end
+      end
+    end
+  end
+end

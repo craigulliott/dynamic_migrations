@@ -6,6 +6,9 @@ module DynamicMigrations
     module Schema
       def create_schema: (Postgres::Server::Database::Schema schema) -> String
       def drop_schema: (Postgres::Server::Database::Schema schema) -> String
+
+      # these come from the generator object (which this module is included into)
+      def add_migration: (Symbol schema_name, nil table_name, String name, String sql) -> String
     end
   end
 end

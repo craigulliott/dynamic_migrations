@@ -8,7 +8,7 @@ module DynamicMigrations
         current_indentation_level = 0
         # walk backwards and fix the indentation of each line
         source_lines.reverse_each do |line|
-          indentation = line[/\A */]
+          indentation = line[/\A */] || ""
           indentation_size = indentation.size
 
           current_indentation = "  " * current_indentation_level

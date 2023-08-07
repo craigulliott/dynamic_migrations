@@ -28,7 +28,9 @@ module DynamicMigrations
               raise ExpectedSymbolError, name unless name.is_a? Symbol
               @name = name
 
-              raise ExpectedDefinitionError, definition unless definition.is_a?(String) && definition.strip != ""
+              unless definition.is_a?(String) && definition.strip != ""
+                raise ExpectedDefinitionError, definition
+              end
               @definition = definition
 
               unless description.nil?

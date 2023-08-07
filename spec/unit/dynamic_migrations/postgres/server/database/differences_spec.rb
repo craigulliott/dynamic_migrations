@@ -40,7 +40,8 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database::Differences do
           configuration: {
             my_schema: {
               exists: true,
-              tables: {}
+              tables: {},
+              functions: {}
             }
           },
           database: {
@@ -63,13 +64,15 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database::Differences do
             configuration: {
               my_schema: {
                 exists: true,
-                tables: {}
+                tables: {},
+                functions: {}
               }
             },
             database: {
               my_schema: {
                 exists: true,
-                tables: {}
+                tables: {},
+                functions: {}
               }
             }
           })
@@ -98,11 +101,13 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database::Differences do
                         exists: false
                       },
                       columns: {},
+                      triggers: {},
                       validations: {},
                       foreign_key_constraints: {},
                       unique_constraints: {}
                     }
-                  }
+                  },
+                  functions: {}
                 }
               },
               database: {
@@ -112,7 +117,8 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database::Differences do
                     my_table: {
                       exists: false
                     }
-                  }
+                  },
+                  functions: {}
                 }
               }
             })
@@ -141,12 +147,14 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database::Differences do
                           exists: false
                         },
                         columns: {},
+                        triggers: {},
                         validations: {},
                         foreign_key_constraints: {},
                         unique_constraints: {}
 
                       }
-                    }
+                    },
+                    functions: {}
                   }
                 },
                 database: {
@@ -163,11 +171,13 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database::Differences do
                           exists: false
                         },
                         columns: {},
+                        triggers: {},
                         validations: {},
                         foreign_key_constraints: {},
                         unique_constraints: {}
                       }
-                    }
+                    },
+                    functions: {}
                   }
                 }
               })
@@ -218,11 +228,13 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database::Differences do
                               }
                             }
                           },
+                          triggers: {},
                           validations: {},
                           foreign_key_constraints: {},
                           unique_constraints: {}
                         }
-                      }
+                      },
+                      functions: {}
                     }
                   },
                   database: {
@@ -243,11 +255,13 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database::Differences do
                               exists: false
                             }
                           },
+                          triggers: {},
                           validations: {},
                           foreign_key_constraints: {},
                           unique_constraints: {}
                         }
-                      }
+                      },
+                      functions: {}
                     }
                   }
                 })
@@ -298,11 +312,13 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database::Differences do
                                 }
                               }
                             },
+                            triggers: {},
                             validations: {},
                             foreign_key_constraints: {},
                             unique_constraints: {}
                           }
-                        }
+                        },
+                        functions: {}
                       }
                     },
                     database: {
@@ -343,11 +359,13 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database::Differences do
                                 }
                               }
                             },
+                            triggers: {},
                             validations: {},
                             foreign_key_constraints: {},
                             unique_constraints: {}
                           }
-                        }
+                        },
+                        functions: {}
                       }
                     }
                   })
@@ -406,11 +424,13 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database::Differences do
                                   }
                                 }
                               },
+                              triggers: {},
                               validations: {},
                               foreign_key_constraints: {},
                               unique_constraints: {}
                             }
-                          }
+                          },
+                          functions: {}
                         }
                       },
                       database: {
@@ -451,11 +471,13 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database::Differences do
                                   }
                                 }
                               },
+                              triggers: {},
                               validations: {},
                               foreign_key_constraints: {},
                               unique_constraints: {}
                             }
-                          }
+                          },
+                          functions: {}
                         }
                       }
                     })
@@ -514,11 +536,13 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database::Differences do
                                     }
                                   }
                                 },
+                                triggers: {},
                                 validations: {},
                                 foreign_key_constraints: {},
                                 unique_constraints: {}
                               }
-                            }
+                            },
+                            functions: {}
                           }
                         },
                         database: {
@@ -567,11 +591,13 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database::Differences do
                                     }
                                   }
                                 },
+                                triggers: {},
                                 validations: {},
                                 foreign_key_constraints: {},
                                 unique_constraints: {}
                               }
-                            }
+                            },
+                            functions: {}
                           }
                         }
                       })

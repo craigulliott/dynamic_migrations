@@ -4,7 +4,7 @@ module DynamicMigrations
       module UniqueConstraint
         # because rails migrations don't support composite (multiple column) foreign keys
         # column_names can be a single column name or an array of column names
-        def add_unique_constraint table_name, column_names, foreign_table_name, foreign_column_names, name:, index_type: btree, deferrable: false, initially_deferred: false, comment: nil
+        def add_unique_constraint table_name, column_names, name:, deferrable: false, initially_deferred: false, comment: nil
           if initially_deferred == true && deferrable == false
             raise DeferrableOptionsError, "A constraint can only be initially deferred if it is also deferrable"
           end
@@ -32,8 +32,8 @@ module DynamicMigrations
                 #{deferrable_sql};
           SQL
 
-          unless comment.nil?
-            add_constraint_comment table_name, name, comment
+          if comment.is_a? String
+            set_constraint_comment table_name, name, comment
           end
         end
       end

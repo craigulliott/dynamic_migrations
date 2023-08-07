@@ -48,8 +48,7 @@ module DynamicMigrations
           temp_tables_sql = temp_tables.any? ? "REFERENCING #{temp_tables.join(" ")}" : ""
 
           # schema_name was not provided to this method, it comes from the migration class
-          connection.exec <<~SQL
-            -- trigger names only need to be unique for this table
+          execute <<~SQL
             CREATE TRIGGER #{name}
               #{timing_sql} ON #{schema_name}.#{table_name} #{temp_tables_sql}
                 FOR EACH #{action_orientation}
@@ -58,9 +57,21 @@ module DynamicMigrations
           SQL
         end
 
-        def add_trigger_comment trigger_name, comment
+        def drop_trigger trigger_name, table_name
           execute <<~SQL
-            COMMENT ON TRIGGER #{trigger_name} IS '#{connection.quote comment}';
+            DROP TRIGGER #{trigger_name} ON #{schema_name}.#{table_name};
+          SQL
+        end
+
+        def set_trigger_comment trigger_name, table_name, comment
+          execute <<~SQL
+            COMMENT ON TRIGGER #{trigger_name} ON #{schema_name}.#{table_name} IS '#{quote comment}';
+          SQL
+        end
+
+        def remove_trigger_comment trigger_name, table_name
+          execute <<~SQL
+            COMMENT ON TRIGGER #{trigger_name} ON #{schema_name}.#{table_name} IS NULL;
           SQL
         end
       end

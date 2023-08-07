@@ -4,6 +4,9 @@ module DynamicMigrations
     warn "no unit tests"
     def abbreviate_table_name table_name
       table_name_without_schema = table_name.to_s.split(".").last
+      if table_name_without_schema.nil?
+        raise "no table name provided"
+      end
       table_name_without_schema.split("_").map { |v| v[0..2] }.join("_")
     end
   end

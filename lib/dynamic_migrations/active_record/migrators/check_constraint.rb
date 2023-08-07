@@ -28,8 +28,8 @@ module DynamicMigrations
                 #{deferrable_sql};
           SQL
 
-          unless comment.nil?
-            add_constraint_comment table_name, name, comment
+          if comment.is_a? String
+            set_constraint_comment table_name, name, comment
           end
         end
       end

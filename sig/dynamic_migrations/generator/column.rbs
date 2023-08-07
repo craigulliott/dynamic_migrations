@@ -7,6 +7,9 @@ module DynamicMigrations
       def add_column: (Postgres::Server::Database::Schema::Table::Column column) -> String
       def remove_column: (Postgres::Server::Database::Schema::Table::Column column) -> String
 
+      # these come from the generator object (which this module is included into)
+      def add_migration: (Symbol schema_name, Symbol table_name, String name, String sql) -> String
+
       class NoColumnCommentError < StandardError
       end
     end

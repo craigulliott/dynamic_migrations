@@ -5,7 +5,18 @@ module DynamicMigrations
         module LoadedSchemasBuilder
           def recursively_build_schemas_from_database: -> void
 
+          # these come from the database object (which this module is included into)
+          def fetch_validations: -> untyped
+          def fetch_structure: -> untyped
+          def add_loaded_schema: (Symbol schema_name) -> untyped
+          def fetch_keys_and_unique_constraints: -> untyped
+          def loaded_schema: (Symbol schema_name) -> Schema
+          def fetch_triggers_and_functions: -> untyped
+
           class UnexpectedConstrintTypeError < StandardError
+          end
+
+          class UnexpectedTriggerSchema < StandardError
           end
         end
       end

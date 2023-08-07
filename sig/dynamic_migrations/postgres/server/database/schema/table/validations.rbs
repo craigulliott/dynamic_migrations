@@ -13,6 +13,10 @@ module DynamicMigrations
               def validations_hash: -> Hash[Symbol, Validation]
               def add_validation: (Symbol name, Array[Symbol] column_names, String check_clause, **untyped) -> untyped
 
+              # these come from the table object (which this module is included into)
+              def source: -> database_or_configuration
+              def column: (Symbol column_name) -> Column
+
               class ValidationDoesNotExistError < StandardError
               end
 

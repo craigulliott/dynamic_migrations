@@ -1,0 +1,32 @@
+# TypeProf 0.21.7
+
+# Classes
+module DynamicMigrations
+  module ActiveRecord
+    module Migrators
+      module Trigger
+        def create_trigger: (Symbol table_name, Symbol name, action_timing: Symbol, event_manipulation: Symbol, action_orientation: Symbol, function_name: Symbol, ?action_condition: String | nil, ?action_reference_old_table: nil | Symbol, ?action_reference_new_table: nil | Symbol, ?comment: nil | String) -> void
+        def drop_trigger: (Symbol trigger_name, Symbol table_name) -> void
+        def set_trigger_comment: (Symbol trigger_name, Symbol table_name, String comment) -> void
+        def remove_trigger_comment: (Symbol trigger_name, Symbol table_name) -> void
+
+        # stubbing these out, as they are available on the module which includes this module
+        def execute: (String sql) -> void
+        def schema_name: () -> Symbol
+        def quote: (String str) -> String
+
+        class UnexpectedEventManipulationError < StandardError
+        end
+
+        class UnexpectedActionOrientationError < StandardError
+        end
+
+        class UnexpectedActionTimingError < StandardError
+        end
+
+        class UnexpectedConditionsError < StandardError
+        end
+      end
+    end
+  end
+end

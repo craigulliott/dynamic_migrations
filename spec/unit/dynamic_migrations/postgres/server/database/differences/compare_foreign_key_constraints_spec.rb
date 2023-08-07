@@ -27,7 +27,7 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database::Differences do
       describe "when comparison table has a foreign key constraint" do
         let(:comparison) { loaded_table }
 
-        before(:each) {
+        before(:each) do
           # create a table and columns for the foreign key to point to
           foreign_table = loaded_schema.add_table :foreign_table
           foreign_table.add_column :foreign_column, :boolean
@@ -35,7 +35,7 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database::Differences do
           # create the foreign key constraint
           comparison.add_column :local_column, :boolean
           comparison.add_foreign_key_constraint :foreign_key_constraint, [:local_column], foreign_table.schema.name, foreign_table.name, [:foreign_column]
-        }
+        end
 
         it "returns the expected object" do
           expect(differences_class.compare_foreign_key_constraints(base.foreign_key_constraints_hash, comparison.foreign_key_constraints_hash)).to eql({
@@ -50,7 +50,7 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database::Differences do
     describe "when base table has a foreign key constraint" do
       let(:base) { configured_table }
 
-      before(:each) {
+      before(:each) do
         # create a table and columns for the foreign key to point to
         foreign_table = configured_schema.add_table :foreign_table
         foreign_table.add_column :foreign_column, :boolean
@@ -58,7 +58,7 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database::Differences do
         # create the foreign key constraint
         base.add_column :local_column, :boolean
         base.add_foreign_key_constraint :foreign_key_constraint, [:local_column], foreign_table.schema.name, foreign_table.name, [:foreign_column]
-      }
+      end
 
       describe "when comparison table has no foreign key constraints" do
         let(:comparison) { loaded_table }
@@ -109,7 +109,7 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database::Differences do
       describe "when comparison table has an equivilent foreign key constraint" do
         let(:comparison) { loaded_table }
 
-        before(:each) {
+        before(:each) do
           # create a table and columns for the foreign key to point to
           foreign_table = loaded_schema.add_table :foreign_table
           foreign_table.add_column :foreign_column, :boolean
@@ -117,7 +117,7 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database::Differences do
           # create the foreign key constraint
           comparison.add_column :local_column, :boolean
           comparison.add_foreign_key_constraint :foreign_key_constraint, [:local_column], foreign_table.schema.name, foreign_table.name, [:foreign_column]
-        }
+        end
 
         it "returns the expected object" do
           expect(differences_class.compare_foreign_key_constraints(base.foreign_key_constraints_hash, comparison.foreign_key_constraints_hash)).to eql({foreign_key_constraint:             {
@@ -165,7 +165,7 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database::Differences do
       describe "when comparison table has a different foreign key constraint" do
         let(:comparison) { loaded_table }
 
-        before(:each) {
+        before(:each) do
           # create a table and columns for the foreign key to point to
           foreign_table = loaded_schema.add_table :different_foreign_table_name
           foreign_table.add_column :different_foreign_column_name, :boolean
@@ -173,7 +173,7 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database::Differences do
           # create the foreign key constraint
           comparison.add_column :local_column, :boolean
           comparison.add_foreign_key_constraint :foreign_key_constraint, [:local_column], foreign_table.schema.name, foreign_table.name, [:different_foreign_column_name]
-        }
+        end
 
         it "returns the expected object" do
           expect(differences_class.compare_foreign_key_constraints(base.foreign_key_constraints_hash, comparison.foreign_key_constraints_hash)).to eql({foreign_key_constraint:             {

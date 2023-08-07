@@ -1,0 +1,33 @@
+# TypeProf 0.21.7
+
+# Classes
+module DynamicMigrations
+  module Postgres
+    class Server
+      class Database
+        class Schema
+          class Table
+            module Triggers
+              @triggers: Hash[Symbol, Trigger]
+
+              def trigger: (Symbol name) -> Trigger
+              def has_trigger?: (untyped name) -> bool
+              def triggers: -> Array[Trigger]
+              def triggers_hash: -> Hash[Symbol, Trigger]
+              def add_trigger: (Symbol name, action_timing: Symbol, event_manipulation: Symbol, action_order: Integer, action_statement: String, action_orientation: Symbol, function: Function, ?action_condition: String | nil, ?action_reference_old_table: nil | Symbol, ?action_reference_new_table: nil | Symbol, ?description: nil | String) -> Trigger
+
+              # these come from the table object (which this module is included into)
+              def source: -> database_or_configuration
+
+              class TriggerDoesNotExistError < StandardError
+              end
+
+              class TriggerAlreadyExistsError < StandardError
+              end
+            end
+          end
+        end
+      end
+    end
+  end
+end

@@ -11,6 +11,9 @@ module DynamicMigrations
       def add_database: (Symbol database_name) -> Database
       def database: (Symbol database_name) -> Database
       def databases: -> Array[Database]
+
+      class DatabaseAlreadyExistsError < StandardError
+      end
     end
   end
 end

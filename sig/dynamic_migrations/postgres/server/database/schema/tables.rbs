@@ -1,0 +1,28 @@
+module DynamicMigrations
+  module Postgres
+    class Server
+      class Database
+        class Schema < Source
+          module Tables
+            @tables: Hash[Symbol, untyped]
+
+            def add_table: (Symbol table_name, ?description: String | nil) -> Table
+            def table: (Symbol table_name) -> Table
+            def has_table?: (Symbol table_name) -> bool
+            def tables: -> Array[Table]
+            def tables_hash: -> Hash[Symbol, Table]
+
+            # these come from the schema object (which this module is included into)
+            def source: -> database_or_configuration
+
+            class TableAlreadyExistsError < StandardError
+            end
+
+            class TableDoesNotExistError < StandardError
+            end
+          end
+        end
+      end
+    end
+  end
+end

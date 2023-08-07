@@ -4,32 +4,31 @@ module DynamicMigrations
       class Database
         class Schema
           class Table < Source
-            @columns: Hash[Symbol, untyped]
-            @validations: Hash[Symbol, untyped]
-            @indexes: Hash[Symbol, untyped]
-            @foreign_key_constraints: Hash[Symbol, untyped]
-            @unique_constraints: Hash[Symbol, untyped]
-            @primary_key: PrimaryKey?
+            @primary_key: PrimaryKey | nil
 
             include Columns
             include Validations
             include Indexes
             include ForeignKeyConstraints
             include UniqueConstraints
+            include Triggers
 
             attr_reader schema: Schema
             attr_reader name: Symbol
             attr_reader description: String?
-            def initialize: (database_or_configuration source, Schema schema, Symbol name, ?nil | String? description ) -> void
+            def initialize: (database_or_configuration source, Schema schema, Symbol name, ?description: String | nil) -> void
             def has_description?: -> bool
             def add_primary_key: (Symbol name, Array[Symbol] column_names, **untyped) -> untyped
             def has_primary_key?: -> bool
-            def primary_key: -> PrimaryKey?
+            def primary_key: -> PrimaryKey
 
             class ExpectedSchemaError < StandardError
             end
 
             class PrimaryKeyDoesNotExistError < StandardError
+            end
+
+            class PrimaryKeyAlreadyExistsError < StandardError
             end
           end
         end

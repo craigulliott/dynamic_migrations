@@ -1,0 +1,5 @@
+module DynamicMigrations
+  module NameHelper
+    def abbreviate_table_name: (String table_name) -> String
+  end
+end

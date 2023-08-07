@@ -73,7 +73,7 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database do
                           action_condition: "((new.my_column <> 0))",
                           function_schema: :my_schema,
                           function_name: :my_function,
-                          function_definition: :"BEGIN -- example function\nNEW.my_column = 0;\nRETURN NEW;\nEND",
+                          function_definition: "BEGIN -- example function\nNEW.my_column = 0;\nRETURN NEW;\nEND",
                           action_statement: "EXECUTE FUNCTION my_schema.my_function()",
                           action_orientation: :row,
                           action_timing: :before,

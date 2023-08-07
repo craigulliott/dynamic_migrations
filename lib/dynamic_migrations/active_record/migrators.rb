@@ -12,6 +12,12 @@
 module DynamicMigrations
   module ActiveRecord
     module Migrators
+      class SchemaNameNotSetError < StandardError
+      end
+
+      class DeferrableOptionsError < StandardError
+      end
+
       include Schema
       include CheckConstraint
       include ForeignKeyConstraint
@@ -19,8 +25,9 @@ module DynamicMigrations
       include Function
       include Trigger
 
-      @current_schema = nil
-
+      # The schema name should be set before the migrations for
+      # each schema's migrations are run. This is done by:
+      # DynamicMigrations::ActiveRecord::Migrators.set_schema_name :schema_name
       def self.schema_name
         @current_schema
       end
@@ -33,10 +40,18 @@ module DynamicMigrations
         @current_schema = nil
       end
 
-      # the schema name is set by the EngineDatabase module
-      # which is run by the migration rake tasks
+      def quote string
+        connection.quote string
+      end
+
+      # this method is made available on the final migration class
       def schema_name
-        EnhancedMigrations.schema_name
+        sn = Migrators.schema_name
+        if sn.nil?
+          raise SchemaNameNotSetError
+        end
+        # return the schema name
+        sn
       end
     end
   end

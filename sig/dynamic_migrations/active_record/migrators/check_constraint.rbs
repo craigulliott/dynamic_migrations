@@ -1,0 +1,18 @@
+# TypeProf 0.21.7
+
+# Classes
+module DynamicMigrations
+  module ActiveRecord
+    module Migrators
+      module CheckConstraint
+        def add_check_constraint: (Symbol table_name, String sql, name: Symbol, ?initially_deferred: bool, ?deferrable: bool, ?comment: nil | String) -> void
+
+        # stubbing these out, as they are available on the module which includes this module
+        def set_constraint_comment: (Symbol table_name, Symbol constraint_name, String comment) -> void
+        def execute: (String sql) -> void
+        def schema_name: () -> Symbol
+        def quote: (String str) -> String
+      end
+    end
+  end
+end

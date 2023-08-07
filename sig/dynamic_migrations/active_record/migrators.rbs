@@ -4,6 +4,29 @@
 module DynamicMigrations
   module ActiveRecord
     module Migrators
+      self.@current_schema: nil
+
+      include Schema
+      include CheckConstraint
+      include ForeignKeyConstraint
+      include ConstraintComment
+      include Function
+      include Trigger
+
+      def self.schema_name: -> nil
+      def self.set_schema_name: (untyped schema_name) -> untyped
+      def self.clear_schema_name: -> nil
+      def self.included: (untyped klass) -> untyped
+      def schema_name: -> nil
+
+      # this methods comes from active record once the module has been included
+      def connection: -> untyped
+
+      class SchemaNameNotSetError < StandardError
+      end
+
+      class DeferrableOptionsError < StandardError
+      end
     end
   end
 end
