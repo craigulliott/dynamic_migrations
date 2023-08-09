@@ -96,10 +96,12 @@ module DynamicMigrations
                   raise ExpectedFunctionError, function
                 end
                 # this should never happen, but adding it just in case
-                unless function.schema.source == source
-                  raise "Internal error - function schema source `#{function.schema.source}` does not match trigger schema source `#{source}`"
+                unless function.source == source
+                  raise "Internal error - function source `#{function.source}` does not match trigger source `#{source}`"
                 end
                 @function = function
+                # associate this trigger with the function (so they are aware of each other)
+                @function.add_trigger self
 
                 unless action_reference_old_table.nil? || action_reference_old_table == :old_records
                   raise ExpectedOldRecordsTableError, "expected :old_records or nil, but got #{action_reference_old_table}"

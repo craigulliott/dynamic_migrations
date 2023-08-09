@@ -82,4 +82,12 @@ RSpec.describe DynamicMigrations::Postgres::Server do
       end
     end
   end
+
+  # this is just a convenience wrapper for the Difference class `to_migrations` method
+  # so is tested much more thoroughly in the specs for that class
+  describe :migrations do
+    it "returns an empty object because there are no migrations" do
+      expect(server.migrations).to eql({})
+    end
+  end
 end

@@ -17,6 +17,11 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database::Schema::Table::Tri
       }.to_not raise_error
     end
 
+    it "causes a reference back to this trigger from the triggers function" do
+      trigger = DynamicMigrations::Postgres::Server::Database::Schema::Table::Trigger.new :configuration, table, :trigger_name, event_manipulation: :insert, action_order: 1, action_condition: nil, action_statement: "EXECUTE FUNCTION checklists.foo()", action_orientation: :row, action_timing: :before, function: function
+      expect(function.triggers).to eql [trigger]
+    end
+
     describe "providing an optional description" do
       it "does not raise an error" do
         expect {

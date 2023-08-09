@@ -1,0 +1,24 @@
+# TypeProf 0.21.7
+
+# Classes
+module DynamicMigrations
+  module Postgres
+    class Server
+      class Database
+        class Differences
+          class ToMigrations
+            module Schemas
+              module Functions
+
+                private
+                def process_functions: (Symbol schema_name, untyped configuration_functions, untyped database_functions) -> void
+                def process_function: (Symbol schema_name, Symbol function_name, untyped configuration_function, untyped database_function) -> void
+
+              end
+            end
+          end
+        end
+      end
+    end
+  end
+end

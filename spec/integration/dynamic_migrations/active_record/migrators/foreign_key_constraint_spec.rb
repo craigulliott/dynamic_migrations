@@ -34,9 +34,9 @@ RSpec.describe DynamicMigrations::ActiveRecord::Migrators do
           DynamicMigrations::ActiveRecord::Migrators.clear_schema_name
         end
 
-        describe :add_foreign_key_constraint do
+        describe :add_foreign_key do
           it "generates the expected sql for a basic foreign key constraint" do
-            migration.add_foreign_key_constraint(:my_table, :my_column, :foreign_schema, :foreign_table, :foreign_column, name: :my_foreign_key)
+            migration.add_foreign_key(:my_table, :my_column, :foreign_schema, :foreign_table, :foreign_column, name: :my_foreign_key)
 
             expect(migration).to executed_sql <<~SQL
               ALTER TABLE my_table
@@ -50,7 +50,7 @@ RSpec.describe DynamicMigrations::ActiveRecord::Migrators do
           end
 
           it "generates the expected sql for a composite foreign key constraint" do
-            migration.add_foreign_key_constraint(:my_table, [:my_column, :my_other_column], :foreign_schema, :foreign_table, [:foreign_column, :other_foreign_column], name: :my_foreign_key)
+            migration.add_foreign_key(:my_table, [:my_column, :my_other_column], :foreign_schema, :foreign_table, [:foreign_column, :other_foreign_column], name: :my_foreign_key)
 
             expect(migration).to executed_sql <<~SQL
               ALTER TABLE my_table
@@ -65,7 +65,7 @@ RSpec.describe DynamicMigrations::ActiveRecord::Migrators do
 
           it "raises an error if an invalid combination of initially_deferred and deferrable is provided" do
             expect {
-              migration.add_foreign_key_constraint(:my_table, [:my_column, :my_other_column], :foreign_schema, :foreign_table, [:foreign_column, :other_foreign_column], name: :my_foreign_key, initially_deferred: true, deferrable: false)
+              migration.add_foreign_key(:my_table, [:my_column, :my_other_column], :foreign_schema, :foreign_table, [:foreign_column, :other_foreign_column], name: :my_foreign_key, initially_deferred: true, deferrable: false)
             }.to raise_error DynamicMigrations::ActiveRecord::Migrators::DeferrableOptionsError
           end
         end

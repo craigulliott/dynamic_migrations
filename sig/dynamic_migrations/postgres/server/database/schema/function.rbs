@@ -11,8 +11,10 @@ module DynamicMigrations
             attr_reader name: untyped
             attr_reader definition: untyped
             attr_reader description: nil
+            attr_reader triggers: Array[Schema::Table::Trigger]
             def initialize: (untyped source, untyped schema, untyped name, untyped definition, ?description: nil) -> void
             def has_description?: -> false
+            def add_trigger: (Schema::Table::Trigger trigger) -> void
 
             class ExpectedSchemaError < StandardError
             end

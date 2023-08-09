@@ -38,8 +38,12 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database do
   end
 
   describe :differences do
+    it "returns a differences object" do
+      expect(database.differences).to be_a(DynamicMigrations::Postgres::Server::Database::Differences)
+    end
+
     it "returns the expected differences" do
-      expect(database.differences).to eql({
+      expect(database.differences.to_h).to eql({
         configuration: {},
         database: {}
       })

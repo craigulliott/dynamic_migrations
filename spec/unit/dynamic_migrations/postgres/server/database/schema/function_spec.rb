@@ -6,6 +6,7 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database::Schema::Function d
   let(:database) { DynamicMigrations::Postgres::Server::Database.new server, :my_database }
   let(:schema) { DynamicMigrations::Postgres::Server::Database::Schema.new :configuration, database, :my_schema }
   let(:function) { DynamicMigrations::Postgres::Server::Database::Schema::Function.new :configuration, schema, :my_function, "NEW.column = 0" }
+  let(:table) { DynamicMigrations::Postgres::Server::Database::Schema::Table.new :configuration, schema, :my_table }
 
   describe :initialize do
     it "instantiates a new function without raising an error" do
@@ -62,6 +63,24 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database::Schema::Function d
   describe :definition do
     it "returns the expected definition" do
       expect(function.definition).to eq("NEW.column = 0")
+    end
+  end
+
+  describe :triggers do
+    it "returns an empty array because no triggers have been added" do
+      expect(function.triggers).to eql []
+    end
+
+    describe "after a trigger has been added which references this function" do
+      let(:trigger) { DynamicMigrations::Postgres::Server::Database::Schema::Table::Trigger.new :configuration, table, :trigger_name, event_manipulation: :insert, action_order: 1, action_condition: nil, action_statement: "EXECUTE FUNCTION checklists.foo()", action_orientation: :row, action_timing: :before, function: function }
+
+      before(:each) do
+        trigger
+      end
+
+      it "returns the expected triggers" do
+        expect(function.triggers).to eql([trigger])
+      end
     end
   end
 

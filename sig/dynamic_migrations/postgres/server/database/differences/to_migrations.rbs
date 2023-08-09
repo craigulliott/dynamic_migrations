@@ -1,0 +1,35 @@
+# TypeProf 0.21.7
+
+# Classes
+module DynamicMigrations
+  module Postgres
+    class Server
+      class Database
+        class Differences
+          class ToMigrations
+            @database: Database
+            @differences_hash: untyped
+            @generator: Generator
+            @differences: Differences
+            @differences_hash: Hash[untyped, untyped]
+
+            def initialize: (Database database, Differences differences) -> void
+            def migrations: -> untyped
+
+            private
+            def differences: -> Hash[untyped, untyped]
+
+            # this method comes from the Schemas module
+            def process_schema: (Symbol schema_name, untyped configuration_schema, untyped database_schema) -> void
+
+            class UnexpectedDatabaseObjectError < StandardError
+            end
+
+            class UnexpectedDifferencesObjectError < StandardError
+            end
+          end
+        end
+      end
+    end
+  end
+end

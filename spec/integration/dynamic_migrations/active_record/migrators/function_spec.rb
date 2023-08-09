@@ -47,6 +47,33 @@ RSpec.describe DynamicMigrations::ActiveRecord::Migrators do
           end
         end
 
+        describe :update_function do
+          it "generates the expected sql" do
+            migration.update_function(:my_table, :my_function, "NEW.column = 0")
+
+            assert_existance_sql = <<~SQL
+              SELECT TRUE as exists
+              FROM pg_proc p
+              INNER JOIN pg_namespace p_n
+                ON p_n.oid = p.pronamespace
+              WHERE
+                p.proname = my_function
+                AND p_n.nspname = my_schema
+                -- arguments (defaulting to none for now)
+                AND pg_get_function_identity_arguments(p.oid) = ''
+            SQL
+
+            update_sql = <<~SQL
+              CREATE OR REPLACE FUNCTION my_schema.my_function() returns trigger language plpgsql AS
+              $$BEGIN NEW.column = 0;
+              RETURN NEW;
+              END$$;
+            SQL
+
+            expect(migration).to executed_sql [assert_existance_sql, update_sql]
+          end
+        end
+
         describe :drop_function do
           it "generates the expected sql" do
             migration.drop_function(:my_function)

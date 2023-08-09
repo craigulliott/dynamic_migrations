@@ -17,10 +17,13 @@ module DynamicMigrations
             attr_reader :name
             attr_reader :definition
             attr_reader :description
+            attr_reader :triggers
 
             # initialize a new object to represent a postgres function
             def initialize source, schema, name, definition, description: nil
               super source
+
+              @triggers ||= []
 
               raise ExpectedSchemaError, schema unless schema.is_a? Schema
               @schema = schema
@@ -42,6 +45,15 @@ module DynamicMigrations
             # returns true if this function has a description, otehrwise false
             def has_description?
               !@description.nil?
+            end
+
+            # returns all the triggers which are associated with this function
+            def add_trigger trigger
+              # this should never happen, but adding it just in case
+              unless trigger.source == source
+                raise "Internal error - trigger source `#{trigger.source}` does not match function source `#{source}`"
+              end
+              @triggers << trigger
             end
           end
         end

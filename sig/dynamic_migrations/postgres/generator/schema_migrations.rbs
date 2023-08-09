@@ -1,0 +1,27 @@
+# TypeProf 0.21.7
+
+# Classes
+module DynamicMigrations
+  module Postgres
+    class Generator
+      class SchemaMigrations
+        @migrations: Array[{name: Symbol, content: String}]
+        @current_migration_sections: Array[Section]
+
+        def initialize: -> void
+        def add_content: (Symbol schema_name, Symbol |nil table_name, Symbol content_type, Symbol | nil object_name, String content) -> void
+        def finalize: -> void
+        def to_a: -> (Array[{name: Symbol, content: String}])
+
+        private
+        def current_migration_has_content_type?: (Symbol content_type) -> bool
+        def current_migration_section_of_content_type: (Symbol content_type) -> Section
+        def current_migration_only_content_types?: (Array[Symbol] content_types) -> bool
+        def generate_current_migration_name: -> Symbol
+
+        class SectionNotFoundError < StandardError
+        end
+      end
+    end
+  end
+end

@@ -47,7 +47,7 @@ module DynamicMigrations
         end
 
         def differences
-          Differences.new(self).to_h
+          Differences.new(self)
         end
       end
     end

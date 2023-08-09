@@ -34,9 +34,9 @@ RSpec.describe DynamicMigrations::ActiveRecord::Migrators do
           DynamicMigrations::ActiveRecord::Migrators.clear_schema_name
         end
 
-        describe :create_trigger do
+        describe :add_trigger do
           it "generates the expected sql for a basic trigger" do
-            migration.create_trigger(:my_table, :my_trigger, action_timing: :before, event_manipulation: :insert, action_orientation: :row, function_name: :my_function)
+            migration.add_trigger(:my_table, name: :my_trigger, action_timing: :before, event_manipulation: :insert, action_orientation: :row, function_schema_name: :my_schema, function_name: :my_function)
 
             expect(migration).to executed_sql <<~SQL
               CREATE TRIGGER my_trigger
@@ -47,7 +47,7 @@ RSpec.describe DynamicMigrations::ActiveRecord::Migrators do
           end
 
           it "generates the expected sql for a trigger which includes a condition" do
-            migration.create_trigger(:my_table, :my_trigger, action_timing: :before, event_manipulation: :insert, action_orientation: :row, function_name: :my_function, action_condition: "NEW.my_column != 0")
+            migration.add_trigger(:my_table, name: :my_trigger, action_timing: :before, event_manipulation: :insert, action_orientation: :row, function_schema_name: :my_schema, function_name: :my_function, action_condition: "NEW.my_column != 0")
 
             expect(migration).to executed_sql <<~SQL
               CREATE TRIGGER my_trigger
@@ -59,9 +59,9 @@ RSpec.describe DynamicMigrations::ActiveRecord::Migrators do
           end
         end
 
-        describe :drop_trigger do
+        describe :remove_trigger do
           it "generates the expected sql" do
-            migration.drop_trigger(:my_trigger, :my_table)
+            migration.remove_trigger(:my_table, :my_trigger)
 
             expect(migration).to executed_sql <<~SQL
               DROP TRIGGER my_trigger ON my_schema.my_table;
@@ -71,7 +71,7 @@ RSpec.describe DynamicMigrations::ActiveRecord::Migrators do
 
         describe :set_trigger_comment do
           it "generates the expected sql" do
-            migration.set_trigger_comment(:my_trigger, :my_table, "my comment")
+            migration.set_trigger_comment(:my_table, :my_trigger, "my comment")
 
             expect(migration).to executed_sql <<~SQL
               COMMENT ON TRIGGER my_trigger ON my_schema.my_table IS 'my comment';
@@ -81,7 +81,7 @@ RSpec.describe DynamicMigrations::ActiveRecord::Migrators do
 
         describe :remove_trigger_comment do
           it "generates the expected sql" do
-            migration.remove_trigger_comment(:my_trigger, :my_table)
+            migration.remove_trigger_comment(:my_table, :my_trigger)
 
             expect(migration).to executed_sql <<~SQL
               COMMENT ON TRIGGER my_trigger ON my_schema.my_table IS NULL;

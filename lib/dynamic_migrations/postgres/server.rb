@@ -32,6 +32,14 @@ module DynamicMigrations
       def databases
         @databases.values
       end
+
+      def migrations
+        {
+          postgres: databases.each_with_object({}) { |database, result|
+            result[database.name] = database.differences.to_migrations
+          }
+        }
+      end
     end
   end
 end

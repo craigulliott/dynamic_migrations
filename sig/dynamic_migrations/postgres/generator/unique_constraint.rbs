@@ -1,0 +1,16 @@
+# TypeProf 0.21.7
+
+# Classes
+module DynamicMigrations
+  module Postgres
+    class Generator
+      module UniqueConstraint
+        def add_unique_constraint: (Postgres::Server::Database::Schema::Table::UniqueConstraint unique_constraint) -> String
+        def remove_unique_constraint: (Postgres::Server::Database::Schema::Table::UniqueConstraint unique_constraint) -> String
+
+        # these come from the generator object (which this module is included into)
+        def add_migration: (Symbol schema_name, Symbol | nil table_name, Symbol migration_method, Symbol | nil object_name, String migration) -> String
+      end
+    end
+  end
+end
