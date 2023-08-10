@@ -1,0 +1,26 @@
+# TypeProf 0.21.7
+
+# Classes
+module DynamicMigrations
+  module Postgres
+    class Server
+      class Database
+        class Differences
+          class ToMigrations
+            module Schemas
+              module Tables
+                module ForeignKeyConstraints
+
+                  private
+                  def process_foreign_key_constraints: (Symbol schema_name, Symbol table_name, untyped configuration_foreign_key_constraints, untyped database_foreign_key_constraints) -> void
+                  def process_foreign_key_constraint: (Symbol schema_name, Symbol table_name, Symbol foreign_key_constraint_name, untyped configuration_foreign_key_constraint, untyped database_foreign_key_constraint) -> void
+
+                end
+              end
+            end
+          end
+        end
+      end
+    end
+  end
+end

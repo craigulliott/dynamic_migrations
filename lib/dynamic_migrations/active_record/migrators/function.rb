@@ -5,12 +5,28 @@ module DynamicMigrations
         class FunctionDoesNotExistError < StandardError
         end
 
+        class MissingFunctionBlockError < StandardError
+        end
+
         # create a postgres function
-        def create_function table_name, function_name, fn_sql, comment: nil
+        def create_function table_name, function_name, comment: nil, &block
+          unless block
+            raise MissingFunctionBlockError, "create_function requires a block"
+          end
+          # todo - remove this once steep/rbs can better handle blocks
+          unless block.is_a? NilClass
+            fn_sql = block.call.strip
+          end
+
+          # ensure that the function ends with a semicolon
+          unless fn_sql.end_with? ";"
+            fn_sql << ";"
+          end
+
           # schema_name was not provided to this method, it comes from the migration class
           execute <<~SQL
             CREATE FUNCTION #{schema_name}.#{function_name}() returns trigger language plpgsql AS
-            $$BEGIN #{fn_sql.strip};
+            $$BEGIN #{fn_sql}
             RETURN NEW;
             END$$;
           SQL
@@ -21,7 +37,20 @@ module DynamicMigrations
         end
 
         # update a postgres function
-        def update_function table_name, function_name, fn_sql, comment: nil
+        def update_function table_name, function_name, comment: nil, &block
+          unless block
+            raise MissingFunctionBlockError, "create_function requires a block"
+          end
+          # todo - remove this once steep/rbs can better handle blocks
+          unless block.is_a? NilClass
+            fn_sql = block.call.strip
+          end
+
+          # ensure that the function ends with a semicolon
+          unless fn_sql.end_with? ";"
+            fn_sql << ";"
+          end
+
           # schema_name was not provided to this method, it comes from the migration class
           # assert it already exists
           exists_result = execute <<~SQL
@@ -43,7 +72,7 @@ module DynamicMigrations
           # create or replace will update the function
           execute <<~SQL
             CREATE OR REPLACE FUNCTION #{schema_name}.#{function_name}() returns trigger language plpgsql AS
-            $$BEGIN #{fn_sql.strip};
+            $$BEGIN #{fn_sql}
             RETURN NEW;
             END$$;
           SQL

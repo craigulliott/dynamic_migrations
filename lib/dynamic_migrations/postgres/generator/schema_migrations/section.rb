@@ -2,7 +2,6 @@ module DynamicMigrations
   module Postgres
     class Generator
       class SchemaMigrations
-        warn "not tested"
         class Section
           attr_reader :schema_name
           attr_reader :table_name

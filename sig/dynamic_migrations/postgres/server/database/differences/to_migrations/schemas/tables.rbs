@@ -12,6 +12,16 @@ module DynamicMigrations
 
                 private
                 def process_tables: (Symbol schema_name, untyped configuration_tables, untyped database_tables) -> void
+                def process_table: (Symbol schema_name, Symbol table_name, untyped configuration_table, untyped database_table) -> void
+                # this method comes from the Columns module
+                def process_dependents: (Symbol schema_name, Symbol table_name, untyped configuration_columns, untyped database_columns) -> void
+                def process_columns: (Symbol schema_name, Symbol table_name, untyped configuration_columns, untyped database_columns) -> void
+                def process_foreign_key_constraints: (Symbol schema_name, Symbol table_name, untyped configuration_foreign_key_constraints, untyped database_foreign_key_constraints) -> void
+                def process_indexes: (Symbol schema_name, Symbol table_name, untyped configuration_indexes, untyped database_indexes) -> void
+                def process_primary_key: (Symbol schema_name, Symbol table_name, untyped configuration_primary_key, untyped database_primary_key) -> void
+                def process_triggers: (Symbol schema_name, Symbol table_name, untyped configuration_triggers, untyped database_triggers) -> void
+                def process_unique_constraints: (Symbol schema_name, Symbol table_name, untyped configuration_unique_constraints, untyped database_unique_constraints) -> void
+                def process_validations: (Symbol schema_name, Symbol table_name, untyped configuration_validations, untyped database_validations) -> void
 
               end
             end

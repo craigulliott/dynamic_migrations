@@ -27,7 +27,11 @@ module DynamicMigrations
           end
 
           unless index.description.nil?
-            options[:comment] = "<<~COMMENT\n  #{index.description}\nCOMMENT"
+            options[:comment] = <<~RUBY
+              <<~COMMENT
+                #{indent index.description}
+              COMMENT
+            RUBY
           end
 
           where_sql = ""
@@ -35,7 +39,7 @@ module DynamicMigrations
             options[:where] = "#{index.name}_where_sql"
             where_sql = <<~RUBY
               #{index.name}_where_sql = <<~SQL
-                #{index.where}
+                #{indent index.where}
               SQL
             RUBY
           end

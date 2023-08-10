@@ -1,0 +1,26 @@
+# TypeProf 0.21.7
+
+# Classes
+module DynamicMigrations
+  module Postgres
+    class Server
+      class Database
+        class Differences
+          class ToMigrations
+            module Schemas
+              module Tables
+                module Indexes
+
+                  private
+                  def process_indexes: (Symbol schema_name, Symbol table_name, untyped configuration_indexes, untyped database_indexes) -> void
+                  def process_index: (Symbol schema_name, Symbol table_name, Symbol index_name, untyped configuration_index, untyped database_index) -> void
+
+                end
+              end
+            end
+          end
+        end
+      end
+    end
+  end
+end

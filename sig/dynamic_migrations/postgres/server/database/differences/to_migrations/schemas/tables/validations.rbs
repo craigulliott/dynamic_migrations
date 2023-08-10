@@ -1,0 +1,26 @@
+# TypeProf 0.21.7
+
+# Classes
+module DynamicMigrations
+  module Postgres
+    class Server
+      class Database
+        class Differences
+          class ToMigrations
+            module Schemas
+              module Tables
+                module Validations
+
+                  private
+                  def process_validations: (Symbol schema_name, Symbol table_name, untyped configuration_validations, untyped database_validations) -> void
+                  def process_validation: (Symbol schema_name, Symbol table_name, Symbol validation_name, untyped configuration_validation, untyped database_validation) -> void
+
+                end
+              end
+            end
+          end
+        end
+      end
+    end
+  end
+end

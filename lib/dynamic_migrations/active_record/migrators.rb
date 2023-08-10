@@ -19,9 +19,11 @@ module DynamicMigrations
       end
 
       include Schema
-      include CheckConstraint
+      include Validation
       include ForeignKeyConstraint
       include ConstraintComment
+      include ColumnComment
+      include TableComment
       include Function
       include Trigger
 

@@ -44,6 +44,10 @@ module DynamicMigrations
               def has_description?
                 !@description.nil?
               end
+
+              def array?
+                @data_type.end_with? "[]"
+              end
             end
           end
         end

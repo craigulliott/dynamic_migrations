@@ -13,6 +13,17 @@ module DynamicMigrations
             @differences: Differences
             @differences_hash: Hash[untyped, untyped]
 
+            include Schemas
+            include Schemas::Functions
+            include Schemas::Tables
+            include Schemas::Tables::Columns
+            include Schemas::Tables::ForeignKeyConstraints
+            include Schemas::Tables::Indexes
+            include Schemas::Tables::PrimaryKey
+            include Schemas::Tables::Triggers
+            include Schemas::Tables::UniqueConstraints
+            include Schemas::Tables::Validations
+
             def initialize: (Database database, Differences differences) -> void
             def migrations: -> untyped
 

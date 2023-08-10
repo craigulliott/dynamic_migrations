@@ -37,7 +37,11 @@ module DynamicMigrations
           end
 
           unless trigger.description.nil?
-            options[:comment] = "<<~COMMENT\n  #{trigger.description}\nCOMMENT"
+            options[:comment] = <<~RUBY
+              <<~COMMENT
+                #{indent trigger.description}
+              COMMENT
+            RUBY
           end
 
           options_syntax = options.map { |k, v| "#{k}: #{v}" }.join(", ")
@@ -57,7 +61,7 @@ module DynamicMigrations
         def set_trigger_comment trigger
           add_migration trigger.table.schema.name, trigger.table.name, :set_trigger_comment, trigger.name, <<~RUBY
             set_trigger_comment :#{trigger.table.name}, :#{trigger.name}, <<~COMMENT
-              #{trigger.description}
+              #{indent trigger.description}
             COMMENT
           RUBY
         end

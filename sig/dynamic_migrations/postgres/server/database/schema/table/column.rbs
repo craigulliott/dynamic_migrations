@@ -15,6 +15,7 @@ module DynamicMigrations
               attr_reader interval_type: Symbol?
               def initialize: (database_or_configuration source, Table table, Symbol name, Symbol data_type, ?null: bool, ?default: untyped, ?description: String | nil, ?interval_type: Symbol | nil) -> void
               def has_description?: -> bool
+              def array?: -> bool
 
               class ExpectedTableError < StandardError
               end

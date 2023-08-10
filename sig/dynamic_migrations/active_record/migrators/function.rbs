@@ -5,8 +5,8 @@ module DynamicMigrations
   module ActiveRecord
     module Migrators
       module Function
-        def create_function: (Symbol table_name, Symbol function_name, String fn_sql, ?comment: nil | String) -> void
-        def update_function: (Symbol table_name, Symbol function_name, String fn_sql, ?comment: nil | String) -> void
+        def create_function: (Symbol table_name, Symbol function_name, ?comment: nil | String) -> void
+        def update_function: (Symbol table_name, Symbol function_name, ?comment: nil | String) -> void
         def drop_function: (Symbol function_name) -> void
         def set_function_comment: (Symbol function_name, String comment) -> void
         def remove_function_comment: (Symbol function_name) -> void
@@ -19,6 +19,8 @@ module DynamicMigrations
         class FunctionDoesNotExistError < StandardError
         end
 
+        class MissingFunctionBlockError < StandardError
+        end
       end
     end
   end

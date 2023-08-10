@@ -4,8 +4,8 @@
 module DynamicMigrations
   module ActiveRecord
     module Migrators
-      module CheckConstraint
-        def add_check_constraint: (Symbol table_name, String sql, name: Symbol, ?initially_deferred: bool, ?deferrable: bool, ?comment: nil | String) -> void
+      module Validation
+        def add_validation: (Symbol table_name, name: Symbol, ?initially_deferred: bool, ?deferrable: bool, ?comment: nil | String) -> void
 
         # stubbing these out, as they are available on the module which includes this module
         def set_constraint_comment: (Symbol table_name, Symbol constraint_name, String comment) -> void

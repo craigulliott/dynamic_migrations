@@ -36,7 +36,9 @@ RSpec.describe DynamicMigrations::ActiveRecord::Migrators do
 
         describe :create_function do
           it "generates the expected sql" do
-            migration.create_function(:my_table, :my_function, "NEW.column = 0")
+            migration.create_function :my_table, :my_function do
+              "NEW.column = 0"
+            end
 
             expect(migration).to executed_sql <<~SQL
               CREATE FUNCTION my_schema.my_function() returns trigger language plpgsql AS
@@ -45,11 +47,19 @@ RSpec.describe DynamicMigrations::ActiveRecord::Migrators do
               END$$;
             SQL
           end
+
+          it "raises an error if the block is ommited" do
+            expect {
+              migration.create_function :my_table, :my_function
+            }.to raise_error DynamicMigrations::ActiveRecord::Migrators::Function::MissingFunctionBlockError
+          end
         end
 
         describe :update_function do
           it "generates the expected sql" do
-            migration.update_function(:my_table, :my_function, "NEW.column = 0")
+            migration.update_function :my_table, :my_function do
+              "NEW.column = 0"
+            end
 
             assert_existance_sql = <<~SQL
               SELECT TRUE as exists

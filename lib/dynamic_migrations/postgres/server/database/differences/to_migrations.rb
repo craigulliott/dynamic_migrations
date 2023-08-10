@@ -15,6 +15,13 @@ module DynamicMigrations
             include Schemas
             include Schemas::Functions
             include Schemas::Tables
+            include Schemas::Tables::Columns
+            include Schemas::Tables::ForeignKeyConstraints
+            include Schemas::Tables::Indexes
+            include Schemas::Tables::PrimaryKey
+            include Schemas::Tables::Triggers
+            include Schemas::Tables::UniqueConstraints
+            include Schemas::Tables::Validations
 
             def initialize database, differences
               raise UnexpectedDatabaseObjectError, database unless database.is_a? Database

@@ -1,10 +1,11 @@
 module DynamicMigrations
   module Postgres
     class Generator
-      warn "not tested"
       class SchemaMigrations
         class SectionNotFoundError < StandardError
         end
+
+        attr_reader :current_migration_sections
 
         def initialize
           @migrations = []
@@ -21,8 +22,9 @@ module DynamicMigrations
             contents = []
             @current_migration_sections.each do |section|
               contents << section.content.strip
+              # add an empty line between sections (unless this is a comment section)
               unless section.content_type? :comment
-                contents << "\n"
+                contents << ""
               end
             end
 

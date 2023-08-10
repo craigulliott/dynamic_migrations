@@ -20,7 +20,11 @@ module DynamicMigrations
             on_update: ":#{foreign_key_constraint.on_update}"
           }
           unless foreign_key_constraint.description.nil?
-            options[:comment] = "<<~COMMENT\n  #{foreign_key_constraint.description}\nCOMMENT"
+            options[:comment] = <<~RUBY
+              <<~COMMENT
+                #{indent foreign_key_constraint.description}
+              COMMENT
+            RUBY
           end
           options_syntax = options.map { |k, v| "#{k}: #{v}" }.join(", ")
 

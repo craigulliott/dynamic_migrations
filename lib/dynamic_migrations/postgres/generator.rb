@@ -40,11 +40,11 @@ module DynamicMigrations
         {
           header_comment: <<~COMMENT,
             #
-            # Remove Constraints
+            # Remove Validations
             #
           COMMENT
           methods: [
-            :remove_check_constraint,
+            :remove_validation,
             :remove_unique_constraint
           ]
         },
@@ -128,11 +128,22 @@ module DynamicMigrations
         {
           header_comment: <<~COMMENT,
             #
-            # Create Tables
+            # Create Table
             #
           COMMENT
           methods: [
             :create_table
+          ]
+        },
+        {
+          header_comment: <<~COMMENT,
+            #
+            # Tables
+            #
+          COMMENT
+          methods: [
+            :remove_table_comment,
+            :set_table_comment
           ]
         },
         {
@@ -152,7 +163,9 @@ module DynamicMigrations
             #
           COMMENT
           methods: [
-            :update_column
+            :change_column,
+            :remove_column_comment,
+            :set_column_comment
           ]
         },
         {
@@ -182,18 +195,24 @@ module DynamicMigrations
             #
           COMMENT
           methods: [
-            :add_foreign_key
+            :add_foreign_key,
+            :set_foreign_key_constraint_comment,
+            :remove_foreign_key_constraint_comment
           ]
         },
         {
           header_comment: <<~COMMENT,
             #
-            # Constraints
+            # Validations
             #
           COMMENT
           methods: [
-            :add_check_constraint,
-            :add_unique_constraint
+            :add_validation,
+            :add_unique_constraint,
+            :set_validation_comment,
+            :remove_validation_comment,
+            :set_unique_constraint_comment,
+            :remove_unique_constraint_comment
           ]
         },
         {
@@ -203,8 +222,7 @@ module DynamicMigrations
             #
           COMMENT
           methods: [
-            :create_function,
-            :set_function_comment
+            :create_function
           ]
         },
         {
@@ -225,7 +243,8 @@ module DynamicMigrations
             #
           COMMENT
           methods: [
-            :update_function
+            :update_function,
+            :set_function_comment
           ]
         }
       ]
@@ -237,8 +256,8 @@ module DynamicMigrations
       include Index
       include PrimaryKey
       include UniqueConstraint
+      include ConstraintComments
       include Validation
-      include FixIndentation
       include Function
       include Trigger
 
@@ -261,15 +280,18 @@ module DynamicMigrations
                 schema_migrations.finalize
               end
 
+              # add the header comment if we have a migration which matches one of the
+              # methods in this section
+              if (section[:methods] & migrations.keys).any?
+                schema_migrations.add_content schema_name, table_name, :comment, nil, section[:header_comment]
+              end
+
               # iterate through this sections methods in order and look
               # for any that match the migrations we have
               section[:methods].each do |method_name|
-                # if we have a migration which matches one of the methods in this section
-                unless migrations[method_name].nil?
-                  schema_migrations.add_content schema_name, table_name, :comment, nil, section[:header_comment]
-                  migrations[method_name].each do |migration|
-                    schema_migrations.add_content schema_name, table_name, method_name, migration[:object_name], migration[:content]
-                  end
+                # if we have any migrations for this method then add them
+                migrations[method_name]&.each do |migration|
+                  schema_migrations.add_content schema_name, table_name, method_name, migration[:object_name], migration[:content]
                 end
               end
 
@@ -303,7 +325,7 @@ module DynamicMigrations
           raise UnexpectedMigrationMethodNameError, "Expected migration_method to be a valid migrator method, got `#{migration_method}`"
         end
 
-        fixed_indentation_migration = fix_indentation migration
+        final_migration = strip_empty_lines(migration).strip
         @migrations[schema_name] ||= {}
         # note, table_name can be nil, which is OK because nil is a valid
         # key and we do want to group them all together
@@ -311,10 +333,18 @@ module DynamicMigrations
         @migrations[schema_name][table_name][migration_method] ||= []
         @migrations[schema_name][table_name][migration_method] << {
           object_name:,
-          content: fixed_indentation_migration
+          content: final_migration
         }
         # return the newly created migration
-        fixed_indentation_migration
+        final_migration
+      end
+
+      def indent multi_line_string
+        multi_line_string.gsub("\n", "\n  ")
+      end
+
+      def strip_empty_lines multi_line_string
+        multi_line_string.gsub(/^\s*\n/, "")
       end
     end
   end

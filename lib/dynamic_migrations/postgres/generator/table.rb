@@ -15,10 +15,10 @@ module DynamicMigrations
 
           add_migration table.schema.name, table.name, :create_table, table.name, <<~RUBY
             table_comment = <<~COMMENT
-              #{table.description}
+              #{indent table.description}
             COMMENT
             create_table :#{table.name}, #{table_options table} do |t|
-              #{table_columns(table.columns)}
+              #{indent table_columns(table.columns)}
             end
           RUBY
         end
@@ -35,18 +35,25 @@ module DynamicMigrations
               next
             end
 
-            line = "t.#{column.data_type} :#{column.name}, null: #{column.null}"
+            options = {}
+            options[:null] = column.null
 
             unless column.default.nil?
-              line << ", default: \"#{column.default}\""
+              options[:default] = "\"#{column.default}\""
             end
 
             if column.description.nil?
               raise NoTableColumnCommentError, "Refusing to generate create_table migration, no description was provided for `#{column.table.name}`.`#{column.table.schema.name}` column `#{column.name}`"
             end
-            line << ", comment: <<~COMMENT\n  #{column.description}\nCOMMENT"
+            options[:comment] = <<~RUBY
+              <<~COMMENT
+                #{indent column.description}
+              COMMENT
+            RUBY
 
-            lines << line
+            options_syntax = options.map { |k, v| "#{k}: #{v}" }.join(", ")
+
+            lines << "t.#{column.data_type} :#{column.name}, #{options_syntax}"
           end
 
           if timestamps.any?
@@ -59,6 +66,22 @@ module DynamicMigrations
         def drop_table table
           add_migration table.schema.name, table.name, :drop_table, table.name, <<~RUBY
             drop_table :#{table.name}, force: true
+          RUBY
+        end
+
+        # add a comment to a table
+        def set_table_comment table
+          add_migration table.schema.name, table.name, :set_table_comment, table.name, <<~RUBY
+            set_table_comment :#{table.name}, <<~COMMENT
+              #{indent table.description}
+            COMMENT
+          RUBY
+        end
+
+        # remove the comment from a table
+        def remove_table_comment table
+          add_migration table.schema.name, table.name, :remove_table_comment, table.name, <<~RUBY
+            remove_table_comment :#{table.name}
           RUBY
         end
 

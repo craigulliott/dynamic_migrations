@@ -18,7 +18,6 @@ RSpec.describe DynamicMigrations::Postgres::Generator do
               Comment for this table
             COMMENT
             create_table :my_table, id: false, comment: table_comment do |t|
-
             end
           RUBY
         end
@@ -36,7 +35,6 @@ RSpec.describe DynamicMigrations::Postgres::Generator do
               Comment for this table
             COMMENT
             create_table :my_table, id: :uuid, comment: table_comment do |t|
-
             end
           RUBY
         end
@@ -129,6 +127,24 @@ RSpec.describe DynamicMigrations::Postgres::Generator do
       it "should return the expected ruby syntax to drop a table" do
         expect(generator.drop_table(table)).to eq <<~RUBY.strip
           drop_table :my_table, force: true
+        RUBY
+      end
+    end
+
+    describe :set_table_comment do
+      it "should return the expected ruby syntax to set a table comment" do
+        expect(generator.set_table_comment(table)).to eq <<~RUBY.strip
+          set_table_comment :my_table, <<~COMMENT
+            Comment for this table
+          COMMENT
+        RUBY
+      end
+    end
+
+    describe :remove_table_comment do
+      it "should return the expected ruby syntax to remove a table comment" do
+        expect(generator.remove_table_comment(table)).to eq <<~RUBY.strip
+          remove_table_comment :my_table
         RUBY
       end
     end

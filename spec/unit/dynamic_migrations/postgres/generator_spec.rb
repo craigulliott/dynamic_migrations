@@ -29,7 +29,7 @@ RSpec.describe DynamicMigrations::Postgres::Generator do
               name: :create_my_table,
               content: <<~RUBY.strip
                 #
-                # Create Tables
+                # Create Table
                 #
                 table_comment = <<~COMMENT
                   Comment for this table

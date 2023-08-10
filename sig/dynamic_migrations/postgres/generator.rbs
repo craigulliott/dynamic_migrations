@@ -21,8 +21,8 @@ module DynamicMigrations
       include Index
       include PrimaryKey
       include UniqueConstraint
+      include ConstraintComments
       include Validation
-      include FixIndentation
       include Function
       include Trigger
 
@@ -33,6 +33,8 @@ module DynamicMigrations
       def supported_migration_method_names: -> Array[Symbol]
       def supported_migration_method?: (Symbol migration_method) -> bool
       def add_migration: (Symbol schema_name, Symbol | nil table_name, Symbol migration_method, Symbol | nil object_name, String migration) -> String
+      def indent: (String migration) -> String
+      def strip_empty_lines: (String migration) -> String
 
       class ExpectedSymbolError < StandardError
       end

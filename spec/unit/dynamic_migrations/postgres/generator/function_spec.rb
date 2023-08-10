@@ -15,12 +15,14 @@ RSpec.describe DynamicMigrations::Postgres::Generator do
 
         it "should return the expected ruby syntax to add a function" do
           expect(generator.create_function(function)).to eq <<~RUBY.strip
-            my_function_definition = <<~SQL
-              NEW.column = 0;
-            SQL
-            create_function :my_function, my_function_definition, name: :my_function, comment: <<~COMMENT
+            my_function_comment = <<~COMMENT
               Comment for this function
             COMMENT
+            create_function :my_function, comment: my_function_comment do
+              <<~SQL
+                NEW.column = 0;
+              SQL
+            end
           RUBY
         end
       end
@@ -32,12 +34,11 @@ RSpec.describe DynamicMigrations::Postgres::Generator do
 
         it "should return the expected ruby syntax to update a function" do
           expect(generator.update_function(function)).to eq <<~RUBY.strip
-            my_function_definition = <<~SQL
-              NEW.column = 0;
-            SQL
-            update_function :my_function, my_function_definition, name: :my_function, comment: <<~COMMENT
-              Comment for this function
-            COMMENT
+            update_function :my_function do
+              <<~SQL
+                NEW.column = 0;
+              SQL
+            end
           RUBY
         end
       end

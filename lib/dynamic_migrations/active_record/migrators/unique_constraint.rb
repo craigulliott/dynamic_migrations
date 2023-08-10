@@ -36,6 +36,17 @@ module DynamicMigrations
             set_constraint_comment table_name, name, comment
           end
         end
+
+        warn "not tested"
+        def remove_unique_constraint table_name, name
+          remove_check_constraint table_name, name
+        end
+
+        warn "not tested"
+        def change_unique_constraint table_name, column_names, name:, deferrable: false, initially_deferred: false, comment: nil
+          remove_unique_constraint table_name, name
+          create_unique_constraint table_name, column_names, name:, deferrable:, initially_deferred:, comment:
+        end
       end
     end
   end

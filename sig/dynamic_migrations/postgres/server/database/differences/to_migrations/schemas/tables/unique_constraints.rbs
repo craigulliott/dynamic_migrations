@@ -1,0 +1,26 @@
+# TypeProf 0.21.7
+
+# Classes
+module DynamicMigrations
+  module Postgres
+    class Server
+      class Database
+        class Differences
+          class ToMigrations
+            module Schemas
+              module Tables
+                module UniqueConstraints
+
+                  private
+                  def process_unique_constraints: (Symbol schema_name, Symbol table_name, untyped configuration_unique_constraints, untyped database_unique_constraints) -> void
+                  def process_unique_constraint: (Symbol schema_name, Symbol table_name, Symbol unique_constraint_name, untyped configuration_unique_constraint, untyped database_unique_constraint) -> void
+
+                end
+              end
+            end
+          end
+        end
+      end
+    end
+  end
+end

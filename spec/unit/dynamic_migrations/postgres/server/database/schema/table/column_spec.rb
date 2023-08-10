@@ -54,6 +54,19 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database::Schema::Table::Col
     end
   end
 
+  describe :array do
+    it "returns false because this datatype is not an array" do
+      expect(column.array?).to be false
+    end
+
+    describe "when an array data type was is provided at initialization" do
+      let(:array_column) { DynamicMigrations::Postgres::Server::Database::Schema::Table::Column.new :configuration, table, :my_column, :"integer[]", description: "a valid description of my column" }
+      it "returns the expected description" do
+        expect(array_column.array?).to be true
+      end
+    end
+  end
+
   describe :description do
     describe "when no description was provided at initialization" do
       it "returns nil" do

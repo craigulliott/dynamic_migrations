@@ -1,0 +1,26 @@
+# TypeProf 0.21.7
+
+# Classes
+module DynamicMigrations
+  module Postgres
+    class Server
+      class Database
+        class Differences
+          class ToMigrations
+            module Schemas
+              module Tables
+                module Triggers
+
+                  private
+                  def process_triggers: (Symbol schema_name, Symbol table_name, untyped configuration_triggers, untyped database_triggers) -> void
+                  def process_trigger: (Symbol schema_name, Symbol table_name, Symbol trigger_name, untyped configuration_trigger, untyped database_trigger) -> void
+
+                end
+              end
+            end
+          end
+        end
+      end
+    end
+  end
+end

@@ -13,7 +13,11 @@ module DynamicMigrations
           }
 
           unless primary_key.description.nil?
-            options[:comment] = "<<~COMMENT\n  #{primary_key.description}\nCOMMENT"
+            options[:comment] = <<~RUBY
+              <<~COMMENT
+                #{indent primary_key.description}
+              COMMENT
+            RUBY
           end
 
           options_syntax = options.map { |k, v| "#{k}: #{v}" }.join(", ")

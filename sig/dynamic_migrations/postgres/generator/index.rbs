@@ -7,6 +7,7 @@ module DynamicMigrations
       module Index
         def add_index: (Postgres::Server::Database::Schema::Table::Index index) -> String
         def remove_index: (Postgres::Server::Database::Schema::Table::Index index) -> String
+        def indent: (String str) -> String
 
         # these come from the generator object (which this module is included into)
         def add_migration: (Symbol schema_name, Symbol | nil table_name, Symbol migration_method, Symbol | nil object_name, String migration) -> String

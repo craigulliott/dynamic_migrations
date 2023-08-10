@@ -12,13 +12,11 @@ module DynamicMigrations
               private
               def process_schema: (Symbol schema_name, untyped configuration_schema, untyped database_schema) -> void
 
-              # these methods comes from the Functions module
+              # this method comes from the Functions module
               def process_functions: (Symbol schema_name, untyped configuration_functions, untyped database_functions) -> void
-              def process_function: (Symbol schema_name, Symbol function_name, untyped configuration_function, untyped database_function) -> void
 
-              # these methods comes from the Tables module
+              # this method comes from the Tables module
               def process_tables: (Symbol schema_name, untyped configuration_tables, untyped database_tables) -> void
-              def process_table: (Symbol schema_name, Symbol table_name, untyped configuration_table, untyped database_table) -> void
 
             end
           end

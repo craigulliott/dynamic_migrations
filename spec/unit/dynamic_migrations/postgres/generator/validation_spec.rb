@@ -17,10 +17,28 @@ RSpec.describe DynamicMigrations::Postgres::Generator do
 
         it "should return the expected ruby syntax to add a validation" do
           expect(generator.add_validation(validation)).to eq <<~RUBY.strip
-            validation_name_check_clause = <<~SQL
-              #{validation.check_clause}
-            SQL
-            add_check_constraint :my_table, validation_name_check_clause, name: :validation_name, initially_deferred: false, deferrable: false
+            add_validation :my_table, name: :validation_name, deferrable: false, initially_deferred: false do
+              <<~SQL
+                my_column > 0;
+              SQL
+            end
+          RUBY
+        end
+      end
+
+      describe "for simple validation on one column which has a description" do
+        let(:validation) { DynamicMigrations::Postgres::Server::Database::Schema::Table::Validation.new :configuration, table, [column], :validation_name, "my_column > 0", description: "My validation" }
+
+        it "should return the expected ruby syntax to add a validation" do
+          expect(generator.add_validation(validation)).to eq <<~RUBY.strip
+            validation_name_comment = <<~COMMENT
+              My validation
+            COMMENT
+            add_validation :my_table, name: :validation_name, deferrable: false, initially_deferred: false, comment: validation_name_comment do
+              <<~SQL
+                my_column > 0;
+              SQL
+            end
           RUBY
         end
       end
@@ -32,7 +50,7 @@ RSpec.describe DynamicMigrations::Postgres::Generator do
 
         it "should return the expected ruby syntax to remove a validation" do
           expect(generator.remove_validation(validation)).to eq <<~RUBY.strip
-            remove_check_constraint :my_table, :validation_name
+            remove_validation :my_table, :validation_name
           RUBY
         end
       end

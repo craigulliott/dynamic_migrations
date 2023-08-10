@@ -36,12 +36,18 @@ module DynamicMigrations
                   elsif configuration_function[:definition][:matches] == false
                     function = @database.configured_schema(schema_name).function(function_name)
                     @generator.update_function function
+                    # does the description also need to be updated
+                    if configuration_function[:description][:matches] == false
+                      # if the description was removed
+                      if configuration_function[:description].nil?
+                        @generator.remove_function_comment function
+                      else
+                        @generator.set_function_comment function
+                      end
+                    end
 
                   # If the function exists in both the configuration and database representations
                   # but the description is different then we need to update the description.
-                  #
-                  # We dont need to update the description if the definition was different (the previous
-                  # conditional), because that results in updating the description anyway.
                   elsif configuration_function[:description][:matches] == false
                     function = @database.configured_schema(schema_name).function(function_name)
                     # if the description was removed

@@ -1,5 +1,6 @@
-# frozen_string_literal: true
+# TypeProf 0.21.7
 
+# Classes
 module DynamicMigrations
   module Postgres
     class Server
@@ -8,7 +9,11 @@ module DynamicMigrations
           class ToMigrations
             module Schemas
               module Tables
-                def process_tables schema_name, configuration_tables, database_tables
+                module PrimaryKey
+
+                  private
+                  def process_primary_key: (Symbol schema_name, Symbol table_name, Symbol primary_key_name, untyped configuration_primary_key, untyped database_primary_key) -> void
+
                 end
               end
             end

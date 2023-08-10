@@ -3,38 +3,50 @@ module DynamicMigrations
     class Generator
       module Function
         def create_function function
-          options = {
-            name: ":#{function.name}"
-          }
-          unless function.description.nil?
-            options[:comment] = "<<~COMMENT\n  #{function.description}\nCOMMENT"
+          options = {}
+
+          if function.description.nil?
+            comment_sql = ""
+          else
+            comment_sql = <<~RUBY
+              #{function.name}_comment = <<~COMMENT
+                #{indent function.description || ""}
+              COMMENT
+            RUBY
+            options[:comment] = "#{function.name}_comment"
           end
 
           options_syntax = options.map { |k, v| "#{k}: #{v}" }.join(", ")
+          optional_options_syntax = (options_syntax == "") ? "" : ", #{options_syntax}"
 
-          add_migration function.schema.name, function.triggers.first&.table&.name, :create_function, function.name, <<~RUBY
-            #{function.name}_definition = <<~SQL
-              NEW.column = 0;
-            SQL
-            create_function :#{function.name}, #{function.name}_definition, #{options_syntax}
+          fn_sql = function.definition.strip
+          # ensure that the function ends with a semicolon
+          unless fn_sql.end_with? ";"
+            fn_sql << ";"
+          end
+
+          add_migration function.schema.name, function.triggers.first&.table&.name, :create_function, function.name, (comment_sql + <<~RUBY)
+            create_function :#{function.name}#{optional_options_syntax} do
+              <<~SQL
+                #{indent fn_sql}
+              SQL
+            end
           RUBY
         end
 
         def update_function function
-          options = {
-            name: ":#{function.name}"
-          }
-          unless function.description.nil?
-            options[:comment] = "<<~COMMENT\n  #{function.description}\nCOMMENT"
+          fn_sql = function.definition.strip
+          # ensure that the function ends with a semicolon
+          unless fn_sql.end_with? ";"
+            fn_sql << ";"
           end
 
-          options_syntax = options.map { |k, v| "#{k}: #{v}" }.join(", ")
-
           add_migration function.schema.name, function.triggers.first&.table&.name, :update_function, function.name, <<~RUBY
-            #{function.name}_definition = <<~SQL
-              NEW.column = 0;
-            SQL
-            update_function :#{function.name}, #{function.name}_definition, #{options_syntax}
+            update_function :#{function.name} do
+              <<~SQL
+                #{indent fn_sql}
+              SQL
+            end
           RUBY
         end
 
@@ -48,7 +60,7 @@ module DynamicMigrations
         def set_function_comment function
           add_migration function.schema.name, function.triggers.first&.table&.name, :set_function_comment, function.name, <<~RUBY
             set_function_comment :#{function.name}, <<~COMMENT
-              #{function.description}
+              #{indent function.description || ""}
             COMMENT
           RUBY
         end

@@ -1,16 +1,14 @@
-todo
 # frozen_string_literal: true
 
 RSpec.describe DynamicMigrations::Postgres::Generator::SchemaMigrations::Section do
-  let(:pg_helper) { RSpec.configuration.pg_spec_helper }
-  let(:server) { DynamicMigrations::Postgres::Server.new pg_helper.host, pg_helper.port, pg_helper.username, pg_helper.password }
-  let(:database) { DynamicMigrations::Postgres::Server::Database.new server, :my_database }
-  let(:schema) { DynamicMigrations::Postgres::Server::Database::Schema.new :configuration, database, :my_schema }
-  let(:generator) { DynamicMigrations::Postgres::Generator::SchemaMigrations.new }
-
   describe :initialize do
-    it "" do
-      raise "todo"
+    it "initialies without error and exposes the required getters" do
+      section = DynamicMigrations::Postgres::Generator::SchemaMigrations::Section.new :my_schema, :my_table, :my_content, :my_object, "content here"
+      expect(section.schema_name).to eq :my_schema
+      expect(section.table_name).to eq :my_table
+      expect(section.content_type).to eq :my_content
+      expect(section.object_name).to eq :my_object
+      expect(section.content).to eq "content here"
     end
   end
 end
