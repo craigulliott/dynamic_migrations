@@ -9,9 +9,9 @@ module DynamicMigrations
       include Schema
       include Validation
       include ForeignKeyConstraint
-      include ConstraintComment
-      include ColumnComment
-      include TableComment
+      include Column
+      include Table
+      include Index
       include Function
       include Trigger
 
@@ -28,6 +28,9 @@ module DynamicMigrations
       end
 
       class DeferrableOptionsError < StandardError
+      end
+
+      class MissingFunctionBlockError < StandardError
       end
     end
   end

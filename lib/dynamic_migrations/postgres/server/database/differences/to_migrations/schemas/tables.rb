@@ -67,8 +67,8 @@ module DynamicMigrations
                   process_triggers schema_name, table_name, configuration_table[:triggers] || {}, database_table[:triggers] || {}
                   process_unique_constraints schema_name, table_name, configuration_table[:unique_constraints] || {}, database_table[:unique_constraints] || {}
                   process_validations schema_name, table_name, configuration_table[:validations] || {}, database_table[:validations] || {}
-                  #
-                  # TODO process_primary_key schema_name, table_name, primary_key_name, configuration_primary_key, database_primary_key
+                  # Process the primary key. The primary key is singular (max of one per table)
+                  process_primary_key schema_name, table_name, configuration_table[:primary_key], database_table[:primary_key]
                 end
               end
             end

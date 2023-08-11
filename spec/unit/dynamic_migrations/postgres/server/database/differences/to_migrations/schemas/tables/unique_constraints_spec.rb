@@ -51,15 +51,30 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database::Differences::ToMig
 
             it "returns the migration to update the unique_constraint by replacing it" do
               expect(to_migrations.migrations).to eql({
-                my_schema: [{
-                  name: :changes_for_my_table,
-                  content: <<~RUBY.strip
-                    #
-                    # Validations
-                    #
-                    change_unique_constraint :my_table, :my_column, name: :my_unique_constraint, deferrable: false, initially_deferred: false
-                  RUBY
-                }]
+                my_schema: [
+                  {
+                    name: :changes_for_my_table,
+                    content: <<~RUBY.strip
+                      #
+                      # Remove Validations
+                      #
+                      # Removing original unique constraint because it has changed (it is recreated below)
+                      # Changes:
+                      #   deferrable changed from `true` to `false`
+                      remove_unique_constraint :my_table, :my_unique_constraint
+                    RUBY
+                  },
+                  {
+                    name: :changes_for_my_table,
+                    content: <<~RUBY.strip
+                      #
+                      # Validations
+                      #
+                      # Recreating this unique constraint
+                      add_unique_constraint :my_table, :my_column, name: :my_unique_constraint, deferrable: false, initially_deferred: false
+                    RUBY
+                  }
+                ]
               })
             end
           end

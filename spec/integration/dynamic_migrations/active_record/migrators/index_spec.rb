@@ -24,7 +24,7 @@ RSpec.describe DynamicMigrations::ActiveRecord::Migrators do
 
     let(:migration) { migration_class.new }
 
-    describe :TableComment do
+    describe :Index do
       describe "once the schema_name has been set on the module" do
         before(:each) do
           DynamicMigrations::ActiveRecord::Migrators.set_schema_name :my_schema
@@ -34,22 +34,22 @@ RSpec.describe DynamicMigrations::ActiveRecord::Migrators do
           DynamicMigrations::ActiveRecord::Migrators.clear_schema_name
         end
 
-        describe :set_table_comment do
+        describe :set_index_comment do
           it "generates the expected sql" do
-            migration.set_table_comment(:my_table, "my comment")
+            migration.set_index_comment(:my_table, :my_index, "my comment")
 
             expect(migration).to executed_sql <<~SQL
-              COMMENT ON TABLE my_schema.my_table IS 'my comment';
+              COMMENT ON INDEX my_index IS 'my comment';
             SQL
           end
         end
 
-        describe :remove_table_comment do
+        describe :remove_index_comment do
           it "generates the expected sql" do
-            migration.remove_table_comment(:my_table)
+            migration.remove_index_comment(:my_table, :my_index)
 
             expect(migration).to executed_sql <<~SQL
-              COMMENT ON TABLE my_schema.my_table IS NULL;
+              COMMENT ON INDEX my_index IS NULL;
             SQL
           end
         end

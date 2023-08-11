@@ -123,6 +123,25 @@ module DynamicMigrations
               def has_description?
                 !@description.nil?
               end
+
+              def differences_descriptions other_trigger
+                descriptions = method_differences_descriptions other_trigger, [
+                  :event_manipulation,
+                  :action_timing,
+                  :action_order,
+                  :action_condition,
+                  :action_statement,
+                  :action_orientation,
+                  :action_reference_old_table,
+                  :action_reference_new_table
+                ]
+                # add the function differences descriptions
+                function.differences_descriptions(other_trigger.function).each do |description|
+                  descriptions << "function_#{description}"
+                end
+                # return the combined differences
+                descriptions
+              end
             end
           end
         end

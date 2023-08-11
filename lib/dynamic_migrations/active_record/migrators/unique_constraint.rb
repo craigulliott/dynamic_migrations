@@ -33,19 +33,29 @@ module DynamicMigrations
           SQL
 
           if comment.is_a? String
-            set_constraint_comment table_name, name, comment
+            set_unique_constraint_comment table_name, name, comment
           end
         end
 
-        warn "not tested"
         def remove_unique_constraint table_name, name
-          remove_check_constraint table_name, name
+          execute <<~SQL
+            ALTER TABLE #{table_name}
+              DROP CONSTRAINT #{name};
+          SQL
         end
 
-        warn "not tested"
-        def change_unique_constraint table_name, column_names, name:, deferrable: false, initially_deferred: false, comment: nil
-          remove_unique_constraint table_name, name
-          create_unique_constraint table_name, column_names, name:, deferrable:, initially_deferred:, comment:
+        # add a comment to the unique_constraint
+        def set_unique_constraint_comment table_name, unique_constraint_name, comment
+          execute <<~SQL
+            COMMENT ON CONSTRAINT #{unique_constraint_name} ON #{schema_name}.#{table_name} IS '#{quote comment}';
+          SQL
+        end
+
+        # remove a unique_constraint comment
+        def remove_unique_constraint_comment table_name, unique_constraint_name
+          execute <<~SQL
+            COMMENT ON CONSTRAINT #{unique_constraint_name} ON #{schema_name}.#{table_name} IS NULL;
+          SQL
         end
       end
     end

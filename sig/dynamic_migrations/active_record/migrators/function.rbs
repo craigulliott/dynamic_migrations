@@ -19,6 +19,7 @@ module DynamicMigrations
         class FunctionDoesNotExistError < StandardError
         end
 
+        # this error is actually available on the module which includes this module
         class MissingFunctionBlockError < StandardError
         end
       end

@@ -6,12 +6,18 @@ module DynamicMigrations
     module Migrators
       module Validation
         def add_validation: (Symbol table_name, name: Symbol, ?initially_deferred: bool, ?deferrable: bool, ?comment: nil | String) -> void
+        def remove_validation: (Symbol table_name, Symbol name) -> void
+        def set_validation_comment: (Symbol table_name, Symbol validation_name, String comment) -> void
+        def remove_validation_comment: (Symbol table_name, Symbol validation_name) -> void
 
         # stubbing these out, as they are available on the module which includes this module
-        def set_constraint_comment: (Symbol table_name, Symbol constraint_name, String comment) -> void
         def execute: (String sql) -> void
         def schema_name: () -> Symbol
         def quote: (String str) -> String
+
+        # this error is actually available on the module which includes this module
+        class MissingFunctionBlockError < StandardError
+        end
       end
     end
   end

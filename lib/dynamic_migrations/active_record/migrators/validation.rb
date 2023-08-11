@@ -37,19 +37,29 @@ module DynamicMigrations
           SQL
 
           if comment.is_a? String
-            set_constraint_comment table_name, name, comment
+            set_validation_comment table_name, name, comment
           end
         end
 
-        warn "not tested"
         def remove_validation table_name, name
-          remove_check_constraint table_name, name
+          execute <<~SQL
+            ALTER TABLE #{table_name}
+              DROP CONSTRAINT #{name};
+          SQL
         end
 
-        warn "not tested"
-        def change_validation table_name, name:, initially_deferred: false, deferrable: false, comment: nil, &block
-          remove_validation table_name, name
-          create_validation table_name, name:, initially_deferred:, deferrable:, comment:, &block
+        # add a comment to the validation
+        def set_validation_comment table_name, validation_name, comment
+          execute <<~SQL
+            COMMENT ON CONSTRAINT #{validation_name} ON #{schema_name}.#{table_name} IS '#{quote comment}';
+          SQL
+        end
+
+        # remove a validation comment
+        def remove_validation_comment table_name, validation_name
+          execute <<~SQL
+            COMMENT ON CONSTRAINT #{validation_name} ON #{schema_name}.#{table_name} IS NULL;
+          SQL
         end
       end
     end

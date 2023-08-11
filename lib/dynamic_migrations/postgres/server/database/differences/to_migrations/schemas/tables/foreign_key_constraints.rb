@@ -36,9 +36,10 @@ module DynamicMigrations
                     # but the definition (except description, which is handled seeprately below) is different
                     # then we need to update the definition.
                     elsif configuration_foreign_key_constraint.except(:exists, :description).filter { |name, attributes| attributes[:matches] == false }.any?
-                      # configuration_foreign_key_constraint[:definition][:matches] == false
-                      foreign_key_constraint = @database.configured_schema(schema_name).table(table_name).foreign_key_constraint(foreign_key_constraint_name)
-                      @generator.change_foreign_key_constraint foreign_key_constraint
+                      # recreate the foreign_key_constraint
+                      original_foreign_key_constraint = @database.loaded_schema(schema_name).table(table_name).foreign_key_constraint(foreign_key_constraint_name)
+                      updated_foreign_key_constraint = @database.configured_schema(schema_name).table(table_name).foreign_key_constraint(foreign_key_constraint_name)
+                      @generator.recreate_foreign_key_constraint original_foreign_key_constraint, updated_foreign_key_constraint
                       # does the description also need to be updated
                       if configuration_foreign_key_constraint[:description][:matches] == false
                         # if the description was removed

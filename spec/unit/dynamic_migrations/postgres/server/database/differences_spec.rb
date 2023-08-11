@@ -101,6 +101,7 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database::Differences do
                         exists: false
                       },
                       columns: {},
+                      indexes: {},
                       triggers: {},
                       validations: {},
                       foreign_key_constraints: {},
@@ -147,6 +148,7 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database::Differences do
                           exists: false
                         },
                         columns: {},
+                        indexes: {},
                         triggers: {},
                         validations: {},
                         foreign_key_constraints: {},
@@ -171,6 +173,7 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database::Differences do
                           exists: false
                         },
                         columns: {},
+                        indexes: {},
                         triggers: {},
                         validations: {},
                         foreign_key_constraints: {},
@@ -228,6 +231,7 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database::Differences do
                               }
                             }
                           },
+                          indexes: {},
                           triggers: {},
                           validations: {},
                           foreign_key_constraints: {},
@@ -255,6 +259,7 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database::Differences do
                               exists: false
                             }
                           },
+                          indexes: {},
                           triggers: {},
                           validations: {},
                           foreign_key_constraints: {},
@@ -312,6 +317,7 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database::Differences do
                                 }
                               }
                             },
+                            indexes: {},
                             triggers: {},
                             validations: {},
                             foreign_key_constraints: {},
@@ -359,6 +365,7 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database::Differences do
                                 }
                               }
                             },
+                            indexes: {},
                             triggers: {},
                             validations: {},
                             foreign_key_constraints: {},
@@ -394,6 +401,10 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database::Differences do
                                   value: :my_primary_key,
                                   matches: false
                                 },
+                                column_names: {
+                                  value: [:my_column],
+                                  matches: false
+                                },
                                 description: {
                                   value: nil,
                                   matches: false
@@ -424,6 +435,7 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database::Differences do
                                   }
                                 }
                               },
+                              indexes: {},
                               triggers: {},
                               validations: {},
                               foreign_key_constraints: {},
@@ -471,6 +483,7 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database::Differences do
                                   }
                                 }
                               },
+                              indexes: {},
                               triggers: {},
                               validations: {},
                               foreign_key_constraints: {},
@@ -506,59 +519,8 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database::Differences do
                                     value: :my_primary_key,
                                     matches: true
                                   },
-                                  description: {
-                                    value: nil,
-                                    matches: true
-                                  }
-                                },
-                                columns: {
-                                  my_column: {
-                                    exists: true,
-                                    data_type: {
-                                      value: :integer,
-                                      matches: true
-                                    },
-                                    null: {
-                                      value: true,
-                                      matches: true
-                                    },
-                                    default: {
-                                      value: nil,
-                                      matches: true
-                                    },
-                                    description: {
-                                      value: nil,
-                                      matches: true
-                                    },
-                                    interval_type: {
-                                      value: nil,
-                                      matches: true
-                                    }
-                                  }
-                                },
-                                triggers: {},
-                                validations: {},
-                                foreign_key_constraints: {},
-                                unique_constraints: {}
-                              }
-                            },
-                            functions: {}
-                          }
-                        },
-                        database: {
-                          my_schema: {
-                            exists: true,
-                            tables: {
-                              my_table: {
-                                exists: true,
-                                description: {
-                                  value: nil,
-                                  matches: true
-                                },
-                                primary_key: {
-                                  exists: true,
-                                  name: {
-                                    value: :my_primary_key,
+                                  column_names: {
+                                    value: [:my_column],
                                     matches: true
                                   },
                                   description: {
@@ -591,6 +553,67 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database::Differences do
                                     }
                                   }
                                 },
+                                indexes: {},
+                                triggers: {},
+                                validations: {},
+                                foreign_key_constraints: {},
+                                unique_constraints: {}
+                              }
+                            },
+                            functions: {}
+                          }
+                        },
+                        database: {
+                          my_schema: {
+                            exists: true,
+                            tables: {
+                              my_table: {
+                                exists: true,
+                                description: {
+                                  value: nil,
+                                  matches: true
+                                },
+                                primary_key: {
+                                  exists: true,
+                                  name: {
+                                    value: :my_primary_key,
+                                    matches: true
+                                  },
+                                  column_names: {
+                                    value: [:my_column],
+                                    matches: true
+                                  },
+                                  description: {
+                                    value: nil,
+                                    matches: true
+                                  }
+                                },
+                                columns: {
+                                  my_column: {
+                                    exists: true,
+                                    data_type: {
+                                      value: :integer,
+                                      matches: true
+                                    },
+                                    null: {
+                                      value: true,
+                                      matches: true
+                                    },
+                                    default: {
+                                      value: nil,
+                                      matches: true
+                                    },
+                                    description: {
+                                      value: nil,
+                                      matches: true
+                                    },
+                                    interval_type: {
+                                      value: nil,
+                                      matches: true
+                                    }
+                                  }
+                                },
+                                indexes: {},
                                 triggers: {},
                                 validations: {},
                                 foreign_key_constraints: {},

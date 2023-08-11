@@ -11,7 +11,7 @@ RSpec.describe DynamicMigrations::Postgres::Generator do
 
     describe :create_schema do
       it "should return the expected ruby syntax to create a schema" do
-        expect(generator.create_schema(schema)).to eq <<~RUBY.strip
+        expect(generator.create_schema(schema).to_s).to eq <<~RUBY.strip
           create_schema :my_schema
         RUBY
       end
@@ -19,7 +19,7 @@ RSpec.describe DynamicMigrations::Postgres::Generator do
 
     describe :drop_schema do
       it "should return the expected ruby syntax to drop a schema" do
-        expect(generator.drop_schema(schema)).to eq <<~RUBY.strip
+        expect(generator.drop_schema(schema).to_s).to eq <<~RUBY.strip
           drop_schema :my_schema
         RUBY
       end

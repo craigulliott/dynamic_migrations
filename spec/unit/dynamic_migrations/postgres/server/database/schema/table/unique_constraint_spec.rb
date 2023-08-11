@@ -158,4 +158,16 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database::Schema::Table::Uni
       end
     end
   end
+
+  describe :differences_descriptions do
+    describe "when compared to a unique_constraint which has a different deferrable" do
+      let(:different_unique_constraint) { DynamicMigrations::Postgres::Server::Database::Schema::Table::UniqueConstraint.new :configuration, table, [column], :unique_constraint_name, deferrable: true }
+
+      it "returns the expected array which describes the differences" do
+        expect(unique_constraint.differences_descriptions(different_unique_constraint)).to eql([
+          "deferrable changed from `false` to `true`"
+        ])
+      end
+    end
+  end
 end

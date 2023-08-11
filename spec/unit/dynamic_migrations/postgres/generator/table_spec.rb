@@ -13,7 +13,7 @@ RSpec.describe DynamicMigrations::Postgres::Generator do
     describe :create_table do
       describe "for a table with no columns" do
         it "should return the expected ruby syntax to create a table" do
-          expect(generator.create_table(table)).to eq <<~RUBY.strip
+          expect(generator.create_table(table).to_s).to eq <<~RUBY.strip
             table_comment = <<~COMMENT
               Comment for this table
             COMMENT
@@ -30,7 +30,7 @@ RSpec.describe DynamicMigrations::Postgres::Generator do
         end
 
         it "should return the expected ruby syntax to create a table" do
-          expect(generator.create_table(table)).to eq <<~RUBY.strip
+          expect(generator.create_table(table).to_s).to eq <<~RUBY.strip
             table_comment = <<~COMMENT
               Comment for this table
             COMMENT
@@ -46,7 +46,7 @@ RSpec.describe DynamicMigrations::Postgres::Generator do
         end
 
         it "should return the expected ruby syntax to create a table" do
-          expect(generator.create_table(table)).to eq <<~RUBY.strip
+          expect(generator.create_table(table).to_s).to eq <<~RUBY.strip
             table_comment = <<~COMMENT
               Comment for this table
             COMMENT
@@ -64,7 +64,7 @@ RSpec.describe DynamicMigrations::Postgres::Generator do
         end
 
         it "should return the expected ruby syntax to create a table" do
-          expect(generator.create_table(table)).to eq <<~RUBY.strip
+          expect(generator.create_table(table).to_s).to eq <<~RUBY.strip
             table_comment = <<~COMMENT
               Comment for this table
             COMMENT
@@ -82,7 +82,7 @@ RSpec.describe DynamicMigrations::Postgres::Generator do
         end
 
         it "should return the expected ruby syntax to create a table" do
-          expect(generator.create_table(table)).to eq <<~RUBY.strip
+          expect(generator.create_table(table).to_s).to eq <<~RUBY.strip
             table_comment = <<~COMMENT
               Comment for this table
             COMMENT
@@ -106,7 +106,7 @@ RSpec.describe DynamicMigrations::Postgres::Generator do
         end
 
         it "should return the expected ruby syntax to create a table" do
-          expect(generator.create_table(table)).to eq <<~RUBY.strip
+          expect(generator.create_table(table).to_s).to eq <<~RUBY.strip
             table_comment = <<~COMMENT
               Comment for this table
             COMMENT
@@ -125,7 +125,7 @@ RSpec.describe DynamicMigrations::Postgres::Generator do
 
     describe :drop_table do
       it "should return the expected ruby syntax to drop a table" do
-        expect(generator.drop_table(table)).to eq <<~RUBY.strip
+        expect(generator.drop_table(table).to_s).to eq <<~RUBY.strip
           drop_table :my_table, force: true
         RUBY
       end
@@ -133,7 +133,7 @@ RSpec.describe DynamicMigrations::Postgres::Generator do
 
     describe :set_table_comment do
       it "should return the expected ruby syntax to set a table comment" do
-        expect(generator.set_table_comment(table)).to eq <<~RUBY.strip
+        expect(generator.set_table_comment(table).to_s).to eq <<~RUBY.strip
           set_table_comment :my_table, <<~COMMENT
             Comment for this table
           COMMENT
@@ -143,7 +143,7 @@ RSpec.describe DynamicMigrations::Postgres::Generator do
 
     describe :remove_table_comment do
       it "should return the expected ruby syntax to remove a table comment" do
-        expect(generator.remove_table_comment(table)).to eq <<~RUBY.strip
+        expect(generator.remove_table_comment(table).to_s).to eq <<~RUBY.strip
           remove_table_comment :my_table
         RUBY
       end

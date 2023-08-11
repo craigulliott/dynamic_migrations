@@ -235,4 +235,16 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database::Schema::Table::For
       end
     end
   end
+
+  describe :differences_descriptions do
+    describe "when compared to a foreign_key_constraint which has a different deferrable" do
+      let(:different_foreign_key_constraint) { DynamicMigrations::Postgres::Server::Database::Schema::Table::ForeignKeyConstraint.new :configuration, table, [column], foreign_table, [foreign_column], :foreign_key_constraint_name, deferrable: true }
+
+      it "returns the expected array which describes the differences" do
+        expect(foreign_key_constraint.differences_descriptions(different_foreign_key_constraint)).to eql([
+          "deferrable changed from `false` to `true`"
+        ])
+      end
+    end
+  end
 end

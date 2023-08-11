@@ -55,6 +55,12 @@ module DynamicMigrations
               end
               @triggers << trigger
             end
+
+            def differences_descriptions other_function
+              method_differences_descriptions other_function, [
+                :definition
+              ]
+            end
           end
         end
       end

@@ -2,7 +2,7 @@ module DynamicMigrations
   module Postgres
     class Generator
       module Trigger
-        def add_trigger trigger
+        def add_trigger trigger, code_comment = nil
           options = {
             name: ":#{trigger.name}"
           }
@@ -46,29 +46,52 @@ module DynamicMigrations
 
           options_syntax = options.map { |k, v| "#{k}: #{v}" }.join(", ")
 
-          add_migration trigger.table.schema.name, trigger.table.name, :add_trigger, trigger.name, <<~RUBY
+          add_migration trigger.table.schema.name, trigger.table.name, :add_trigger, trigger.name, code_comment, <<~RUBY
             #{method_name} :#{trigger.table.name}, #{options_syntax}
           RUBY
         end
 
-        def remove_trigger trigger
-          add_migration trigger.table.schema.name, trigger.table.name, :remove_trigger, trigger.name, <<~RUBY
+        def remove_trigger trigger, code_comment = nil
+          add_migration trigger.table.schema.name, trigger.table.name, :remove_trigger, trigger.name, code_comment, <<~RUBY
             remove_trigger :#{trigger.table.name}, :#{trigger.name}
           RUBY
         end
 
+        def recreate_trigger original_trigger, updated_trigger
+          # remove the original trigger
+          removal_fragment = remove_trigger original_trigger, <<~CODE_COMMENT
+            Removing original trigger because it has changed (it is recreated below)
+            Changes:
+              #{indent original_trigger.differences_descriptions(updated_trigger).join("\n")}
+          CODE_COMMENT
+
+          # recrete the trigger with the new options
+          recreation_fragment = add_trigger updated_trigger, <<~CODE_COMMENT
+            Recreating this trigger
+          CODE_COMMENT
+
+          # return the new fragments (the main reason to return them here is for the specs)
+          [removal_fragment, recreation_fragment]
+        end
+
         # add a comment to a trigger
-        def set_trigger_comment trigger
-          add_migration trigger.table.schema.name, trigger.table.name, :set_trigger_comment, trigger.name, <<~RUBY
+        def set_trigger_comment trigger, code_comment = nil
+          description = trigger.description
+
+          if description.nil?
+            raise MissingDescriptionError
+          end
+
+          add_migration trigger.table.schema.name, trigger.table.name, :set_trigger_comment, trigger.name, code_comment, <<~RUBY
             set_trigger_comment :#{trigger.table.name}, :#{trigger.name}, <<~COMMENT
-              #{indent trigger.description}
+              #{indent description}
             COMMENT
           RUBY
         end
 
         # remove the comment from a trigger
-        def remove_trigger_comment trigger
-          add_migration trigger.table.schema.name, trigger.table.name, :remove_trigger_comment, trigger.name, <<~RUBY
+        def remove_trigger_comment trigger, code_comment = nil
+          add_migration trigger.table.schema.name, trigger.table.name, :remove_trigger_comment, trigger.name, code_comment, <<~RUBY
             remove_trigger_comment :#{trigger.table.name}, :#{trigger.name}
           RUBY
         end

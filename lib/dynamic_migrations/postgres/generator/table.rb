@@ -8,12 +8,12 @@ module DynamicMigrations
         class NoTableColumnCommentError < StandardError
         end
 
-        def create_table table
+        def create_table table, code_comment = nil
           if table.description.nil?
-            raise NoTableCommentError, "Refusing to generate create_table migration, no description was provided for `#{table.name}`.`#{table.schema.name}`"
+            raise NoTableCommentError, "Refusing to generate create_table migration, no description was provided for `#{table.schema.name}`.`#{table.name}`"
           end
 
-          add_migration table.schema.name, table.name, :create_table, table.name, <<~RUBY
+          add_migration table.schema.name, table.name, :create_table, table.name, code_comment, <<~RUBY
             table_comment = <<~COMMENT
               #{indent table.description}
             COMMENT
@@ -22,6 +22,36 @@ module DynamicMigrations
             end
           RUBY
         end
+
+        def drop_table table, code_comment = nil
+          add_migration table.schema.name, table.name, :drop_table, table.name, code_comment, <<~RUBY
+            drop_table :#{table.name}, force: true
+          RUBY
+        end
+
+        # add a comment to a table
+        def set_table_comment table, code_comment = nil
+          description = table.description
+
+          if description.nil?
+            raise MissingDescriptionError
+          end
+
+          add_migration table.schema.name, table.name, :set_table_comment, table.name, code_comment, <<~RUBY
+            set_table_comment :#{table.name}, <<~COMMENT
+              #{indent description}
+            COMMENT
+          RUBY
+        end
+
+        # remove the comment from a table
+        def remove_table_comment table, code_comment = nil
+          add_migration table.schema.name, table.name, :remove_table_comment, table.name, code_comment, <<~RUBY
+            remove_table_comment :#{table.name}
+          RUBY
+        end
+
+        private
 
         def table_columns columns
           lines = []
@@ -43,7 +73,7 @@ module DynamicMigrations
             end
 
             if column.description.nil?
-              raise NoTableColumnCommentError, "Refusing to generate create_table migration, no description was provided for `#{column.table.name}`.`#{column.table.schema.name}` column `#{column.name}`"
+              raise NoTableColumnCommentError, "Refusing to generate create_table migration, no description was provided for `#{column.table.schema.name}`.`#{column.table.name}` column `#{column.name}`"
             end
             options[:comment] = <<~RUBY
               <<~COMMENT
@@ -62,30 +92,6 @@ module DynamicMigrations
 
           lines.join("\n")
         end
-
-        def drop_table table
-          add_migration table.schema.name, table.name, :drop_table, table.name, <<~RUBY
-            drop_table :#{table.name}, force: true
-          RUBY
-        end
-
-        # add a comment to a table
-        def set_table_comment table
-          add_migration table.schema.name, table.name, :set_table_comment, table.name, <<~RUBY
-            set_table_comment :#{table.name}, <<~COMMENT
-              #{indent table.description}
-            COMMENT
-          RUBY
-        end
-
-        # remove the comment from a table
-        def remove_table_comment table
-          add_migration table.schema.name, table.name, :remove_table_comment, table.name, <<~RUBY
-            remove_table_comment :#{table.name}
-          RUBY
-        end
-
-        private
 
         def table_options table
           options = []

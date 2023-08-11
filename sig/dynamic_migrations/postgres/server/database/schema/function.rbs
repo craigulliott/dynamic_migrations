@@ -15,6 +15,7 @@ module DynamicMigrations
             def initialize: (untyped source, untyped schema, untyped name, untyped definition, ?description: nil) -> void
             def has_description?: -> false
             def add_trigger: (Schema::Table::Trigger trigger) -> void
+            def differences_descriptions: (Function other_function) -> Array[String]
 
             class ExpectedSchemaError < StandardError
             end

@@ -37,7 +37,7 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database::Differences::ToMig
                     #
                     # Indexes
                     #
-                    add_index :my_table, :my_column, name: :my_index
+                    add_index :my_table, :my_column, name: :my_index, unique: false, using: :btree, sort: :asc
                   RUBY
                 }
               ]
@@ -51,15 +51,69 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database::Differences::ToMig
 
             it "returns the migration to update the index by replacing it" do
               expect(to_migrations.migrations).to eql({
-                my_schema: [{
-                  name: :changes_for_my_table,
-                  content: <<~RUBY.strip
-                    #
-                    # Indexes
-                    #
-                    change_index :my_table, :my_column, name: :my_index
-                  RUBY
-                }]
+                my_schema: [
+                  {
+                    name: :changes_for_my_table,
+                    content: <<~RUBY.strip
+                      #
+                      # Remove Indexes
+                      #
+                      # Removing original index because it has changed (it is recreated below)
+                      # Changes:
+                      #   order changed from `desc` to `asc`
+                      remove_index :my_table, :my_index
+                    RUBY
+                  },
+                  {
+                    name: :changes_for_my_table,
+                    content: <<~RUBY.strip
+                      #
+                      # Indexes
+                      #
+                      # Recreating this index
+                      add_index :my_table, :my_column, name: :my_index, unique: false, using: :btree, sort: :asc
+                    RUBY
+                  }
+                ]
+              })
+            end
+          end
+
+          describe "when the loaded table has a index with the same name but across additional columns" do
+            before(:each) do
+              # add the additional column on both so that there are no column differences
+              configured_table.add_column :my_other_column, :integer
+              loaded_table.add_column :my_other_column, :integer
+              # add the loaded index across two columns, so that the indexes are different
+              loaded_table.add_index :my_index, [:my_column, :my_other_column]
+            end
+
+            it "returns the migration to update the index by replacing it" do
+              expect(to_migrations.migrations).to eql({
+                my_schema: [
+                  {
+                    name: :changes_for_my_table,
+                    content: <<~RUBY.strip
+                      #
+                      # Remove Indexes
+                      #
+                      # Removing original index because it has changed (it is recreated below)
+                      # Changes:
+                      #   column_names changed from `[:my_column, :my_other_column]` to `[:my_column]`
+                      remove_index :my_table, :my_index
+                    RUBY
+                  },
+                  {
+                    name: :changes_for_my_table,
+                    content: <<~RUBY.strip
+                      #
+                      # Indexes
+                      #
+                      # Recreating this index
+                      add_index :my_table, :my_column, name: :my_index, unique: false, using: :btree, sort: :asc
+                    RUBY
+                  }
+                ]
               })
             end
           end
@@ -89,7 +143,7 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database::Differences::ToMig
                     #
                     # Indexes
                     #
-                    add_index :my_table, :my_column, name: :my_index, comment: <<~COMMENT
+                    add_index :my_table, :my_column, name: :my_index, unique: false, using: :btree, sort: :asc, comment: <<~COMMENT
                       Description of my index
                     COMMENT
                   RUBY

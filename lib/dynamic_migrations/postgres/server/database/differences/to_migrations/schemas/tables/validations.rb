@@ -36,10 +36,10 @@ module DynamicMigrations
                     # but the definition (except description, which is handled seeprately below) is different
                     # then we need to update the definition.
                     elsif configuration_validation.except(:exists, :description).filter { |name, attributes| attributes[:matches] == false }.any?
-                      # configuration_validation[:definition][:matches] == false
-                      validation = @database.configured_schema(schema_name).table(table_name).validation(validation_name)
-                      # update the validation
-                      @generator.change_validation validation
+                      # recreate the validation
+                      original_validation = @database.loaded_schema(schema_name).table(table_name).validation(validation_name)
+                      updated_validation = @database.configured_schema(schema_name).table(table_name).validation(validation_name)
+                      @generator.recreate_validation original_validation, updated_validation
                       # does the description also need to be updated
                       if configuration_validation[:description][:matches] == false
                         # if the description was removed

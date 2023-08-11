@@ -120,4 +120,16 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database::Schema::Table::Pri
       end
     end
   end
+
+  describe :differences_descriptions do
+    describe "when compared to a primary_key which has different columns" do
+      let(:different_primary_key) { DynamicMigrations::Postgres::Server::Database::Schema::Table::PrimaryKey.new :configuration, table, [column, column2], :primary_key_name }
+
+      it "returns the expected array which describes the differences" do
+        expect(primary_key.differences_descriptions(different_primary_key)).to eql([
+          "column_names changed from `[:my_column]` to `[:my_column, :my_other_column]`"
+        ])
+      end
+    end
+  end
 end

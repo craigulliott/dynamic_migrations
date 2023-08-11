@@ -5,13 +5,16 @@ module DynamicMigrations
   module Postgres
     class Generator
       module Index
-        def add_index: (Postgres::Server::Database::Schema::Table::Index index) -> String
-        def remove_index: (Postgres::Server::Database::Schema::Table::Index index) -> String
-        def indent: (String str) -> String
+        def add_index: (Postgres::Server::Database::Schema::Table::Index index, ?nil | String code_comment) -> Fragment
+        def remove_index: (Postgres::Server::Database::Schema::Table::Index index, ?nil | String code_comment) -> Fragment
+        def recreate_index: (Postgres::Server::Database::Schema::Table::Index original_index, Postgres::Server::Database::Schema::Table::Index updated_index) -> Array[Fragment]
+        def set_index_comment: (Postgres::Server::Database::Schema::Table::Index index, ?nil | String code_comment) -> Fragment
+        def remove_index_comment: (Postgres::Server::Database::Schema::Table::Index index, ?nil | String code_comment) -> Fragment
 
         # these come from the generator object (which this module is included into)
-        def add_migration: (Symbol schema_name, Symbol | nil table_name, Symbol migration_method, Symbol | nil object_name, String migration) -> String
-      end
+        def add_migration: (Symbol schema_name, Symbol | nil table_name, Symbol migration_method, Symbol | nil object_name, nil | String code_comment, String migration) -> Fragment
+        def indent: (String str) -> String
+        end
     end
   end
 end

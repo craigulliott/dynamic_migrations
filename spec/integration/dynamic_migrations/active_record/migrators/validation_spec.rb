@@ -95,6 +95,37 @@ RSpec.describe DynamicMigrations::ActiveRecord::Migrators do
             }.to raise_error DynamicMigrations::ActiveRecord::Migrators::DeferrableOptionsError
           end
         end
+
+        describe :remove_validation do
+          it "generates the expected sql" do
+            migration.remove_validation(:my_table, :my_validation)
+
+            expect(migration).to executed_sql <<~SQL
+              ALTER TABLE my_table
+                DROP CONSTRAINT my_validation;
+            SQL
+          end
+        end
+
+        describe :set_validation_comment do
+          it "generates the expected sql" do
+            migration.set_validation_comment(:my_table, :my_validation, "my comment")
+
+            expect(migration).to executed_sql <<~SQL
+              COMMENT ON CONSTRAINT my_validation ON my_schema.my_table IS 'my comment';
+            SQL
+          end
+        end
+
+        describe :remove_validation_comment do
+          it "generates the expected sql" do
+            migration.remove_validation_comment(:my_table, :my_validation)
+
+            expect(migration).to executed_sql <<~SQL
+              COMMENT ON CONSTRAINT my_validation ON my_schema.my_table IS NULL;
+            SQL
+          end
+        end
       end
     end
   end

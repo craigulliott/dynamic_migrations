@@ -36,7 +36,7 @@ module DynamicMigrations
                     # but the definition (except description, which is handled seeprately below) is different
                     # then we need to update the definition.
                     elsif configuration_column.except(:exists, :description).filter { |name, attributes| attributes[:matches] == false }.any?
-                      # configuration_column[:definition][:matches] == false
+                      # update the column
                       column = @database.configured_schema(schema_name).table(table_name).column(column_name)
                       @generator.change_column column
                       # does the description also need to be updated

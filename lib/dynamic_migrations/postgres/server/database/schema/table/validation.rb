@@ -72,6 +72,14 @@ module DynamicMigrations
                 @columns.keys
               end
 
+              def differences_descriptions other_validation
+                method_differences_descriptions other_validation, [
+                  :check_clause,
+                  :deferrable,
+                  :initially_deferred
+                ]
+              end
+
               private
 
               # used internally to set the columns from this objects initialize method

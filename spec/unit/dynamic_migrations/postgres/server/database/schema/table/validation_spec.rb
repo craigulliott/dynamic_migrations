@@ -7,37 +7,37 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database::Schema::Table::Val
   let(:schema) { DynamicMigrations::Postgres::Server::Database::Schema.new :configuration, database, :my_schema }
   let(:table) { DynamicMigrations::Postgres::Server::Database::Schema::Table.new :configuration, schema, :my_table }
   let(:column) { table.add_column :my_column, :boolean }
-  let(:validation) { DynamicMigrations::Postgres::Server::Database::Schema::Table::Validation.new :configuration, table, [column], :validation_name, "validation SQL" }
+  let(:validation) { DynamicMigrations::Postgres::Server::Database::Schema::Table::Validation.new :configuration, table, [column], :validation_name, "my_column > 0" }
 
   describe :initialize do
     it "instantiates a new validation without raising an error" do
       expect {
-        DynamicMigrations::Postgres::Server::Database::Schema::Table::Validation.new :configuration, table, [column], :validation_name, "validation SQL"
+        DynamicMigrations::Postgres::Server::Database::Schema::Table::Validation.new :configuration, table, [column], :validation_name, "my_column > 0"
       }.to_not raise_error
     end
 
     describe "providing an optional description" do
       it "does not raise an error" do
         expect {
-          DynamicMigrations::Postgres::Server::Database::Schema::Table::Validation.new :configuration, table, [column], :validation_name, "validation SQL", description: "foo bar"
+          DynamicMigrations::Postgres::Server::Database::Schema::Table::Validation.new :configuration, table, [column], :validation_name, "my_column > 0", description: "Description of my validation"
         }.to_not raise_error
       end
 
       it "returns the expected value via a getter of the same name" do
-        validation = DynamicMigrations::Postgres::Server::Database::Schema::Table::Validation.new :configuration, table, [column], :validation_name, "validation SQL", description: "foo bar"
-        expect(validation.description).to eq "foo bar"
+        validation = DynamicMigrations::Postgres::Server::Database::Schema::Table::Validation.new :configuration, table, [column], :validation_name, "my_column > 0", description: "Description of my validation"
+        expect(validation.description).to eq "Description of my validation"
       end
     end
 
     describe "providing an optional deferrable value" do
       it "does not raise an error" do
         expect {
-          DynamicMigrations::Postgres::Server::Database::Schema::Table::Validation.new :configuration, table, [column], :validation_name, "validation SQL", deferrable: true
+          DynamicMigrations::Postgres::Server::Database::Schema::Table::Validation.new :configuration, table, [column], :validation_name, "my_column > 0", deferrable: true
         }.to_not raise_error
       end
 
       it "returns the expected value via a getter of the same name" do
-        validation = DynamicMigrations::Postgres::Server::Database::Schema::Table::Validation.new :configuration, table, [column], :validation_name, "validation SQL", deferrable: true
+        validation = DynamicMigrations::Postgres::Server::Database::Schema::Table::Validation.new :configuration, table, [column], :validation_name, "my_column > 0", deferrable: true
         expect(validation.deferrable).to be true
       end
     end
@@ -45,49 +45,49 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database::Schema::Table::Val
     describe "providing an optional initially_deferred value" do
       it "does not raise an error" do
         expect {
-          DynamicMigrations::Postgres::Server::Database::Schema::Table::Validation.new :configuration, table, [column], :validation_name, "validation SQL", initially_deferred: true
+          DynamicMigrations::Postgres::Server::Database::Schema::Table::Validation.new :configuration, table, [column], :validation_name, "my_column > 0", initially_deferred: true
         }.to_not raise_error
       end
 
       it "returns the expected value via a getter of the same name" do
-        validation = DynamicMigrations::Postgres::Server::Database::Schema::Table::Validation.new :configuration, table, [column], :validation_name, "validation SQL", initially_deferred: true
+        validation = DynamicMigrations::Postgres::Server::Database::Schema::Table::Validation.new :configuration, table, [column], :validation_name, "my_column > 0", initially_deferred: true
         expect(validation.initially_deferred).to be true
       end
     end
 
     it "raises an error if providing an invalid table" do
       expect {
-        DynamicMigrations::Postgres::Server::Database::Schema::Table::Validation.new :configuration, :not_a_table, [column], :validation_name, "validation SQL"
+        DynamicMigrations::Postgres::Server::Database::Schema::Table::Validation.new :configuration, :not_a_table, [column], :validation_name, "my_column > 0"
       }.to raise_error DynamicMigrations::Postgres::Server::Database::Schema::Table::Validation::ExpectedTableError
     end
 
     it "raises an error if providing something other than an array for columns" do
       expect {
-        DynamicMigrations::Postgres::Server::Database::Schema::Table::Validation.new :configuration, table, :not_an_array, :validation_name, "validation SQL"
+        DynamicMigrations::Postgres::Server::Database::Schema::Table::Validation.new :configuration, table, :not_an_array, :validation_name, "my_column > 0"
       }.to raise_error DynamicMigrations::Postgres::Server::Database::Schema::Table::Validation::ExpectedArrayOfColumnsError
     end
 
     it "raises an error if providing an array of objects which are not columns for columns" do
       expect {
-        DynamicMigrations::Postgres::Server::Database::Schema::Table::Validation.new :configuration, table, [:not_a_column], :validation_name, "validation SQL"
+        DynamicMigrations::Postgres::Server::Database::Schema::Table::Validation.new :configuration, table, [:not_a_column], :validation_name, "my_column > 0"
       }.to raise_error DynamicMigrations::Postgres::Server::Database::Schema::Table::Validation::ExpectedArrayOfColumnsError
     end
 
     it "raises an error if providing duplicate columns" do
       expect {
-        DynamicMigrations::Postgres::Server::Database::Schema::Table::Validation.new :configuration, table, [column, column], :validation_name, "validation SQL"
+        DynamicMigrations::Postgres::Server::Database::Schema::Table::Validation.new :configuration, table, [column, column], :validation_name, "my_column > 0"
       }.to raise_error DynamicMigrations::Postgres::Server::Database::Schema::Table::Validation::DuplicateColumnError
     end
 
     it "raises an error if providing an empty array of columns" do
       expect {
-        DynamicMigrations::Postgres::Server::Database::Schema::Table::Validation.new :configuration, table, [], :validation_name, "validation SQL"
+        DynamicMigrations::Postgres::Server::Database::Schema::Table::Validation.new :configuration, table, [], :validation_name, "my_column > 0"
       }.to raise_error DynamicMigrations::Postgres::Server::Database::Schema::Table::Validation::ExpectedArrayOfColumnsError
     end
 
     it "raises an error if providing something other than a symbol for the validation name" do
       expect {
-        DynamicMigrations::Postgres::Server::Database::Schema::Table::Validation.new :configuration, table, [column], "invalid validation name", "validation SQL"
+        DynamicMigrations::Postgres::Server::Database::Schema::Table::Validation.new :configuration, table, [column], "invalid validation name", "my_column > 0"
       }.to raise_error DynamicMigrations::ExpectedSymbolError
     end
 
@@ -124,7 +124,7 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database::Schema::Table::Val
 
   describe :check_clause do
     it "returns the expected check_clause" do
-      expect(validation.check_clause).to eq("validation SQL")
+      expect(validation.check_clause).to eq("my_column > 0")
     end
   end
 
@@ -154,9 +154,21 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database::Schema::Table::Val
     end
 
     describe "when a description was provided at initialization" do
-      let(:validation_with_description) { DynamicMigrations::Postgres::Server::Database::Schema::Table::Validation.new :configuration, table, [column], :validation_name, "validation SQL", description: "foo bar" }
+      let(:validation_with_description) { DynamicMigrations::Postgres::Server::Database::Schema::Table::Validation.new :configuration, table, [column], :validation_name, "my_column > 0", description: "Description of my validation" }
       it "returns true" do
         expect(validation_with_description.has_description?).to be(true)
+      end
+    end
+  end
+
+  describe :differences_descriptions do
+    describe "when compared to a validation which has a different check_clause" do
+      let(:different_validation) { DynamicMigrations::Postgres::Server::Database::Schema::Table::Validation.new :configuration, table, [column], :validation_name, "my_column > 100" }
+
+      it "returns the expected array which describes the differences" do
+        expect(validation.differences_descriptions(different_validation)).to eql([
+          "check_clause changed from `my_column > 0` to `my_column > 100`"
+        ])
       end
     end
   end

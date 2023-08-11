@@ -74,6 +74,14 @@ module DynamicMigrations
                 @columns.keys
               end
 
+              def differences_descriptions other_unique_constraint
+                method_differences_descriptions other_unique_constraint, [
+                  :column_names,
+                  :deferrable,
+                  :initially_deferred
+                ]
+              end
+
               private
 
               # used internally to set the columns from this objects initialize method

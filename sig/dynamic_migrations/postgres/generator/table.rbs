@@ -5,17 +5,17 @@ module DynamicMigrations
   module Postgres
     class Generator
       module Table
-        def create_table: (Postgres::Server::Database::Schema::Table table) -> String
-        def table_columns: (Array[Postgres::Server::Database::Schema::Table::Column] columns) -> String
-        def drop_table: (Postgres::Server::Database::Schema::Table table) -> String
-        def set_column_comment: (Postgres::Server::Database::Schema::Table::Column column) -> String
-        def remove_column_comment: (Postgres::Server::Database::Schema::Table::Column column) -> String
+        def create_table: (Postgres::Server::Database::Schema::Table table, ?nil | String code_comment) -> Fragment
+        def drop_table: (Postgres::Server::Database::Schema::Table table, ?nil | String code_comment) -> Fragment
+        def set_table_comment: (Postgres::Server::Database::Schema::Table table, ?nil | String code_comment) -> Fragment
+        def remove_table_comment: (Postgres::Server::Database::Schema::Table table, ?nil | String code_comment) -> Fragment
 
         # these come from the generator object (which this module is included into)
-        def add_migration: (Symbol schema_name, Symbol | nil table_name, Symbol migration_method, Symbol | nil object_name, String migration) -> String
+        def add_migration: (Symbol schema_name, Symbol | nil table_name, Symbol migration_method, Symbol | nil object_name, nil | String code_comment, String migration) -> Fragment
         def indent: (String str) -> String
 
         private
+        def table_columns: (Array[Postgres::Server::Database::Schema::Table::Column] columns) -> String
         def table_options: (Postgres::Server::Database::Schema::Table table) -> String
 
         class NoTableCommentError < StandardError

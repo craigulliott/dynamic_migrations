@@ -1,7 +1,7 @@
 module DynamicMigrations
   module ActiveRecord
     module Migrators
-      module ColumnComment
+      module Column
         # add a comment to the column
         def set_column_comment table_name, column_name, comment
           execute <<~SQL

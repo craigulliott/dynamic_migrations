@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 RSpec.describe DynamicMigrations::Postgres::Generator::SchemaMigrations do
+  let(:fragment) { DynamicMigrations::Postgres::Generator::Fragment.new :my_object, "my comment", "my content" }
   let(:schema_migration) { DynamicMigrations::Postgres::Generator::SchemaMigrations.new }
 
   describe :initialize do
@@ -11,9 +12,9 @@ RSpec.describe DynamicMigrations::Postgres::Generator::SchemaMigrations do
     end
   end
 
-  describe :add_content do
+  describe :add_fragment do
     it "adds content to the current migration section" do
-      schema_migration.add_content :my_schema, :my_table, :my_content, :my_object, "content here"
+      schema_migration.add_fragment :my_schema, :my_table, :my_content, fragment
       expect(schema_migration.current_migration_sections.count).to eq 1
       expect(schema_migration.current_migration_sections.first.schema_name).to eq :my_schema
     end
@@ -27,14 +28,17 @@ RSpec.describe DynamicMigrations::Postgres::Generator::SchemaMigrations do
 
     describe "after content has been added" do
       before(:each) do
-        schema_migration.add_content :my_schema, :my_table, :my_content, :my_object, "content here"
+        schema_migration.add_fragment :my_schema, :my_table, :my_content, fragment
       end
 
       it "commits the current migration to the list of final migrations" do
         schema_migration.finalize
         expect(schema_migration.to_a).to eql [{
           name: :changes_for_my_table,
-          content: "content here"
+          content: <<~CONTENT.strip
+            # my comment
+            my content
+          CONTENT
         }]
       end
     end
@@ -47,14 +51,17 @@ RSpec.describe DynamicMigrations::Postgres::Generator::SchemaMigrations do
 
     describe "after content has been added and finalized" do
       before(:each) do
-        schema_migration.add_content :my_schema, :my_table, :my_content, :my_object, "content here"
+        schema_migration.add_fragment :my_schema, :my_table, :my_content, fragment
         schema_migration.finalize
       end
 
       it "commits the current migration to the list of final migrations" do
         expect(schema_migration.to_a).to eql [{
           name: :changes_for_my_table,
-          content: "content here"
+          content: <<~CONTENT.strip
+            # my comment
+            my content
+          CONTENT
         }]
       end
     end

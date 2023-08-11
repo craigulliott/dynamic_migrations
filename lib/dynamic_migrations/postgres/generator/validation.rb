@@ -2,7 +2,7 @@ module DynamicMigrations
   module Postgres
     class Generator
       module Validation
-        def add_validation validation, update = false
+        def add_validation validation, code_comment = nil
           options = {
             name: ":#{validation.name}",
             deferrable: validation.deferrable,
@@ -28,10 +28,8 @@ module DynamicMigrations
             validation_sql << ";"
           end
 
-          method_name = update ? :change_validation : :add_validation
-
-          add_migration validation.table.schema.name, validation.table.name, :add_validation, validation.name, (comment_sql + <<~RUBY)
-            #{method_name} :#{validation.table.name}, #{options_syntax} do
+          add_migration validation.table.schema.name, validation.table.name, :add_validation, validation.name, code_comment, (comment_sql + <<~RUBY)
+            add_validation :#{validation.table.name}, #{options_syntax} do
               <<~SQL
                 #{indent validation_sql}
               SQL
@@ -39,16 +37,49 @@ module DynamicMigrations
           RUBY
         end
 
-        warn "not tested"
-        def remove_validation validation
-          add_migration validation.table.schema.name, validation.table.name, :remove_validation, validation.name, <<~RUBY
+        def remove_validation validation, code_comment = nil
+          add_migration validation.table.schema.name, validation.table.name, :remove_validation, validation.name, code_comment, <<~RUBY
             remove_validation :#{validation.table.name}, :#{validation.name}
           RUBY
         end
 
-        warn "not tested"
-        def change_validation validation
-          add_validation validation, true
+        def recreate_validation original_validation, updated_validation
+          # remove the original validation
+          removal_fragment = remove_validation original_validation, <<~CODE_COMMENT
+            Removing original validation because it has changed (it is recreated below)
+            Changes:
+              #{indent original_validation.differences_descriptions(updated_validation).join("\n")}
+          CODE_COMMENT
+
+          # recrete the validation with the new options
+          recreation_fragment = add_validation updated_validation, <<~CODE_COMMENT
+            Recreating this validation
+          CODE_COMMENT
+
+          # return the new fragments (the main reason to return them here is for the specs)
+          [removal_fragment, recreation_fragment]
+        end
+
+        # add a comment to a validation
+        def set_validation_comment validation, code_comment = nil
+          description = validation.description
+
+          if description.nil?
+            raise MissingDescriptionError
+          end
+
+          add_migration validation.table.schema.name, validation.table.name, :set_validation_comment, validation.name, code_comment, <<~RUBY
+            set_validation_comment :#{validation.table.name}, :#{validation.name}, <<~COMMENT
+              #{indent description}
+            COMMENT
+          RUBY
+        end
+
+        # remove the comment from a validation
+        def remove_validation_comment validation, code_comment = nil
+          add_migration validation.table.schema.name, validation.table.name, :remove_validation_comment, validation.name, code_comment, <<~RUBY
+            remove_validation_comment :#{validation.table.name}, :#{validation.name}
+          RUBY
         end
       end
     end

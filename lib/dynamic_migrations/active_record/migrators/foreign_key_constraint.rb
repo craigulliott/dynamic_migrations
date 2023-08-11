@@ -44,8 +44,29 @@ module DynamicMigrations
           SQL
 
           if comment.is_a? String
-            set_constraint_comment table_name, name, comment
+            set_foreign_key_comment table_name, name, comment
           end
+        end
+
+        def remove_foreign_key table_name, name
+          execute <<~SQL
+            ALTER TABLE #{table_name}
+              DROP CONSTRAINT #{name};
+          SQL
+        end
+
+        # add a comment to the foreign_key
+        def set_foreign_key_comment table_name, foreign_key_name, comment
+          execute <<~SQL
+            COMMENT ON CONSTRAINT #{foreign_key_name} ON #{schema_name}.#{table_name} IS '#{quote comment}';
+          SQL
+        end
+
+        # remove a foreign_key comment
+        def remove_foreign_key_comment table_name, foreign_key_name
+          execute <<~SQL
+            COMMENT ON CONSTRAINT #{foreign_key_name} ON #{schema_name}.#{table_name} IS NULL;
+          SQL
         end
 
         private

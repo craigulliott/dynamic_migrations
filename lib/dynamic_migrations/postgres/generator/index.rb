@@ -2,7 +2,7 @@ module DynamicMigrations
   module Postgres
     class Generator
       module Index
-        def add_index index
+        def add_index index, code_comment = nil
           # the migration accepts either a single column name or an array of column names
           # we use the appropriate syntax just to make the migration prettier and easier
           # to understand
@@ -46,14 +46,53 @@ module DynamicMigrations
 
           options_syntax = options.map { |k, v| "#{k}: #{v}" }.join(", ")
 
-          add_migration index.table.schema.name, index.table.name, :add_index, index.name, (where_sql + <<~RUBY)
+          add_migration index.table.schema.name, index.table.name, :add_index, index.name, code_comment, (where_sql + <<~RUBY)
             add_index :#{index.table.name}, #{column_names}, #{options_syntax}
           RUBY
         end
 
-        def remove_index index
-          add_migration index.table.schema.name, index.table.name, :remove_index, index.name, <<~RUBY
+        def remove_index index, code_comment = nil
+          add_migration index.table.schema.name, index.table.name, :remove_index, index.name, code_comment, <<~RUBY
             remove_index :#{index.table.name}, :#{index.name}
+          RUBY
+        end
+
+        def recreate_index original_index, updated_index
+          # remove the original index
+          removal_fragment = remove_index original_index, <<~CODE_COMMENT
+            Removing original index because it has changed (it is recreated below)
+            Changes:
+              #{indent original_index.differences_descriptions(updated_index).join("\n")}
+          CODE_COMMENT
+
+          # recrete the index with the new options
+          recreation_fragment = add_index updated_index, <<~CODE_COMMENT
+            Recreating this index
+          CODE_COMMENT
+
+          # return the new fragments (the main reason to return them here is for the specs)
+          [removal_fragment, recreation_fragment]
+        end
+
+        # add a comment to a index
+        def set_index_comment index, code_comment = nil
+          description = index.description
+
+          if description.nil?
+            raise MissingDescriptionError
+          end
+
+          add_migration index.table.schema.name, index.table.name, :set_index_comment, index.name, code_comment, <<~RUBY
+            set_index_comment :#{index.table.name}, :#{index.name}, <<~COMMENT
+              #{indent description}
+            COMMENT
+          RUBY
+        end
+
+        # remove the comment from a index
+        def remove_index_comment index, code_comment = nil
+          add_migration index.table.schema.name, index.table.name, :remove_index_comment, index.name, code_comment, <<~RUBY
+            remove_index_comment :#{index.table.name}, :#{index.name}
           RUBY
         end
       end

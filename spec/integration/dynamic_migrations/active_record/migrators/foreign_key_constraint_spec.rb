@@ -69,6 +69,37 @@ RSpec.describe DynamicMigrations::ActiveRecord::Migrators do
             }.to raise_error DynamicMigrations::ActiveRecord::Migrators::DeferrableOptionsError
           end
         end
+
+        describe :remove_foreign_key do
+          it "generates the expected sql" do
+            migration.remove_foreign_key(:my_table, :my_foreign_key_constraint)
+
+            expect(migration).to executed_sql <<~SQL
+              ALTER TABLE my_table
+                DROP CONSTRAINT my_foreign_key_constraint;
+            SQL
+          end
+        end
+
+        describe :set_foreign_key_comment do
+          it "generates the expected sql" do
+            migration.set_foreign_key_comment(:my_table, :my_foreign_key_constraint, "my comment")
+
+            expect(migration).to executed_sql <<~SQL
+              COMMENT ON CONSTRAINT my_foreign_key_constraint ON my_schema.my_table IS 'my comment';
+            SQL
+          end
+        end
+
+        describe :remove_foreign_key_comment do
+          it "generates the expected sql" do
+            migration.remove_foreign_key_comment(:my_table, :my_foreign_key_constraint)
+
+            expect(migration).to executed_sql <<~SQL
+              COMMENT ON CONSTRAINT my_foreign_key_constraint ON my_schema.my_table IS NULL;
+            SQL
+          end
+        end
       end
     end
   end

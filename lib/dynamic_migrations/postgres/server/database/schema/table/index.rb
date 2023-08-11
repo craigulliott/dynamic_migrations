@@ -114,6 +114,17 @@ module DynamicMigrations
                 @include_columns.keys
               end
 
+              def differences_descriptions other_index
+                method_differences_descriptions other_index, [
+                  :column_names,
+                  :unique,
+                  :where,
+                  :type,
+                  :order,
+                  :nulls_position
+                ]
+              end
+
               private
 
               # used internally to set the columns from this objects initialize method

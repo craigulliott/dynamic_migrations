@@ -9,7 +9,7 @@ module DynamicMigrations
         @current_migration_sections: Array[Section]
 
         def initialize: -> void
-        def add_content: (Symbol schema_name, Symbol |nil table_name, Symbol content_type, Symbol | nil object_name, String content) -> void
+        def add_fragment: (Symbol schema_name, Symbol |nil table_name, Symbol content_type, Fragment fragment) -> void
         def finalize: -> void
         def to_a: -> (Array[{name: Symbol, content: String}])
 

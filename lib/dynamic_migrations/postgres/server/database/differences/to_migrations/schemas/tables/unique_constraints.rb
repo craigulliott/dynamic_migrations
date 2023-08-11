@@ -36,9 +36,10 @@ module DynamicMigrations
                     # but the definition (except description, which is handled seeprately below) is different
                     # then we need to update the definition.
                     elsif configuration_unique_constraint.except(:exists, :description).filter { |name, attributes| attributes[:matches] == false }.any?
-                      # configuration_unique_constraint[:definition][:matches] == false
-                      unique_constraint = @database.configured_schema(schema_name).table(table_name).unique_constraint(unique_constraint_name)
-                      @generator.change_unique_constraint unique_constraint
+                      # recreate the unique_constraint
+                      original_unique_constraint = @database.loaded_schema(schema_name).table(table_name).unique_constraint(unique_constraint_name)
+                      updated_unique_constraint = @database.configured_schema(schema_name).table(table_name).unique_constraint(unique_constraint_name)
+                      @generator.recreate_unique_constraint original_unique_constraint, updated_unique_constraint
                       # does the description also need to be updated
                       if configuration_unique_constraint[:description][:matches] == false
                         # if the description was removed

@@ -4,9 +4,9 @@
 module DynamicMigrations
   module ActiveRecord
     module Migrators
-      module TableComment
-        def set_table_comment: (Symbol table_name, String comment) -> void
-        def remove_table_comment: (Symbol table_name) -> void
+      module Column
+        def set_column_comment: (Symbol table_name, Symbol column_name, String comment) -> void
+        def remove_column_comment: (Symbol table_name, Symbol column_name) -> void
 
         # stubbing these out, as they are available on the module which includes this module
         def execute: (String sql) -> void

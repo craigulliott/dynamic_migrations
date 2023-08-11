@@ -6,14 +6,18 @@ module DynamicMigrations
     class Generator
       class SchemaMigrations
         class Section
+          @fragment: Fragment
+
           attr_reader schema_name: Symbol
           attr_reader table_name: Symbol | nil
           attr_reader content_type: Symbol
-          attr_reader object_name: Symbol | nil
-          attr_reader content: String
 
-          def initialize: (Symbol schema_name, Symbol | nil table_name, Symbol content_type, Symbol | nil object_name, String content) -> void
+          def initialize: (Symbol schema_name, Symbol | nil table_name, Symbol content_type, Fragment fragment) -> void
+          def object_name: -> (Symbol | nil)
+          def to_s: -> String
+
           def content_type?: (Symbol content_type) -> bool
+          def is_comment?: -> bool
         end
       end
     end

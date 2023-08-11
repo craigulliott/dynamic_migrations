@@ -18,13 +18,17 @@ module DynamicMigrations
       class DeferrableOptionsError < StandardError
       end
 
+      class MissingFunctionBlockError < StandardError
+      end
+
       include Schema
       include Validation
       include ForeignKeyConstraint
-      include ConstraintComment
-      include ColumnComment
-      include TableComment
+      include Table
+      include Index
+      include Column
       include Function
+      include UniqueConstraint
       include Trigger
 
       # The schema name should be set before the migrations for

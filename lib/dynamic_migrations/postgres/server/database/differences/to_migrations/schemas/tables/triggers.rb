@@ -36,9 +36,10 @@ module DynamicMigrations
                     # but the definition (except description, which is handled seeprately below) is different
                     # then we need to update the definition.
                     elsif configuration_trigger.except(:exists, :description).filter { |name, attributes| attributes[:matches] == false }.any?
-                      # configuration_trigger[:definition][:matches] == false
-                      trigger = @database.configured_schema(schema_name).table(table_name).trigger(trigger_name)
-                      @generator.change_trigger trigger
+                      # recreate the trigger
+                      original_trigger = @database.loaded_schema(schema_name).table(table_name).trigger(trigger_name)
+                      updated_trigger = @database.configured_schema(schema_name).table(table_name).trigger(trigger_name)
+                      @generator.recreate_trigger original_trigger, updated_trigger
                       # does the description also need to be updated
                       if configuration_trigger[:description][:matches] == false
                         # if the description was removed

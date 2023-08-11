@@ -36,9 +36,10 @@ module DynamicMigrations
                     # but the definition (except description, which is handled seeprately below) is different
                     # then we need to update the definition.
                     elsif configuration_index.except(:exists, :description).filter { |name, attributes| attributes[:matches] == false }.any?
-                      # configuration_index[:definition][:matches] == false
-                      index = @database.configured_schema(schema_name).table(table_name).index(index_name)
-                      @generator.change_index index
+                      # rebild the index
+                      original_index = @database.loaded_schema(schema_name).table(table_name).index(index_name)
+                      updated_index = @database.configured_schema(schema_name).table(table_name).index(index_name)
+                      @generator.recreate_index original_index, updated_index
                       # does the description also need to be updated
                       if configuration_index[:description][:matches] == false
                         # if the description was removed

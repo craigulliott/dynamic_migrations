@@ -1,0 +1,18 @@
+# TypeProf 0.21.7
+
+# Classes
+module DynamicMigrations
+  module Postgres
+    class Generator
+      class Fragment
+        @content: String
+        @code_comment: String | nil
+        attr_reader object_name: Symbol | nil
+
+        def initialize: (Symbol | nil object_name, String | nil code_comment, String content) -> void
+        def to_s: -> String
+        def has_code_comment?: -> bool
+      end
+    end
+  end
+end

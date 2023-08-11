@@ -31,6 +31,7 @@ module DynamicMigrations
               def include_columns: -> Array[Column]
               def include_column_names: -> Array[Symbol]
               def has_description?: -> bool
+              def differences_descriptions: (Index other_index) -> Array[String]
 
               private
               def add_column: (Column column, ?is_include_column: bool) -> void

@@ -2,7 +2,7 @@ module DynamicMigrations
   module Postgres
     class Generator
       module Function
-        def create_function function
+        def create_function function, code_comment = nil
           options = {}
 
           if function.description.nil?
@@ -25,7 +25,7 @@ module DynamicMigrations
             fn_sql << ";"
           end
 
-          add_migration function.schema.name, function.triggers.first&.table&.name, :create_function, function.name, (comment_sql + <<~RUBY)
+          add_migration function.schema.name, function.triggers.first&.table&.name, :create_function, function.name, code_comment, (comment_sql + <<~RUBY)
             create_function :#{function.name}#{optional_options_syntax} do
               <<~SQL
                 #{indent fn_sql}
@@ -34,14 +34,14 @@ module DynamicMigrations
           RUBY
         end
 
-        def update_function function
+        def update_function function, code_comment = nil
           fn_sql = function.definition.strip
           # ensure that the function ends with a semicolon
           unless fn_sql.end_with? ";"
             fn_sql << ";"
           end
 
-          add_migration function.schema.name, function.triggers.first&.table&.name, :update_function, function.name, <<~RUBY
+          add_migration function.schema.name, function.triggers.first&.table&.name, :update_function, function.name, code_comment, <<~RUBY
             update_function :#{function.name} do
               <<~SQL
                 #{indent fn_sql}
@@ -50,15 +50,15 @@ module DynamicMigrations
           RUBY
         end
 
-        def drop_function function
-          add_migration function.schema.name, function.triggers.first&.table&.name, :drop_function, function.name, <<~RUBY
+        def drop_function function, code_comment = nil
+          add_migration function.schema.name, function.triggers.first&.table&.name, :drop_function, function.name, code_comment, <<~RUBY
             drop_function :#{function.name}
           RUBY
         end
 
         # add a comment to a function
-        def set_function_comment function
-          add_migration function.schema.name, function.triggers.first&.table&.name, :set_function_comment, function.name, <<~RUBY
+        def set_function_comment function, code_comment = nil
+          add_migration function.schema.name, function.triggers.first&.table&.name, :set_function_comment, function.name, code_comment, <<~RUBY
             set_function_comment :#{function.name}, <<~COMMENT
               #{indent function.description || ""}
             COMMENT
@@ -66,8 +66,8 @@ module DynamicMigrations
         end
 
         # remove the comment from a function
-        def remove_function_comment function
-          add_migration function.schema.name, function.triggers.first&.table&.name, :remove_function_comment, function.name, <<~RUBY
+        def remove_function_comment function, code_comment = nil
+          add_migration function.schema.name, function.triggers.first&.table&.name, :remove_function_comment, function.name, code_comment, <<~RUBY
             remove_function_comment :#{function.name}
           RUBY
         end

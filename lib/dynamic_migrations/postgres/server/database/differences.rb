@@ -95,6 +95,7 @@ module DynamicMigrations
             if comparison_table
               comparison_primary_key = comparison_table.has_primary_key? ? comparison_table.primary_key : nil
               comparison_columns = comparison_table.columns_hash
+              comparison_indexes = comparison_table.indexes_hash
               comparison_triggers = comparison_table.triggers_hash
               comparison_validations = comparison_table.validations_hash
               comparison_foreign_key_constraints = comparison_table.foreign_key_constraints_hash
@@ -102,6 +103,7 @@ module DynamicMigrations
             else
               comparison_primary_key = {}
               comparison_columns = {}
+              comparison_indexes = {}
               comparison_triggers = {}
               comparison_validations = {}
               comparison_foreign_key_constraints = {}
@@ -115,9 +117,11 @@ module DynamicMigrations
               },
               primary_key: compare_record(primary_key, comparison_primary_key, [
                 :name,
+                :column_names,
                 :description
               ]),
               columns: compare_columns(table.columns_hash, comparison_columns),
+              indexes: compare_indexes(table.indexes_hash, comparison_indexes),
               triggers: compare_triggers(table.triggers_hash, comparison_triggers),
               validations: compare_validations(table.validations_hash, comparison_validations),
               foreign_key_constraints: compare_foreign_key_constraints(table.foreign_key_constraints_hash, comparison_foreign_key_constraints),

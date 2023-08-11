@@ -24,7 +24,7 @@ RSpec.describe DynamicMigrations::ActiveRecord::Migrators do
 
     let(:migration) { migration_class.new }
 
-    describe :ConstraintComment do
+    describe :Column do
       describe "once the schema_name has been set on the module" do
         before(:each) do
           DynamicMigrations::ActiveRecord::Migrators.set_schema_name :my_schema
@@ -34,22 +34,22 @@ RSpec.describe DynamicMigrations::ActiveRecord::Migrators do
           DynamicMigrations::ActiveRecord::Migrators.clear_schema_name
         end
 
-        describe :set_constraint_comment do
+        describe :set_column_comment do
           it "generates the expected sql" do
-            migration.set_constraint_comment(:my_table, :my_check_constraint, "my comment")
+            migration.set_column_comment(:my_table, :my_column, "my comment")
 
             expect(migration).to executed_sql <<~SQL
-              COMMENT ON CONSTRAINT my_check_constraint ON my_schema.my_table IS 'my comment';
+              COMMENT ON COLUMN my_schema.my_table.my_column IS 'my comment';
             SQL
           end
         end
 
-        describe :remove_constraint_comment do
+        describe :remove_column_comment do
           it "generates the expected sql" do
-            migration.remove_constraint_comment(:my_table, :my_check_constraint)
+            migration.remove_column_comment(:my_table, :my_column)
 
             expect(migration).to executed_sql <<~SQL
-              COMMENT ON CONSTRAINT my_check_constraint ON my_schema.my_table IS NULL;
+              COMMENT ON COLUMN my_schema.my_table.my_column IS NULL;
             SQL
           end
         end

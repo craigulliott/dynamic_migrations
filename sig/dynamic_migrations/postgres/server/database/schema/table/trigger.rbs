@@ -23,6 +23,7 @@ module DynamicMigrations
 
               def initialize: (database_or_configuration source, Table table, Symbol name, action_timing: Symbol, event_manipulation: Symbol, action_order: Integer, action_statement: String, action_orientation: Symbol, function: Function, ?action_condition: String | nil, ?action_reference_old_table: nil | Symbol, ?action_reference_new_table: nil | Symbol, ?description: nil | String) -> void
               def has_description?: -> false
+              def differences_descriptions: (Trigger other_trigger) -> Array[String]
 
               class ExpectedTableError < StandardError
               end

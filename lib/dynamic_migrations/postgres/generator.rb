@@ -10,6 +10,12 @@ module DynamicMigrations
       class UnexpectedMigrationMethodNameError < StandardError
       end
 
+      class MissingDescriptionError < StandardError
+      end
+
+      class NoDifferenceError < StandardError
+      end
+
       # these sections are in order for which they will appear in a migration,
       # note that removals come before additions, and that the order here optomizes
       # for dependencies (i.e. columns have to be created before indexes are added and
@@ -75,7 +81,8 @@ module DynamicMigrations
             #
           COMMENT
           methods: [
-            :remove_index
+            :remove_index,
+            :remove_index_comment
           ]
         },
         {
@@ -185,7 +192,8 @@ module DynamicMigrations
             #
           COMMENT
           methods: [
-            :add_index
+            :add_index,
+            :set_index_comment
           ]
         },
         {
@@ -256,7 +264,6 @@ module DynamicMigrations
       include Index
       include PrimaryKey
       include UniqueConstraint
-      include ConstraintComments
       include Validation
       include Function
       include Trigger
@@ -272,7 +279,7 @@ module DynamicMigrations
         @migrations.map do |schema_name, table_migrations|
           schema_migrations = SchemaMigrations.new
           # iterate through the tables which have migrations
-          table_migrations.map do |table_name, migrations|
+          table_migrations.map do |table_name, fragments|
             # iterate through the structure object in order, and create the final migrations
             STRUCTURE.each do |section|
               # if this section requires a new migration, then end any current one
@@ -282,16 +289,17 @@ module DynamicMigrations
 
               # add the header comment if we have a migration which matches one of the
               # methods in this section
-              if (section[:methods] & migrations.keys).any?
-                schema_migrations.add_content schema_name, table_name, :comment, nil, section[:header_comment]
+              if (section[:methods] & fragments.keys).any?
+                header_fragment = Fragment.new nil, nil, section[:header_comment]
+                schema_migrations.add_fragment schema_name, table_name, :comment, header_fragment
               end
 
               # iterate through this sections methods in order and look
               # for any that match the migrations we have
               section[:methods].each do |method_name|
-                # if we have any migrations for this method then add them
-                migrations[method_name]&.each do |migration|
-                  schema_migrations.add_content schema_name, table_name, method_name, migration[:object_name], migration[:content]
+                # if we have any migration fragments for this method then add them
+                fragments[method_name]&.each do |fragment|
+                  schema_migrations.add_fragment schema_name, table_name, method_name, fragment
                 end
               end
 
@@ -317,7 +325,7 @@ module DynamicMigrations
         supported_migration_method_names.include? method_name
       end
 
-      def add_migration schema_name, table_name, migration_method, object_name, migration
+      def add_migration schema_name, table_name, migration_method, object_name, code_comment, migration
         raise ExpectedSymbolError, "Expected schema_name to be a symbol, got #{schema_name}" unless schema_name.is_a?(Symbol)
         raise ExpectedSymbolError, "Expected table_name to be a symbol, got #{table_name}" unless schema_name.is_a?(Symbol)
 
@@ -326,17 +334,17 @@ module DynamicMigrations
         end
 
         final_migration = strip_empty_lines(migration).strip
-        @migrations[schema_name] ||= {}
+        fragment = Fragment.new(object_name, code_comment, final_migration)
+
         # note, table_name can be nil, which is OK because nil is a valid
         # key and we do want to group them all together
+        @migrations[schema_name] ||= {}
         @migrations[schema_name][table_name] ||= {}
         @migrations[schema_name][table_name][migration_method] ||= []
-        @migrations[schema_name][table_name][migration_method] << {
-          object_name:,
-          content: final_migration
-        }
-        # return the newly created migration
-        final_migration
+        @migrations[schema_name][table_name][migration_method] << fragment
+
+        # return the newly created migration fragment
+        fragment
       end
 
       def indent multi_line_string

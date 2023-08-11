@@ -12,7 +12,7 @@ module DynamicMigrations
                 module PrimaryKey
 
                   private
-                  def process_primary_key: (Symbol schema_name, Symbol table_name, Symbol primary_key_name, untyped configuration_primary_key, untyped database_primary_key) -> void
+                  def process_primary_key: (Symbol schema_name, Symbol table_name, untyped configuration_primary_key, untyped database_primary_key) -> void
 
                 end
               end

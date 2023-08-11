@@ -113,4 +113,21 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database::Schema::Function d
       end
     end
   end
+
+  describe :add_trigger do
+    # Can not directly test this method because it is called automatically when
+    # a trigger is instantiated. The trigger specs adequately cover this method.
+  end
+
+  describe :differences_descriptions do
+    describe "when compared to a function which has a different definition" do
+      let(:different_function) { DynamicMigrations::Postgres::Server::Database::Schema::Function.new :configuration, schema, :my_function, "NEW.different_column = 0" }
+
+      it "returns the expected array which describes the differences" do
+        expect(function.differences_descriptions(different_function)).to eql([
+          "definition changed from `NEW.column = 0` to `NEW.different_column = 0`"
+        ])
+      end
+    end
+  end
 end

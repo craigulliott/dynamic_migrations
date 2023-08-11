@@ -14,6 +14,8 @@ module DynamicMigrations
               def initialize: (database_or_configuration source, Table table, Array[Column] columns, Symbol name, ?description: String | nil) -> void
               def columns: -> Array[Column]
               def column_names: -> Array[Symbol]
+              def has_description?: -> bool
+              def differences_descriptions: (PrimaryKey other_primary_key) -> Array[String]
 
               private
               def add_column: (Column column) -> void

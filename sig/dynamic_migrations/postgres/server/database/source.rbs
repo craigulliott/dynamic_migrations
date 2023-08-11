@@ -8,6 +8,9 @@ module DynamicMigrations
           def from_configuration?: -> bool
           def from_database?: -> bool
           def assert_is_a_symbol!: (untyped value) -> true
+
+          private
+          def method_differences_descriptions: (untyped other_object, Array[Symbol]) -> Array[String]
         end
       end
     end

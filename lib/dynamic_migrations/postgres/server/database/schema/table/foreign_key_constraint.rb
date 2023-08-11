@@ -105,16 +105,29 @@ module DynamicMigrations
                 @foreign_columns.values
               end
 
-              def foreign_column_names
-                @foreign_columns.keys
-              end
-
               def foreign_schema_name
                 @foreign_table.schema.name
               end
 
               def foreign_table_name
                 @foreign_table.name
+              end
+
+              def foreign_column_names
+                @foreign_columns.keys
+              end
+
+              def differences_descriptions other_foreign_key_constraint
+                method_differences_descriptions other_foreign_key_constraint, [
+                  :column_names,
+                  :foreign_schema_name,
+                  :foreign_table_name,
+                  :foreign_column_names,
+                  :deferrable,
+                  :initially_deferred,
+                  :on_delete,
+                  :on_update
+                ]
               end
 
               private

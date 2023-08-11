@@ -6,6 +6,7 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database::Schema::Table::Tri
   let(:database) { DynamicMigrations::Postgres::Server::Database.new server, :my_database }
   let(:schema) { DynamicMigrations::Postgres::Server::Database::Schema.new :configuration, database, :my_schema }
   let(:function) { DynamicMigrations::Postgres::Server::Database::Schema::Function.new :configuration, schema, :function_name, "NEW.column = 0" }
+  let(:function2) { DynamicMigrations::Postgres::Server::Database::Schema::Function.new :configuration, schema, :different_function_name, "NEW.column = 100" }
   let(:table) { DynamicMigrations::Postgres::Server::Database::Schema::Table.new :configuration, schema, :my_table }
   let(:column) { table.add_column :my_column, :boolean }
   let(:trigger) { DynamicMigrations::Postgres::Server::Database::Schema::Table::Trigger.new :configuration, table, :trigger_name, event_manipulation: :insert, action_order: 1, action_condition: nil, action_statement: "EXECUTE FUNCTION checklists.foo()", action_orientation: :row, action_timing: :before, function: function }
@@ -212,6 +213,29 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database::Schema::Table::Tri
       let(:trigger_with_description) { DynamicMigrations::Postgres::Server::Database::Schema::Table::Trigger.new :configuration, table, :trigger_name, event_manipulation: :insert, action_order: 1, action_condition: nil, action_statement: "EXECUTE FUNCTION checklists.foo()", action_orientation: :row, action_timing: :before, function: function, description: "foo bar" }
       it "returns true" do
         expect(trigger_with_description.has_description?).to be(true)
+      end
+    end
+  end
+
+  describe :differences_descriptions do
+    describe "when compared to a trigger which has a different event_manipulation" do
+      let(:different_trigger) { DynamicMigrations::Postgres::Server::Database::Schema::Table::Trigger.new :configuration, table, :trigger_name, event_manipulation: :update, action_order: 1, action_condition: nil, action_statement: "EXECUTE FUNCTION checklists.foo()", action_orientation: :row, action_timing: :before, function: function }
+
+      it "returns the expected array which describes the differences" do
+        expect(trigger.differences_descriptions(different_trigger)).to eql([
+          "event_manipulation changed from `insert` to `update`"
+        ])
+      end
+    end
+
+    describe "when compared to a trigger which has a different function" do
+      let(:different_trigger) { DynamicMigrations::Postgres::Server::Database::Schema::Table::Trigger.new :configuration, table, :trigger_name, event_manipulation: :insert, action_order: 1, action_condition: nil, action_statement: "EXECUTE FUNCTION checklists.foo()", action_orientation: :row, action_timing: :before, function: function2 }
+
+      it "returns the expected array which describes the differences" do
+        expect(trigger.differences_descriptions(different_trigger)).to eql([
+          "function_name changed from `function_name` to `different_function_name`",
+          "function_definition changed from `NEW.column = 0` to `NEW.column = 100`"
+        ])
       end
     end
   end

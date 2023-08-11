@@ -14,7 +14,7 @@ RSpec.describe DynamicMigrations::Postgres::Generator do
         let(:function) { schema.add_function :my_function, "NEW.column = 0", description: "Comment for this function" }
 
         it "should return the expected ruby syntax to add a function" do
-          expect(generator.create_function(function)).to eq <<~RUBY.strip
+          expect(generator.create_function(function).to_s).to eq <<~RUBY.strip
             my_function_comment = <<~COMMENT
               Comment for this function
             COMMENT
@@ -33,7 +33,7 @@ RSpec.describe DynamicMigrations::Postgres::Generator do
         let(:function) { schema.add_function :my_function, "NEW.column = 0", description: "Comment for this function" }
 
         it "should return the expected ruby syntax to update a function" do
-          expect(generator.update_function(function)).to eq <<~RUBY.strip
+          expect(generator.update_function(function).to_s).to eq <<~RUBY.strip
             update_function :my_function do
               <<~SQL
                 NEW.column = 0;
@@ -49,7 +49,7 @@ RSpec.describe DynamicMigrations::Postgres::Generator do
         let(:function) { schema.add_function :my_function, "NEW.column = 0" }
 
         it "should return the expected ruby syntax to remove a function" do
-          expect(generator.drop_function(function)).to eq <<~RUBY.strip
+          expect(generator.drop_function(function).to_s).to eq <<~RUBY.strip
             drop_function :my_function
           RUBY
         end
@@ -61,7 +61,7 @@ RSpec.describe DynamicMigrations::Postgres::Generator do
         let(:function) { schema.add_function :my_function, "NEW.column = 0", description: "My function comment" }
 
         it "should return the expected ruby syntax to set a function comment" do
-          expect(generator.set_function_comment(function)).to eq <<~RUBY.strip
+          expect(generator.set_function_comment(function).to_s).to eq <<~RUBY.strip
             set_function_comment :my_function, <<~COMMENT
               My function comment
             COMMENT
@@ -75,7 +75,7 @@ RSpec.describe DynamicMigrations::Postgres::Generator do
         let(:function) { schema.add_function :my_function, "NEW.column = 0", description: "My function comment" }
 
         it "should return the expected ruby syntax to remove a function comment" do
-          expect(generator.remove_function_comment(function)).to eq <<~RUBY.strip
+          expect(generator.remove_function_comment(function).to_s).to eq <<~RUBY.strip
             remove_function_comment :my_function
           RUBY
         end

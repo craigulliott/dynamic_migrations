@@ -6,11 +6,14 @@ module DynamicMigrations
     module Migrators
       module ForeignKeyConstraint
         def add_foreign_key: (Symbol table_name, Array[Symbol] column_names, Symbol foreign_schema_name, Symbol foreign_table_name, Array[Symbol] foreign_column_names, name: Symbol, ?initially_deferred: bool, ?deferrable: bool, ?on_delete: Symbol, ?on_update: Symbol, ?comment: nil | String) -> void
+        def remove_foreign_key: (Symbol table_name, Symbol name) -> void
+        def set_foreign_key_comment: (Symbol table_name, Symbol foreign_key_name, String comment) -> void
+        def remove_foreign_key_comment: (Symbol table_name, Symbol foreign_key_name) -> void
 
         # stubbing these out, as they are available on the module which includes this module
-        def set_constraint_comment: (Symbol table_name, Symbol constraint_name, String comment) -> void
         def execute: (String sql) -> void
         def schema_name: () -> Symbol
+        def quote: (String str) -> String
 
         private
         def referential_action_to_sql: (Symbol referential_action_to_sql) -> String

@@ -6,10 +6,14 @@ module DynamicMigrations
     module Migrators
       module UniqueConstraint
         def add_unique_constraint: (Symbol table_name, Array[Symbol] column_names, name: Symbol, ?deferrable: bool, ?initially_deferred: bool, ?comment: nil | String) -> void
+        def remove_unique_constraint: (Symbol table_name, Symbol name) -> void
+        def set_unique_constraint_comment: (Symbol table_name, Symbol unique_constraint_name, String comment) -> void
+        def remove_unique_constraint_comment: (Symbol table_name, Symbol unique_constraint_name) -> void
 
         # stubbing these out, as they are available on the module which includes this module
-        def set_constraint_comment: (Symbol table_name, Symbol constraint_name, String comment) -> void
         def execute: (String sql) -> void
+        def schema_name: () -> Symbol
+        def quote: (String str) -> String
       end
     end
   end

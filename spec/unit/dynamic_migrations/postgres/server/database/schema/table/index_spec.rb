@@ -292,4 +292,18 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database::Schema::Table::Ind
       end
     end
   end
+
+  describe :differences_descriptions do
+    describe "when compared to a index which has differnt values for unique, order and nulls_position" do
+      let(:different_index) { DynamicMigrations::Postgres::Server::Database::Schema::Table::Index.new :configuration, table, [column], :index_name, unique: true, order: :desc, nulls_position: :first }
+
+      it "returns the expected array which describes the differences" do
+        expect(index.differences_descriptions(different_index)).to eql([
+          "unique changed from `false` to `true`",
+          "order changed from `asc` to `desc`",
+          "nulls_position changed from `last` to `first`"
+        ])
+      end
+    end
+  end
 end

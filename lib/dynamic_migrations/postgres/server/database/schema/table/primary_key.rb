@@ -63,6 +63,12 @@ module DynamicMigrations
                 @columns.keys
               end
 
+              def differences_descriptions other_primary_key
+                method_differences_descriptions other_primary_key, [
+                  :column_names
+                ]
+              end
+
               private
 
               # used internally to set the columns from this objects initialize method

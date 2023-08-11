@@ -17,7 +17,7 @@ RSpec.describe DynamicMigrations::Postgres::Generator do
         let(:unique_constraint) { DynamicMigrations::Postgres::Server::Database::Schema::Table::UniqueConstraint.new :configuration, table, [column], :unique_constraint_name }
 
         it "should return the expected ruby syntax to add a unique_constraint" do
-          expect(generator.add_unique_constraint(unique_constraint)).to eq <<~RUBY.strip
+          expect(generator.add_unique_constraint(unique_constraint).to_s).to eq <<~RUBY.strip
             add_unique_constraint :my_table, :my_column, name: :unique_constraint_name, deferrable: false, initially_deferred: false
           RUBY
         end
@@ -27,7 +27,7 @@ RSpec.describe DynamicMigrations::Postgres::Generator do
         let(:unique_constraint) { DynamicMigrations::Postgres::Server::Database::Schema::Table::UniqueConstraint.new :configuration, table, [column, second_column], :unique_constraint_name, deferrable: true, initially_deferred: true, description: "Comment for this unique_constraint" }
 
         it "should return the expected ruby syntax to add a unique_constraint" do
-          expect(generator.add_unique_constraint(unique_constraint)).to eq <<~RUBY.strip
+          expect(generator.add_unique_constraint(unique_constraint).to_s).to eq <<~RUBY.strip
             add_unique_constraint :my_table, [:my_column, :my_second_column], name: :unique_constraint_name, deferrable: true, initially_deferred: true, comment: <<~COMMENT
               Comment for this unique_constraint
             COMMENT
@@ -41,10 +41,54 @@ RSpec.describe DynamicMigrations::Postgres::Generator do
         let(:unique_constraint) { DynamicMigrations::Postgres::Server::Database::Schema::Table::UniqueConstraint.new :configuration, table, [column], :unique_constraint_name }
 
         it "should return the expected ruby syntax to remove a unique_constraint" do
-          expect(generator.remove_unique_constraint(unique_constraint)).to eq <<~RUBY.strip
+          expect(generator.remove_unique_constraint(unique_constraint).to_s).to eq <<~RUBY.strip
             remove_unique_constraint :my_table, :unique_constraint_name
           RUBY
         end
+      end
+    end
+
+    describe :recreate_unique_constraint do
+      describe "for unique_constraints with different deferrable values" do
+        let(:original_unique_constraint) { DynamicMigrations::Postgres::Server::Database::Schema::Table::UniqueConstraint.new :configuration, table, [column], :unique_constraint_name }
+        let(:updated_unique_constraint) { DynamicMigrations::Postgres::Server::Database::Schema::Table::UniqueConstraint.new :configuration, table, [column], :unique_constraint_name, deferrable: true, initially_deferred: true }
+
+        it "should return the expected ruby syntax to recreate a unique_constraint" do
+          remove = <<~RUBY.strip
+            # Removing original unique constraint because it has changed (it is recreated below)
+            # Changes:
+            #   deferrable changed from `false` to `true`
+            #   initially_deferred changed from `false` to `true`
+            remove_unique_constraint :my_table, :unique_constraint_name
+          RUBY
+          re_add = <<~RUBY.strip
+            # Recreating this unique constraint
+            add_unique_constraint :my_table, :my_column, name: :unique_constraint_name, deferrable: true, initially_deferred: true
+          RUBY
+          expect(generator.recreate_unique_constraint(original_unique_constraint, updated_unique_constraint).map(&:to_s)).to eq [remove, re_add]
+        end
+      end
+    end
+
+    describe :set_unique_constraint_comment do
+      let(:unique_constraint) { table.add_unique_constraint :my_unique_constraint, [column.name], description: "Comment for this unique_constraint" }
+
+      it "should return the expected ruby syntax to set a unique_constraint comment" do
+        expect(generator.set_unique_constraint_comment(unique_constraint).to_s).to eq <<~RUBY.strip
+          set_unique_constraint_comment :my_table, :my_unique_constraint, <<~COMMENT
+            Comment for this unique_constraint
+          COMMENT
+        RUBY
+      end
+    end
+
+    describe :remove_unique_constraint_comment do
+      let(:unique_constraint) { table.add_unique_constraint :my_unique_constraint, [column.name], description: "Comment for this unique_constraint" }
+
+      it "should return the expected ruby syntax to remove a unique_constraint comment" do
+        expect(generator.remove_unique_constraint_comment(unique_constraint).to_s).to eq <<~RUBY.strip
+          remove_unique_constraint_comment :my_table, :my_unique_constraint
+        RUBY
       end
     end
   end

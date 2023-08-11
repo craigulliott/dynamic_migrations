@@ -12,8 +12,8 @@ module DynamicMigrations
           @current_migration_sections = []
         end
 
-        def add_content schema_name, table_name, content_type, object_name, content
-          @current_migration_sections << Section.new(schema_name, table_name, content_type, object_name, content)
+        def add_fragment schema_name, table_name, content_type, fragment
+          @current_migration_sections << Section.new(schema_name, table_name, content_type, fragment)
         end
 
         def finalize
@@ -21,9 +21,9 @@ module DynamicMigrations
 
             contents = []
             @current_migration_sections.each do |section|
-              contents << section.content.strip
+              contents << section.to_s
               # add an empty line between sections (unless this is a comment section)
-              unless section.content_type? :comment
+              unless section.is_comment?
                 contents << ""
               end
             end

@@ -5,13 +5,16 @@ module DynamicMigrations
   module Postgres
     class Generator
       module Validation
-        def add_validation: (Postgres::Server::Database::Schema::Table::Validation validation) -> String
-        def remove_validation: (Postgres::Server::Database::Schema::Table::Validation validation) -> String
+        def add_validation: (Postgres::Server::Database::Schema::Table::Validation validation, ?nil | String code_comment) -> Fragment
+        def remove_validation: (Postgres::Server::Database::Schema::Table::Validation validation, ?nil | String code_comment) -> Fragment
+        def recreate_validation: (Postgres::Server::Database::Schema::Table::Validation original_validation, Postgres::Server::Database::Schema::Table::Validation updated_validation) -> Array[Fragment]
+        def set_validation_comment: (Postgres::Server::Database::Schema::Table::Validation validation, ?nil | String code_comment) -> Fragment
+        def remove_validation_comment: (Postgres::Server::Database::Schema::Table::Validation validation, ?nil | String code_comment) -> Fragment
 
         # these come from the generator object (which this module is included into)
-        def add_migration: (Symbol schema_name, Symbol | nil table_name, Symbol migration_method, Symbol | nil object_name, String migration) -> String
+        def add_migration: (Symbol schema_name, Symbol | nil table_name, Symbol migration_method, Symbol | nil object_name, nil | String code_comment, String migration) -> Fragment
         def indent: (String str) -> String
-      end
+        end
     end
   end
 end

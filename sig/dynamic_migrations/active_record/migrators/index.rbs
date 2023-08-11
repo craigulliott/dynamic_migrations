@@ -4,13 +4,12 @@
 module DynamicMigrations
   module ActiveRecord
     module Migrators
-      module ColumnComment
-        def set_column_comment: (Symbol table_name, Symbol column_name, String comment) -> void
-        def remove_column_comment: (Symbol table_name, Symbol column_name) -> void
+      module Index
+        def set_index_comment: (Symbol table_name, Symbol index_name, String comment) -> void
+        def remove_index_comment: (Symbol table_name, Symbol index_name) -> void
 
         # stubbing these out, as they are available on the module which includes this module
         def execute: (String sql) -> void
-        def schema_name: () -> Symbol
         def quote: (String str) -> String
       end
     end

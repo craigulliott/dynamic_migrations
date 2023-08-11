@@ -4,9 +4,9 @@
 module DynamicMigrations
   module ActiveRecord
     module Migrators
-      module ConstraintComment
-        def set_constraint_comment: (Symbol table_name, Symbol constraint_name, String comment) -> void
-        def remove_constraint_comment: (Symbol table_name, Symbol constraint_name) -> void
+      module Table
+        def set_table_comment: (Symbol table_name, String comment) -> void
+        def remove_table_comment: (Symbol table_name) -> void
 
         # stubbing these out, as they are available on the module which includes this module
         def execute: (String sql) -> void

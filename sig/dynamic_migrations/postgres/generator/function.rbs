@@ -5,14 +5,14 @@ module DynamicMigrations
   module Postgres
     class Generator
       module Function
-        def create_function: (Postgres::Server::Database::Schema::Function function) -> String
-        def update_function: (Postgres::Server::Database::Schema::Function function) -> String
-        def drop_function: (Postgres::Server::Database::Schema::Function function) -> String
-        def set_function_comment: (Postgres::Server::Database::Schema::Function function) -> String
-        def remove_function_comment: (Postgres::Server::Database::Schema::Function function) -> String
+        def create_function: (Postgres::Server::Database::Schema::Function function, ?nil | String code_comment) -> Fragment
+        def update_function: (Postgres::Server::Database::Schema::Function function, ?nil | String code_comment) -> Fragment
+        def drop_function: (Postgres::Server::Database::Schema::Function function, ?nil | String code_comment) -> Fragment
+        def set_function_comment: (Postgres::Server::Database::Schema::Function function, ?nil | String code_comment) -> Fragment
+        def remove_function_comment: (Postgres::Server::Database::Schema::Function function, ?nil | String code_comment) -> Fragment
 
         # these come from the generator object (which this module is included into)
-        def add_migration: (Symbol schema_name, Symbol | nil table_name, Symbol migration_method, Symbol | nil object_name, String migration) -> String
+        def add_migration: (Symbol schema_name, Symbol | nil table_name, Symbol migration_method, Symbol | nil object_name, nil | String code_comment, String migration) -> Fragment
         def indent: (String str) -> String
       end
     end
