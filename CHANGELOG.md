@@ -1,5 +1,21 @@
 # Changelog
 
+## [3.0.0](https://github.com/craigulliott/dynamic_migrations/compare/v2.2.0...v3.0.0) (2023-08-11)
+
+
+### ⚠ BREAKING CHANGES
+
+* functions and triggers, removed unusable index_type from primary key and unique constraints, added active record migrations and some general refactoring
+
+### Features
+
+* adding migration generators and active record migrators ([80bf481](https://github.com/craigulliott/dynamic_migrations/commit/80bf481bfd33941b8380e7deb010b171898c03df))
+* functions and triggers, removed unusable index_type from primary key and unique constraints, added active record migrations and some general refactoring ([45fcb7c](https://github.com/craigulliott/dynamic_migrations/commit/45fcb7ca3b6724625a4868198a9e75aefb1ea964))
+* now generating migrations from all database structure object types ([871ab04](https://github.com/craigulliott/dynamic_migrations/commit/871ab048efb6247bc7fadb6e49bb15f6933c5586))
+* various improvements to triggers and functions, and other general improvements ([e7dd9ab](https://github.com/craigulliott/dynamic_migrations/commit/e7dd9abeee736ea2791c192d3f797497f54773b4))
+* work in progress on the migrations generator ([3e8deb9](https://github.com/craigulliott/dynamic_migrations/commit/3e8deb954913be291ad8e6e7d1c09af619378e4d))
+* work in progress on the migrations generator ([7a999ee](https://github.com/craigulliott/dynamic_migrations/commit/7a999ee8467527164e79f2c6da704245e78cf0cd))
+
 ## [2.2.0](https://github.com/craigulliott/dynamic_migrations/compare/v2.1.0...v2.2.0) (2023-07-31)
 
 
