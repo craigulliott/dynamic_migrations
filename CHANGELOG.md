@@ -1,5 +1,17 @@
 # Changelog
 
+## [3.1.0](https://github.com/craigulliott/dynamic_migrations/compare/v3.0.0...v3.1.0) (2023-08-14)
+
+
+### Features
+
+* adding a convenience method `to_migrations` on the differences class ([efe94be](https://github.com/craigulliott/dynamic_migrations/commit/efe94be9c620fc44d1cdba54f6cd365292ae0f34))
+
+
+### Bug Fixes
+
+* updating to_migrations method signature in differences class ([e4e502b](https://github.com/craigulliott/dynamic_migrations/commit/e4e502b7ec44add3d2b6727869a4ad90bc7531b7))
+
 ## [3.0.0](https://github.com/craigulliott/dynamic_migrations/compare/v2.2.0...v3.0.0) (2023-08-11)
 
 
