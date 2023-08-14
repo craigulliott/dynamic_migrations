@@ -20,6 +20,94 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database::Differences do
     end
   end
 
+  describe :to_migrations do
+    it "returns an empty object because there are no differences" do
+      expect(differences.to_migrations).to eql({})
+    end
+
+    describe "when the configured database has a schema" do
+      let(:configured_schema) { database.add_configured_schema :my_schema }
+
+      before(:each) do
+        configured_schema
+      end
+
+      it "returns the expected migrations" do
+        expect(differences.to_migrations).to eql({
+          my_schema: [
+            {
+              name: :create_my_schema_schema,
+              content: <<~RUBY.strip
+                #
+                # Create this schema
+                #
+                create_schema :my_schema
+              RUBY
+            }
+          ]
+        })
+      end
+
+      describe "when the loaded database has an equivalent schema" do
+        let(:loaded_schema) { database.add_loaded_schema :my_schema }
+
+        before(:each) do
+          loaded_schema
+        end
+
+        it "returns an empty object because there are no differences" do
+          expect(differences.to_migrations).to eql({})
+        end
+
+        describe "when the configured schema has a table" do
+          let(:configured_table) { configured_schema.add_table :my_table, description: "Description of my table" }
+
+          before(:each) do
+            configured_table
+          end
+
+          it "returns the expected migrations" do
+            expect(differences.to_migrations).to eql({
+              my_schema: [
+                {
+                  name: :create_my_table,
+                  content: <<~RUBY.strip
+                    #
+                    # Create Table
+                    #
+                    table_comment = <<~COMMENT
+                      Description of my table
+                    COMMENT
+                    create_table :my_table, id: false, comment: table_comment do |t|
+                    end
+                  RUBY
+                }
+              ]
+            })
+          end
+
+          describe "when the loaded database has an equivalent table" do
+            let(:loaded_table) { loaded_schema.add_table :my_table, description: "Description of my table" }
+
+            before(:each) do
+              loaded_table
+            end
+
+            it "returns an empty object because there are no differences" do
+              expect(differences.to_migrations).to eql({})
+            end
+
+            describe "when the configured table has a column" do
+              before(:each) do
+                configured_table.add_column :my_column, :integer
+              end
+            end
+          end
+        end
+      end
+    end
+  end
+
   describe :to_h do
     it "returns the expected differences" do
       expect(differences.to_h).to eql({

@@ -22,6 +22,12 @@ module DynamicMigrations
             @database = database
           end
 
+          # returns a hash of migrations for each schema which will bring the configured
+          # loaded database structure into alignment with the configured database structure
+          def to_migrations
+            ToMigrations.new(@database, self).migrations
+          end
+
           # return a hash representing any differenced betweek the loaded and configured
           # versions of the current database
           def to_h
