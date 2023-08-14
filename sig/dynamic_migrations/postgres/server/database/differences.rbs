@@ -10,7 +10,7 @@ module DynamicMigrations
             configuration: Hash[Symbol, untyped],
             database: Hash[Symbol, untyped]
           }
-          def to_migrations: -> Hash[Symbol, Hash[Symbol, Hash[Symbol, String]]]
+          def to_migrations: -> Hash[Symbol, Array[{name: Symbol, content: String}]]
 
           def self.compare_schemas: (Hash[Symbol, Schema] schemas, Hash[Symbol, Schema] comparison_schemas) -> Hash[Symbol, untyped]
           def self.compare_schema: (Schema schema, Schema comparison_schema) -> {
