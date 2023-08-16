@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.2.0](https://github.com/craigulliott/dynamic_migrations/compare/v3.1.1...v3.2.0) (2023-08-16)
+
+
+### Features
+
+* adding a with_connection method to the database which yields to a block, and provides a connection object to that block ([fc1590a](https://github.com/craigulliott/dynamic_migrations/commit/fc1590a00be8d3f9f0ee0472a96be94b80e667e0))
+
 ## [3.1.1](https://github.com/craigulliott/dynamic_migrations/compare/v3.1.0...v3.1.1) (2023-08-16)
 
 
