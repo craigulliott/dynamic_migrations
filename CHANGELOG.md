@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.1.1](https://github.com/craigulliott/dynamic_migrations/compare/v3.1.0...v3.1.1) (2023-08-16)
+
+
+### Bug Fixes
+
+* refactoring the migration generator so that it handles dependencies between migrations ([8d0f8d8](https://github.com/craigulliott/dynamic_migrations/commit/8d0f8d8cd4a22b974b6449c62ad2a2d74aeffb2e))
+
 ## [3.1.0](https://github.com/craigulliott/dynamic_migrations/compare/v3.0.0...v3.1.0) (2023-08-14)
 
 
