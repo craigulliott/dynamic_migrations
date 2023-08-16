@@ -28,21 +28,20 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database::Differences::ToMig
           end
 
           it "returns the migration to create the column and description" do
-            expect(to_migrations.migrations).to eql({
-              my_schema: [
-                {
-                  name: :changes_for_my_table,
-                  content: <<~RUBY.strip
-                    #
-                    # Additional Columns
-                    #
-                    add_column :my_table, :my_column, :integer, null: true, comment: <<~COMMENT
-                      Description of my column
-                    COMMENT
-                  RUBY
-                }
-              ]
-            })
+            expect(to_migrations.migrations).to eql([
+              {
+                schema_name: :my_schema,
+                name: :changes_for_my_table,
+                content: <<~RUBY.strip
+                  #
+                  # Additional Columns
+                  #
+                  add_column :my_table, :my_column, :integer, null: true, comment: <<~COMMENT
+                    Description of my column
+                  COMMENT
+                RUBY
+              }
+            ])
           end
 
           describe "when the loaded table has a column with a different type but the same description" do
@@ -51,17 +50,16 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database::Differences::ToMig
             end
 
             it "returns the migration to update the description" do
-              expect(to_migrations.migrations).to eql({
-                my_schema: [{
-                  name: :changes_for_my_table,
-                  content: <<~RUBY.strip
-                    #
-                    # Update Columns
-                    #
-                    change_column :my_table, :my_column, :integer, null: true
-                  RUBY
-                }]
-              })
+              expect(to_migrations.migrations).to eql([{
+                schema_name: :my_schema,
+                name: :changes_for_my_table,
+                content: <<~RUBY.strip
+                  #
+                  # Update Columns
+                  #
+                  change_column :my_table, :my_column, :integer, null: true
+                RUBY
+              }])
             end
           end
 
@@ -71,19 +69,18 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database::Differences::ToMig
             end
 
             it "returns the migration to update the description" do
-              expect(to_migrations.migrations).to eql({
-                my_schema: [{
-                  name: :changes_for_my_table,
-                  content: <<~RUBY.strip
-                    #
-                    # Update Columns
-                    #
-                    set_column_comment :my_table, :my_column, <<~COMMENT
-                      Description of my column
-                    COMMENT
-                  RUBY
-                }]
-              })
+              expect(to_migrations.migrations).to eql([{
+                schema_name: :my_schema,
+                name: :changes_for_my_table,
+                content: <<~RUBY.strip
+                  #
+                  # Update Columns
+                  #
+                  set_column_comment :my_table, :my_column, <<~COMMENT
+                    Description of my column
+                  COMMENT
+                RUBY
+              }])
             end
           end
 
@@ -93,7 +90,7 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database::Differences::ToMig
             end
 
             it "returns no migrations because there are no differences" do
-              expect(to_migrations.migrations).to eql({})
+              expect(to_migrations.migrations).to eql([])
             end
           end
         end

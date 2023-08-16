@@ -34,19 +34,18 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database::Differences::ToMig
           end
 
           it "returns the migration to create the trigger" do
-            expect(to_migrations.migrations).to eql({
-              my_schema: [
-                {
-                  name: :changes_for_my_table,
-                  content: <<~RUBY.strip
-                    #
-                    # Triggers
-                    #
-                    before_insert :my_table, name: :my_trigger, function_schema_name: :my_schema, function_name: :my_function
-                  RUBY
-                }
-              ]
-            })
+            expect(to_migrations.migrations).to eql([
+              {
+                schema_name: :my_schema,
+                name: :changes_for_my_table,
+                content: <<~RUBY.strip
+                  #
+                  # Triggers
+                  #
+                  before_insert :my_table, name: :my_trigger, function_schema_name: :my_schema, function_name: :my_function
+                RUBY
+              }
+            ])
           end
 
           describe "when the loaded table has a trigger with the same name but a different action_timing" do
@@ -55,32 +54,27 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database::Differences::ToMig
             end
 
             it "returns the migration to update the trigger by replacing it" do
-              expect(to_migrations.migrations).to eql({
-                my_schema: [
-                  {
-                    name: :changes_for_my_table,
-                    content: <<~RUBY.strip
-                      #
-                      # Remove Triggers
-                      #
-                      # Removing original trigger because it has changed (it is recreated below)
-                      # Changes:
-                      #   action_timing changed from `after` to `before`
-                      remove_trigger :my_table, :my_trigger
-                    RUBY
-                  },
-                  {
-                    name: :changes_for_my_table,
-                    content: <<~RUBY.strip
-                      #
-                      # Triggers
-                      #
-                      # Recreating this trigger
-                      before_insert :my_table, name: :my_trigger, function_schema_name: :my_schema, function_name: :my_function
-                    RUBY
-                  }
-                ]
-              })
+              expect(to_migrations.migrations).to eql([
+                {
+                  schema_name: :my_schema,
+                  name: :changes_for_my_table,
+                  content: <<~RUBY.strip
+                    #
+                    # Remove Triggers
+                    #
+                    # Removing original trigger because it has changed (it is recreated below)
+                    # Changes:
+                    #   action_timing changed from `after` to `before`
+                    remove_trigger :my_table, :my_trigger
+
+                    #
+                    # Triggers
+                    #
+                    # Recreating this trigger
+                    before_insert :my_table, name: :my_trigger, function_schema_name: :my_schema, function_name: :my_function
+                  RUBY
+                }
+              ])
             end
           end
 
@@ -90,7 +84,7 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database::Differences::ToMig
             end
 
             it "returns no migrations because there are no differences" do
-              expect(to_migrations.migrations).to eql({})
+              expect(to_migrations.migrations).to eql([])
             end
           end
         end
@@ -101,21 +95,20 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database::Differences::ToMig
           end
 
           it "returns the migration to create the trigger and description" do
-            expect(to_migrations.migrations).to eql({
-              my_schema: [
-                {
-                  name: :changes_for_my_table,
-                  content: <<~RUBY.strip
-                    #
-                    # Triggers
-                    #
-                    before_insert :my_table, name: :my_trigger, function_schema_name: :my_schema, function_name: :my_function, comment: <<~COMMENT
-                      Description of my trigger
-                    COMMENT
-                  RUBY
-                }
-              ]
-            })
+            expect(to_migrations.migrations).to eql([
+              {
+                schema_name: :my_schema,
+                name: :changes_for_my_table,
+                content: <<~RUBY.strip
+                  #
+                  # Triggers
+                  #
+                  before_insert :my_table, name: :my_trigger, function_schema_name: :my_schema, function_name: :my_function, comment: <<~COMMENT
+                    Description of my trigger
+                  COMMENT
+                RUBY
+              }
+            ])
           end
 
           describe "when the loaded table has the same trigger but a different description" do
@@ -124,19 +117,18 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database::Differences::ToMig
             end
 
             it "returns the migration to update the description" do
-              expect(to_migrations.migrations).to eql({
-                my_schema: [{
-                  name: :changes_for_my_table,
-                  content: <<~RUBY.strip
-                    #
-                    # Triggers
-                    #
-                    set_trigger_comment :my_table, :my_trigger, <<~COMMENT
-                      Description of my trigger
-                    COMMENT
-                  RUBY
-                }]
-              })
+              expect(to_migrations.migrations).to eql([{
+                schema_name: :my_schema,
+                name: :changes_for_my_table,
+                content: <<~RUBY.strip
+                  #
+                  # Triggers
+                  #
+                  set_trigger_comment :my_table, :my_trigger, <<~COMMENT
+                    Description of my trigger
+                  COMMENT
+                RUBY
+              }])
             end
           end
 
@@ -146,7 +138,7 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database::Differences::ToMig
             end
 
             it "returns no migrations because there are no differences" do
-              expect(to_migrations.migrations).to eql({})
+              expect(to_migrations.migrations).to eql([])
             end
           end
         end

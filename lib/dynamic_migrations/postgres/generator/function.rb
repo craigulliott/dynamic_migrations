@@ -25,13 +25,18 @@ module DynamicMigrations
             fn_sql << ";"
           end
 
-          add_migration function.schema.name, function.triggers.first&.table&.name, :create_function, function.name, code_comment, (comment_sql + <<~RUBY)
-            create_function :#{function.name}#{optional_options_syntax} do
-              <<~SQL
-                #{indent fn_sql}
-              SQL
-            end
-          RUBY
+          add_fragment schema: function.schema,
+            table: function.triggers.first&.table,
+            migration_method: :create_function,
+            object: function,
+            code_comment: code_comment,
+            migration: comment_sql + <<~RUBY
+              create_function :#{function.name}#{optional_options_syntax} do
+                <<~SQL
+                  #{indent fn_sql}
+                SQL
+              end
+            RUBY
         end
 
         def update_function function, code_comment = nil
@@ -41,35 +46,55 @@ module DynamicMigrations
             fn_sql << ";"
           end
 
-          add_migration function.schema.name, function.triggers.first&.table&.name, :update_function, function.name, code_comment, <<~RUBY
-            update_function :#{function.name} do
-              <<~SQL
-                #{indent fn_sql}
-              SQL
-            end
-          RUBY
+          add_fragment schema: function.schema,
+            table: function.triggers.first&.table,
+            migration_method: :update_function,
+            object: function,
+            code_comment: code_comment,
+            migration: <<~RUBY
+              update_function :#{function.name} do
+                <<~SQL
+                  #{indent fn_sql}
+                SQL
+              end
+            RUBY
         end
 
         def drop_function function, code_comment = nil
-          add_migration function.schema.name, function.triggers.first&.table&.name, :drop_function, function.name, code_comment, <<~RUBY
-            drop_function :#{function.name}
-          RUBY
+          add_fragment schema: function.schema,
+            table: function.triggers.first&.table,
+            migration_method: :drop_function,
+            object: function,
+            code_comment: code_comment,
+            migration: <<~RUBY
+              drop_function :#{function.name}
+            RUBY
         end
 
         # add a comment to a function
         def set_function_comment function, code_comment = nil
-          add_migration function.schema.name, function.triggers.first&.table&.name, :set_function_comment, function.name, code_comment, <<~RUBY
-            set_function_comment :#{function.name}, <<~COMMENT
-              #{indent function.description || ""}
-            COMMENT
-          RUBY
+          add_fragment schema: function.schema,
+            table: function.triggers.first&.table,
+            migration_method: :set_function_comment,
+            object: function,
+            code_comment: code_comment,
+            migration: <<~RUBY
+              set_function_comment :#{function.name}, <<~COMMENT
+                #{indent function.description || ""}
+              COMMENT
+            RUBY
         end
 
         # remove the comment from a function
         def remove_function_comment function, code_comment = nil
-          add_migration function.schema.name, function.triggers.first&.table&.name, :remove_function_comment, function.name, code_comment, <<~RUBY
-            remove_function_comment :#{function.name}
-          RUBY
+          add_fragment schema: function.schema,
+            table: function.triggers.first&.table,
+            migration_method: :remove_function_comment,
+            object: function,
+            code_comment: code_comment,
+            migration: <<~RUBY
+              remove_function_comment :#{function.name}
+            RUBY
         end
       end
     end

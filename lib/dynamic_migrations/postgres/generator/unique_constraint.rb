@@ -24,15 +24,25 @@ module DynamicMigrations
 
           options_syntax = options.map { |k, v| "#{k}: #{v}" }.join(", ")
 
-          add_migration unique_constraint.table.schema.name, unique_constraint.table.name, :add_unique_constraint, unique_constraint.name, code_comment, <<~RUBY
-            add_unique_constraint :#{unique_constraint.table.name}, #{column_names}, #{options_syntax}
-          RUBY
+          add_fragment schema: unique_constraint.table.schema,
+            table: unique_constraint.table,
+            migration_method: :add_unique_constraint,
+            object: unique_constraint,
+            code_comment: code_comment,
+            migration: <<~RUBY
+              add_unique_constraint :#{unique_constraint.table.name}, #{column_names}, #{options_syntax}
+            RUBY
         end
 
         def remove_unique_constraint unique_constraint, code_comment = nil
-          add_migration unique_constraint.table.schema.name, unique_constraint.table.name, :remove_unique_constraint, unique_constraint.name, code_comment, <<~RUBY
-            remove_unique_constraint :#{unique_constraint.table.name}, :#{unique_constraint.name}
-          RUBY
+          add_fragment schema: unique_constraint.table.schema,
+            table: unique_constraint.table,
+            migration_method: :remove_unique_constraint,
+            object: unique_constraint,
+            code_comment: code_comment,
+            migration: <<~RUBY
+              remove_unique_constraint :#{unique_constraint.table.name}, :#{unique_constraint.name}
+            RUBY
         end
 
         def recreate_unique_constraint original_unique_constraint, updated_unique_constraint
@@ -60,18 +70,28 @@ module DynamicMigrations
             raise MissingDescriptionError
           end
 
-          add_migration unique_constraint.table.schema.name, unique_constraint.table.name, :set_unique_constraint_comment, unique_constraint.name, code_comment, <<~RUBY
-            set_unique_constraint_comment :#{unique_constraint.table.name}, :#{unique_constraint.name}, <<~COMMENT
-              #{indent description}
-            COMMENT
-          RUBY
+          add_fragment schema: unique_constraint.table.schema,
+            table: unique_constraint.table,
+            migration_method: :set_unique_constraint_comment,
+            object: unique_constraint,
+            code_comment: code_comment,
+            migration: <<~RUBY
+              set_unique_constraint_comment :#{unique_constraint.table.name}, :#{unique_constraint.name}, <<~COMMENT
+                #{indent description}
+              COMMENT
+            RUBY
         end
 
         # remove the comment from a unique_constraint
         def remove_unique_constraint_comment unique_constraint, code_comment = nil
-          add_migration unique_constraint.table.schema.name, unique_constraint.table.name, :remove_unique_constraint_comment, unique_constraint.name, code_comment, <<~RUBY
-            remove_unique_constraint_comment :#{unique_constraint.table.name}, :#{unique_constraint.name}
-          RUBY
+          add_fragment schema: unique_constraint.table.schema,
+            table: unique_constraint.table,
+            migration_method: :remove_unique_constraint_comment,
+            object: unique_constraint,
+            code_comment: code_comment,
+            migration: <<~RUBY
+              remove_unique_constraint_comment :#{unique_constraint.table.name}, :#{unique_constraint.name}
+            RUBY
         end
       end
     end

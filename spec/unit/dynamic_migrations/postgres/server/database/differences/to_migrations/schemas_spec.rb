@@ -15,17 +15,16 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database::Differences::ToMig
         end
 
         it "returns the migration to create it" do
-          expect(to_migrations.migrations).to eql({
-            my_schema: [{
-              name: :create_my_schema_schema,
-              content: <<~RUBY.strip
-                #
-                # Create this schema
-                #
-                create_schema :my_schema
-              RUBY
-            }]
-          })
+          expect(to_migrations.migrations).to eql([{
+            schema_name: :my_schema,
+            name: :create_my_schema_schema,
+            content: <<~RUBY.strip
+              #
+              # Create this schema
+              #
+              create_schema :my_schema
+            RUBY
+          }])
         end
 
         describe "when the loaded database has an equivalent schema" do
@@ -34,7 +33,7 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database::Differences::ToMig
           end
 
           it "returns no migrations because there are no differences" do
-            expect(to_migrations.migrations).to eql({})
+            expect(to_migrations.migrations).to eql([])
           end
         end
       end
@@ -45,17 +44,16 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database::Differences::ToMig
         end
 
         it "returns the migration to delete it, because the configured does not have it" do
-          expect(to_migrations.migrations).to eql({
-            my_schema: [{
-              name: :drop_my_schema_schema,
-              content: <<~RUBY.strip
-                #
-                # Drop this schema
-                #
-                drop_schema :my_schema
-              RUBY
-            }]
-          })
+          expect(to_migrations.migrations).to eql([{
+            schema_name: :my_schema,
+            name: :drop_my_schema_schema,
+            content: <<~RUBY.strip
+              #
+              # Drop this schema
+              #
+              drop_schema :my_schema
+            RUBY
+          }])
         end
       end
     end

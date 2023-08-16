@@ -7,255 +7,14 @@ module DynamicMigrations
       class DeferrableOptionsError < StandardError
       end
 
-      class UnexpectedMigrationMethodNameError < StandardError
-      end
-
       class MissingDescriptionError < StandardError
       end
 
       class NoDifferenceError < StandardError
       end
 
-      # these sections are in order for which they will appear in a migration,
-      # note that removals come before additions, and that the order here optomizes
-      # for dependencies (i.e. columns have to be created before indexes are added and
-      # triggers are removed before functions are dropped)
-      STRUCTURE = [
-        {
-          header_comment: <<~COMMENT,
-            #
-            # Remove Functions
-            #
-          COMMENT
-          methods: [
-            :remove_function_comment,
-            :drop_function
-          ]
-        },
-        {
-          header_comment: <<~COMMENT,
-            #
-            # Remove Triggers
-            #
-          COMMENT
-          methods: [
-            :remove_trigger_comment,
-            :remove_trigger
-          ]
-        },
-        {
-          header_comment: <<~COMMENT,
-            #
-            # Remove Validations
-            #
-          COMMENT
-          methods: [
-            :remove_validation,
-            :remove_unique_constraint
-          ]
-        },
-        {
-          header_comment: <<~COMMENT,
-            #
-            # Remove Foreign Keys
-            #
-          COMMENT
-          methods: [
-            :remove_foreign_key
-          ]
-        },
-        {
-          header_comment: <<~COMMENT,
-            #
-            # Remove Primary Keys
-            #
-          COMMENT
-          methods: [
-            :remove_primary_key
-          ]
-        },
-        {
-          header_comment: <<~COMMENT,
-            #
-            # Remove Indexes
-            #
-          COMMENT
-          methods: [
-            :remove_index,
-            :remove_index_comment
-          ]
-        },
-        {
-          header_comment: <<~COMMENT,
-            #
-            # Remove Columns
-            #
-          COMMENT
-          methods: [
-            :remove_column
-          ]
-        },
-        {
-          header_comment: <<~COMMENT,
-            #
-            # Remove Tables
-            #
-          COMMENT
-          break_after: true,
-          methods: [
-            :drop_table
-          ]
-        },
-        {
-          # this is important enough to get it's own migration
-          break_before: true,
-          break_after: true,
-          header_comment: <<~COMMENT,
-            #
-            # Drop this schema
-            #
-          COMMENT
-          methods: [
-            :drop_schema
-          ]
-        },
-        {
-          # this is important enough to get it's own migration
-          break_before: true,
-          break_after: true,
-          header_comment: <<~COMMENT,
-            #
-            # Create this schema
-            #
-          COMMENT
-          methods: [
-            :create_schema
-          ]
-        },
-        {
-          header_comment: <<~COMMENT,
-            #
-            # Create Table
-            #
-          COMMENT
-          methods: [
-            :create_table
-          ]
-        },
-        {
-          header_comment: <<~COMMENT,
-            #
-            # Tables
-            #
-          COMMENT
-          methods: [
-            :remove_table_comment,
-            :set_table_comment
-          ]
-        },
-        {
-          header_comment: <<~COMMENT,
-            #
-            # Additional Columns
-            #
-          COMMENT
-          methods: [
-            :add_column
-          ]
-        },
-        {
-          header_comment: <<~COMMENT,
-            #
-            # Update Columns
-            #
-          COMMENT
-          methods: [
-            :change_column,
-            :remove_column_comment,
-            :set_column_comment
-          ]
-        },
-        {
-          header_comment: <<~COMMENT,
-            #
-            # Primary Key
-            #
-          COMMENT
-          methods: [
-            :add_primary_key
-          ]
-        },
-        {
-          header_comment: <<~COMMENT,
-            #
-            # Indexes
-            #
-          COMMENT
-          methods: [
-            :add_index,
-            :set_index_comment
-          ]
-        },
-        {
-          header_comment: <<~COMMENT,
-            #
-            # Foreign Keys
-            #
-          COMMENT
-          methods: [
-            :add_foreign_key,
-            :set_foreign_key_constraint_comment,
-            :remove_foreign_key_constraint_comment
-          ]
-        },
-        {
-          header_comment: <<~COMMENT,
-            #
-            # Validations
-            #
-          COMMENT
-          methods: [
-            :add_validation,
-            :add_unique_constraint,
-            :set_validation_comment,
-            :remove_validation_comment,
-            :set_unique_constraint_comment,
-            :remove_unique_constraint_comment
-          ]
-        },
-        {
-          header_comment: <<~COMMENT,
-            #
-            # Functions
-            #
-          COMMENT
-          methods: [
-            :create_function
-          ]
-        },
-        {
-          header_comment: <<~COMMENT,
-            #
-            # Triggers
-            #
-          COMMENT
-          methods: [
-            :add_trigger,
-            :set_trigger_comment
-          ]
-        },
-        {
-          header_comment: <<~COMMENT,
-            #
-            # Update Functions
-            #
-          COMMENT
-          methods: [
-            :update_function,
-            :set_function_comment
-          ]
-        }
-      ]
+      class TableMigrationNotFound < StandardError
+      end
 
       include Schema
       include Table
@@ -269,79 +28,189 @@ module DynamicMigrations
       include Trigger
 
       def initialize
-        @migrations = {}
+        @fragments = []
       end
 
-      # builds an array of migrations that can be used to create the provided schema
+      # builds the final migrations
       def migrations
-        final_migrations = {}
-        # an array of table names which have migrations, we group migrations for the same table together
-        @migrations.map do |schema_name, table_migrations|
-          schema_migrations = SchemaMigrations.new
-          # iterate through the tables which have migrations
-          table_migrations.map do |table_name, fragments|
-            # iterate through the structure object in order, and create the final migrations
-            STRUCTURE.each do |section|
-              # if this section requires a new migration, then end any current one
-              if section[:break_before]
-                schema_migrations.finalize
-              end
+        # a hash to hold the generated migrations orgnized by their schema and table
+        # this makes it easier and faster to work with them within this method
+        database_migrations = {}
 
-              # add the header comment if we have a migration which matches one of the
-              # methods in this section
-              if (section[:methods] & fragments.keys).any?
-                header_fragment = Fragment.new nil, nil, section[:header_comment]
-                schema_migrations.add_fragment schema_name, table_name, :comment, header_fragment
-              end
+        # Process each fragment, and organize them into migrations. We create a shared
+        # Migration for each table, and a single shared migration for any schema migrations
+        # which do not relate to a table.
+        @fragments.each do |fragment|
+          # The first time this schema is encountered we create an object to hold the migrations
+          # and organize the different migrations.
+          schema_migrations = database_migrations[fragment.schema_name] ||= {
+            schema_migration: nil,
+            table_migrations: {},
+            # this array will hold any migrations which were created by splitting apart table
+            # migrations to resolve circular dependencies
+            additional_migrations: []
+          }
+          schema_name = fragment.schema_name
+          table_name = fragment.table_name
+          # If we have a table name, then add the migration fragment to a
+          # TableMigration which holds all of the migrations for this table
+          if table_name
+            table_migration = schema_migrations[:table_migrations][table_name] ||= TableMigration.new(schema_name, table_name)
+            table_migration.add_fragment fragment
 
-              # iterate through this sections methods in order and look
-              # for any that match the migrations we have
-              section[:methods].each do |method_name|
-                # if we have any migration fragments for this method then add them
-                fragments[method_name]&.each do |fragment|
-                  schema_migrations.add_fragment schema_name, table_name, method_name, fragment
+          # migration fragments which do not belong to a specific table are added
+          # to a dedicated SchemaMigration object
+          else
+            schema_migration = schema_migrations[:schema_migration] ||= SchemaMigration.new(schema_name)
+            schema_migration.add_fragment fragment
+          end
+        end
+
+        # Convert the hash of migrations into an array of migrations, this is
+        # passed to the `circular_dependency?` method below, and any new migrations
+        # requred to resolve circular dependencies will be added to this array
+        all_table_migrations = database_migrations.values.map { |m| m[:table_migrations].values }.flatten
+
+        # iterate through all of the table migrations, and fix any circular dependencies caused
+        # by foreign key constraints
+        database_migrations.each do |schema_name, schema_migrations|
+          # we only need to process the TableMigrations, as the SchemaMigration
+          # never have dependencies
+          schema_migrations[:table_migrations].values.each do |table_migration|
+            # recursively test each table migration for circular dependencies
+            table_migration.dependencies.each do |dependency|
+              if circular_dependency? table_migration.schema_name, table_migration.table_name, dependency, all_table_migrations
+                # remove the fragment which is causing the circular dependency
+                removed_fragments = table_migration.extract_fragments_with_dependency dependency[:schema_name], dependency[:table_name]
+                # create a new table migration for these fragments (there should only
+                # be one, but we treat them as an array to futiure proof this)
+                new_migration = TableMigration.new(schema_name, table_migration.table_name)
+                # place these fragments in their own migration
+                removed_fragments.each do |removed_fragment|
+                  new_migration.add_fragment removed_fragment
                 end
-              end
-
-              # if this section causes a new migration then end any current one
-              if section[:break_after]
-                schema_migrations.finalize
+                # add the new migration to the list of migrations
+                schema_migrations[:additional_migrations] << new_migration
               end
             end
-            schema_migrations.finalize
           end
-          final_migrations[schema_name] = schema_migrations.to_a
         end
-        final_migrations
+
+        # Prepare a dependency sorter, this is used to sort the migrations via rubys included Tsort module
+        # The object used to sort the migrations is extended from a hash, and takes the form:
+        # {
+        #   # every migration exists as a key, and its corresponding array is all the
+        #   # migrations which it depends on
+        #   migration1 => [migration2, migration3],
+        #   migration3 => [migration2]
+        # }
+        dependency_sorter = MigrationDependencySorter.new
+        database_migrations.each do |schema_name, schema_migrations|
+          if schema_migrations[:schema_migration]
+            # the schema migration never has any dependencies
+            dependency_sorter[schema_migrations[:schema_migration]] = []
+          end
+          # add each table migration, and its dependencies
+          schema_migrations[:table_migrations].values.each do |table_migration|
+            deps = dependency_sorter[table_migration] = []
+            # if there is a schema migration, then it should always come first
+            # so make the table migration depend on it
+            deps << schema_migrations[:schema_migration] if schema_migrations[:schema_migration]
+            # if the table migration has any dependencies, then add them
+            table_migration.dependencies.each do |dependency|
+              # find the migration which matches the dependency
+              dependent_migration = schema_migrations[:table_migrations][dependency[:table_name]]
+              # if the table migration is not found, then it's safe to assume the table was created
+              # by an earlier set of migrations
+              unless dependent_migration.nil?
+                # add the dependent migration to the list of dependencies
+                deps << dependent_migration
+              end
+            end
+          end
+          # add each additional migration, and its dependencies
+          schema_migrations[:additional_migrations].each do |additional_migration|
+            deps = dependency_sorter[additional_migration] = []
+            # if there is a schema migration, then it should always come first
+            # so make the table migration depend on it
+            deps << schema_migrations[:schema_migration] if schema_migrations[:schema_migration]
+            # additional migrations are always dependent on the table migration which they came from
+            table_migration = schema_migrations[:table_migrations][additional_migration.table_name]
+            # if the table migration is not found, then it's safe to assume the table was created
+            # by an earlier set of migrations
+            unless table_migration.nil?
+              deps << table_migration
+            end
+            # if the additional_migration has any dependencies, then add them too
+            additional_migration.dependencies.each do |dependency|
+              # find the table migration which matches the dependency
+              dependent_migration = schema_migrations[:table_migrations][dependency[:table_name]]
+              # if the table migration is not found, then it's safe to assume the table was created
+              # by an earlier set of migrations
+              unless dependent_migration.nil?
+                deps << dependent_migration
+              end
+            end
+          end
+        end
+
+        # sort the migrations so that they are executed in the correct order
+        # the order is determined by their dependencies
+        final_migrations = dependency_sorter.tsort
+
+        # return the final migrations in the expected format
+        final_migrations.map do |migration|
+          {
+            schema_name: migration.schema_name,
+            name: migration.name,
+            content: migration.content
+          }
+        end
       end
 
       private
 
-      def supported_migration_method_names
-        @supported_migration_method_names ||= STRUCTURE.map { |s| s[:methods] }.flatten
+      def circular_dependency? schema_name, table_name, dependency, all_table_migrations
+        # if the current dependency (schema_name and table_name) matches the original migration then we have a circular dependency
+        if dependency[:schema_name] == schema_name && dependency[:table_name] == table_name
+          true
+        else
+          # get all mirations which are for the same schema and table as the dependency
+          dependent_migrations = all_table_migrations.filter { |m| m.schema_name == dependency[:schema_name] && m.table_name == dependency[:table_name] }
+          # recursively call this method for all the dependencies for these migrations
+          dependent_migrations.each do |dependent_migration|
+            dependent_migration.dependencies.each do |next_dependency|
+              # if we find a dependency which matches the original schema and table name then we have a circular dependency
+              if circular_dependency?(schema_name, table_name, next_dependency, all_table_migrations)
+                return true
+              end
+            end
+          end
+          false
+        end
       end
 
-      def supported_migration_method? method_name
-        supported_migration_method_names.include? method_name
+      # tsort_each_node is used to iterate for all nodes over a graph.
+      def tsort_each_node(&block)
+        @fragments.each(&block)
       end
 
-      def add_migration schema_name, table_name, migration_method, object_name, code_comment, migration
-        raise ExpectedSymbolError, "Expected schema_name to be a symbol, got #{schema_name}" unless schema_name.is_a?(Symbol)
-        raise ExpectedSymbolError, "Expected table_name to be a symbol, got #{table_name}" unless schema_name.is_a?(Symbol)
+      # tsort_each_child is used to iterate for child nodes of a given node.
+      def tsort_each_child(node, &block)
+        @dep[node].each(&block)
+      end
 
-        unless supported_migration_method? migration_method
-          raise UnexpectedMigrationMethodNameError, "Expected migration_method to be a valid migrator method, got `#{migration_method}`"
+      def add_fragment schema:, migration_method:, object:, migration:, table: nil, code_comment: nil, dependent_table: nil
+        # Remove any empty lines and whitespace from the beginning or the end of the migration and then
+        # strip any empty lines witin the migration (remove the whitespace from them, not delete them).
+        final_migration = strip_empty_lines(migration).strip
+        fragment = Fragment.new(schema.name, table&.name, migration_method, object.name, code_comment, final_migration)
+        if dependent_table
+          fragment.set_dependent_table dependent_table.schema.name, dependent_table.name
         end
 
-        final_migration = strip_empty_lines(migration).strip
-        fragment = Fragment.new(object_name, code_comment, final_migration)
-
-        # note, table_name can be nil, which is OK because nil is a valid
-        # key and we do want to group them all together
-        @migrations[schema_name] ||= {}
-        @migrations[schema_name][table_name] ||= {}
-        @migrations[schema_name][table_name][migration_method] ||= []
-        @migrations[schema_name][table_name][migration_method] << fragment
+        # add this fragment to the list
+        @fragments << fragment
 
         # return the newly created migration fragment
         fragment

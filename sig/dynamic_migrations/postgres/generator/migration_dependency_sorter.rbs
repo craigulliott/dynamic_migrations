@@ -1,0 +1,12 @@
+module DynamicMigrations
+  module Postgres
+    class Generator
+      class MigrationDependencySorter < Hash[Fragment, Array[Fragment]]
+        include TSort
+
+        def tsort_each_child: (Fragment node) -> untyped
+
+      end
+    end
+  end
+end

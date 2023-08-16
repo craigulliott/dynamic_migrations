@@ -46,15 +46,25 @@ module DynamicMigrations
 
           options_syntax = options.map { |k, v| "#{k}: #{v}" }.join(", ")
 
-          add_migration index.table.schema.name, index.table.name, :add_index, index.name, code_comment, (where_sql + <<~RUBY)
-            add_index :#{index.table.name}, #{column_names}, #{options_syntax}
-          RUBY
+          add_fragment schema: index.table.schema,
+            table: index.table,
+            migration_method: :add_index,
+            object: index,
+            code_comment: code_comment,
+            migration: where_sql + <<~RUBY
+              add_index :#{index.table.name}, #{column_names}, #{options_syntax}
+            RUBY
         end
 
         def remove_index index, code_comment = nil
-          add_migration index.table.schema.name, index.table.name, :remove_index, index.name, code_comment, <<~RUBY
-            remove_index :#{index.table.name}, :#{index.name}
-          RUBY
+          add_fragment schema: index.table.schema,
+            table: index.table,
+            migration_method: :remove_index,
+            object: index,
+            code_comment: code_comment,
+            migration: <<~RUBY
+              remove_index :#{index.table.name}, :#{index.name}
+            RUBY
         end
 
         def recreate_index original_index, updated_index
@@ -82,18 +92,28 @@ module DynamicMigrations
             raise MissingDescriptionError
           end
 
-          add_migration index.table.schema.name, index.table.name, :set_index_comment, index.name, code_comment, <<~RUBY
-            set_index_comment :#{index.table.name}, :#{index.name}, <<~COMMENT
-              #{indent description}
-            COMMENT
-          RUBY
+          add_fragment schema: index.table.schema,
+            table: index.table,
+            migration_method: :set_index_comment,
+            object: index,
+            code_comment: code_comment,
+            migration: <<~RUBY
+              set_index_comment :#{index.table.name}, :#{index.name}, <<~COMMENT
+                #{indent description}
+              COMMENT
+            RUBY
         end
 
         # remove the comment from a index
         def remove_index_comment index, code_comment = nil
-          add_migration index.table.schema.name, index.table.name, :remove_index_comment, index.name, code_comment, <<~RUBY
-            remove_index_comment :#{index.table.name}, :#{index.name}
-          RUBY
+          add_fragment schema: index.table.schema,
+            table: index.table,
+            migration_method: :remove_index_comment,
+            object: index,
+            code_comment: code_comment,
+            migration: <<~RUBY
+              remove_index_comment :#{index.table.name}, :#{index.name}
+            RUBY
         end
       end
     end

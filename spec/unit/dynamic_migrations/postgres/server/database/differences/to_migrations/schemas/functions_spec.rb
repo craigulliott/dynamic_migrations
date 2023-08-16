@@ -24,23 +24,22 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database::Differences::ToMig
           end
 
           it "returns the migration to create the function" do
-            expect(to_migrations.migrations).to eql({
-              my_schema: [
-                {
-                  name: :create_function_my_function,
-                  content: <<~RUBY.strip
-                    #
-                    # Functions
-                    #
-                    create_function :my_function do
-                      <<~SQL
-                        NEW.column = 0;
-                      SQL
-                    end
-                  RUBY
-                }
-              ]
-            })
+            expect(to_migrations.migrations).to eql([
+              {
+                schema_name: :my_schema,
+                name: :create_function_my_function,
+                content: <<~RUBY.strip
+                  #
+                  # Functions
+                  #
+                  create_function :my_function do
+                    <<~SQL
+                      NEW.column = 0;
+                    SQL
+                  end
+                RUBY
+              }
+            ])
           end
 
           describe "when the loaded database has the same function but a different function definition" do
@@ -49,21 +48,20 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database::Differences::ToMig
             end
 
             it "returns the migration to update the function" do
-              expect(to_migrations.migrations).to eql({
-                my_schema: [{
-                  name: :schema_functions,
-                  content: <<~RUBY.strip
-                    #
-                    # Update Functions
-                    #
-                    update_function :my_function do
-                      <<~SQL
-                        NEW.column = 0;
-                      SQL
-                    end
-                  RUBY
-                }]
-              })
+              expect(to_migrations.migrations).to eql([{
+                schema_name: :my_schema,
+                name: :schema_functions,
+                content: <<~RUBY.strip
+                  #
+                  # Update Functions
+                  #
+                  update_function :my_function do
+                    <<~SQL
+                      NEW.column = 0;
+                    SQL
+                  end
+                RUBY
+              }])
             end
           end
 
@@ -73,7 +71,7 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database::Differences::ToMig
             end
 
             it "returns no migrations because there are no differences" do
-              expect(to_migrations.migrations).to eql({})
+              expect(to_migrations.migrations).to eql([])
             end
           end
         end
@@ -84,26 +82,25 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database::Differences::ToMig
           end
 
           it "returns the migration to create the function and description" do
-            expect(to_migrations.migrations).to eql({
-              my_schema: [
-                {
-                  name: :create_function_my_function,
-                  content: <<~RUBY.strip
-                    #
-                    # Functions
-                    #
-                    my_function_comment = <<~COMMENT
-                      Description of my function
-                    COMMENT
-                    create_function :my_function, comment: my_function_comment do
-                      <<~SQL
-                        NEW.column = 0;
-                      SQL
-                    end
-                  RUBY
-                }
-              ]
-            })
+            expect(to_migrations.migrations).to eql([
+              {
+                schema_name: :my_schema,
+                name: :create_function_my_function,
+                content: <<~RUBY.strip
+                  #
+                  # Functions
+                  #
+                  my_function_comment = <<~COMMENT
+                    Description of my function
+                  COMMENT
+                  create_function :my_function, comment: my_function_comment do
+                    <<~SQL
+                      NEW.column = 0;
+                    SQL
+                  end
+                RUBY
+              }
+            ])
           end
 
           describe "when the loaded schema has the same function but a different description" do
@@ -112,19 +109,18 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database::Differences::ToMig
             end
 
             it "returns the migration to update the description" do
-              expect(to_migrations.migrations).to eql({
-                my_schema: [{
-                  name: :schema_functions,
-                  content: <<~RUBY.strip
-                    #
-                    # Update Functions
-                    #
-                    set_function_comment :my_function, <<~COMMENT
-                      Description of my function
-                    COMMENT
-                  RUBY
-                }]
-              })
+              expect(to_migrations.migrations).to eql([{
+                schema_name: :my_schema,
+                name: :schema_functions,
+                content: <<~RUBY.strip
+                  #
+                  # Update Functions
+                  #
+                  set_function_comment :my_function, <<~COMMENT
+                    Description of my function
+                  COMMENT
+                RUBY
+              }])
             end
           end
 
@@ -134,25 +130,24 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database::Differences::ToMig
             end
 
             it "returns the migration to update the description" do
-              expect(to_migrations.migrations).to eql({
-                my_schema: [{
-                  name: :schema_functions,
-                  content: <<~RUBY.strip
-                    #
-                    # Update Functions
-                    #
-                    update_function :my_function do
-                      <<~SQL
-                        NEW.column = 0;
-                      SQL
-                    end
+              expect(to_migrations.migrations).to eql([{
+                schema_name: :my_schema,
+                name: :schema_functions,
+                content: <<~RUBY.strip
+                  #
+                  # Update Functions
+                  #
+                  update_function :my_function do
+                    <<~SQL
+                      NEW.column = 0;
+                    SQL
+                  end
 
-                    set_function_comment :my_function, <<~COMMENT
-                      Description of my function
-                    COMMENT
-                  RUBY
-                }]
-              })
+                  set_function_comment :my_function, <<~COMMENT
+                    Description of my function
+                  COMMENT
+                RUBY
+              }])
             end
           end
 
@@ -162,7 +157,7 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database::Differences::ToMig
             end
 
             it "returns no migrations because there are no differences" do
-              expect(to_migrations.migrations).to eql({})
+              expect(to_migrations.migrations).to eql([])
             end
           end
         end

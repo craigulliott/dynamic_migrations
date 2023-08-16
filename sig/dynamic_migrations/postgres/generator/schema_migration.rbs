@@ -1,0 +1,11 @@
+# TypeProf 0.21.7
+
+# Classes
+module DynamicMigrations
+  module Postgres
+    class Generator
+      class SchemaMigration < Migration
+      end
+    end
+  end
+end

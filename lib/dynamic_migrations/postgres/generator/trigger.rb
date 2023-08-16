@@ -46,15 +46,25 @@ module DynamicMigrations
 
           options_syntax = options.map { |k, v| "#{k}: #{v}" }.join(", ")
 
-          add_migration trigger.table.schema.name, trigger.table.name, :add_trigger, trigger.name, code_comment, <<~RUBY
-            #{method_name} :#{trigger.table.name}, #{options_syntax}
-          RUBY
+          add_fragment schema: trigger.table.schema,
+            table: trigger.table,
+            migration_method: :add_trigger,
+            object: trigger,
+            code_comment: code_comment,
+            migration: <<~RUBY
+              #{method_name} :#{trigger.table.name}, #{options_syntax}
+            RUBY
         end
 
         def remove_trigger trigger, code_comment = nil
-          add_migration trigger.table.schema.name, trigger.table.name, :remove_trigger, trigger.name, code_comment, <<~RUBY
-            remove_trigger :#{trigger.table.name}, :#{trigger.name}
-          RUBY
+          add_fragment schema: trigger.table.schema,
+            table: trigger.table,
+            migration_method: :remove_trigger,
+            object: trigger,
+            code_comment: code_comment,
+            migration: <<~RUBY
+              remove_trigger :#{trigger.table.name}, :#{trigger.name}
+            RUBY
         end
 
         def recreate_trigger original_trigger, updated_trigger
@@ -82,18 +92,28 @@ module DynamicMigrations
             raise MissingDescriptionError
           end
 
-          add_migration trigger.table.schema.name, trigger.table.name, :set_trigger_comment, trigger.name, code_comment, <<~RUBY
-            set_trigger_comment :#{trigger.table.name}, :#{trigger.name}, <<~COMMENT
-              #{indent description}
-            COMMENT
-          RUBY
+          add_fragment schema: trigger.table.schema,
+            table: trigger.table,
+            migration_method: :set_trigger_comment,
+            object: trigger,
+            code_comment: code_comment,
+            migration: <<~RUBY
+              set_trigger_comment :#{trigger.table.name}, :#{trigger.name}, <<~COMMENT
+                #{indent description}
+              COMMENT
+            RUBY
         end
 
         # remove the comment from a trigger
         def remove_trigger_comment trigger, code_comment = nil
-          add_migration trigger.table.schema.name, trigger.table.name, :remove_trigger_comment, trigger.name, code_comment, <<~RUBY
-            remove_trigger_comment :#{trigger.table.name}, :#{trigger.name}
-          RUBY
+          add_fragment schema: trigger.table.schema,
+            table: trigger.table,
+            migration_method: :remove_trigger_comment,
+            object: trigger,
+            code_comment: code_comment,
+            migration: <<~RUBY
+              remove_trigger_comment :#{trigger.table.name}, :#{trigger.name}
+            RUBY
         end
       end
     end

@@ -4,15 +4,9 @@
 module DynamicMigrations
   module Postgres
     class Generator
-      @migrations: Hash[Symbol, Hash[Symbol | nil, Hash[Symbol, Array[Fragment]]]]
-      @supported_migration_method_names: Array[Symbol]
+      include TSort
 
-      STRUCTURE: Array[{
-        header_comment: String,
-        methods: Array[Symbol],
-        break_after: bool?,
-        break_before: bool?
-      }]
+      @fragments: Array[Fragment]
 
       include Schema
       include Table
@@ -26,14 +20,20 @@ module DynamicMigrations
       include Trigger
 
       def initialize: -> void
-      def migrations: -> Hash[Symbol, Array[String]]
+      def migrations: -> Array[{
+        schema_name: Symbol,
+        name: Symbol,
+        content: String
+      }]
 
       private
-      def supported_migration_method_names: -> Array[Symbol]
+      def circular_dependency?: (Symbol schema_name, Symbol table_name, {schema_name: Symbol, table_name: Symbol} dependency, Array[TableMigration] all_table_migrations) -> bool
       def supported_migration_method?: (Symbol migration_method) -> bool
-      def add_migration: (Symbol schema_name, Symbol | nil table_name, Symbol migration_method, Symbol | nil object_name, nil | String code_comment, String migration) -> Fragment
+      def add_fragment: (schema: Server::Database::Schema, migration_method: Symbol, object: untyped, migration: String, ?table: nil | Server::Database::Schema::Table, ?code_comment: nil | String, ?dependent_table: nil | Server::Database::Schema::Table) -> Fragment
       def indent: (String migration) -> String
       def strip_empty_lines: (String migration) -> String
+      def tsort_each_node: -> Enumerator[untyped, untyped]
+      def tsort_each_child: (untyped node) -> untyped
 
       class ExpectedSymbolError < StandardError
       end
@@ -41,13 +41,13 @@ module DynamicMigrations
       class DeferrableOptionsError < StandardError
       end
 
-      class UnexpectedMigrationMethodNameError < StandardError
-      end
-
       class MissingDescriptionError < StandardError
       end
 
       class NoDifferenceError < StandardError
+      end
+
+      class TableMigrationNotFound < StandardError
       end
     end
   end

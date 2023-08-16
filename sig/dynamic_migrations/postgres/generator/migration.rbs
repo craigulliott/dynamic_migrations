@@ -1,0 +1,51 @@
+# TypeProf 0.21.7
+
+# Classes
+module DynamicMigrations
+  module Postgres
+    class Generator
+      class Migration
+        type structure_template = {
+          header_comment: String,
+          methods: Array[Symbol],
+        }
+        self.@structure_templates: Array[structure_template]
+
+        def self.add_structure_template: (Array[Symbol] method_names, String header) -> void
+        def self.structure_templates: -> Array[structure_template]
+        attr_reader schema_name: Symbol
+        attr_reader fragments: Array[Fragment]
+        def initialize: (Symbol schema_name) -> void
+        def add_fragment: (Fragment fragment) -> void
+        def dependencies: -> Array[{schema_name: Symbol, table_name: Symbol}]
+        def extract_fragments_with_dependency: (Symbol schema_name, Symbol table_name) -> Array[Fragment]
+        def content: -> String
+        def name: -> (:changes | :schema_functions | Symbol)
+
+        private
+        def supported_migration_method?: (Symbol method_name) -> bool
+        def fragments_for_method?: (:create_schema | :create_table | :drop_schema | :drop_table migration_method) -> bool
+        def first_fragment_using_migration_method: (:create_schema | :create_table | :drop_schema | :drop_table migration_method) -> Fragment
+        def all_fragments_for_method?: (Array[:create_function | :drop_function | :remove_function_comment | :set_function_comment | :update_function] migration_methods) -> untyped
+
+        class UnexpectedSchemaError < StandardError
+        end
+
+        class UnexpectedTableError < StandardError
+        end
+
+        class SectionNotFoundError < StandardError
+        end
+
+        class UnexpectedMigrationMethodNameError < StandardError
+        end
+
+        class DuplicateStructureTemplateError < StandardError
+        end
+
+        class NoFragmentsError < StandardError
+        end
+      end
+    end
+  end
+end

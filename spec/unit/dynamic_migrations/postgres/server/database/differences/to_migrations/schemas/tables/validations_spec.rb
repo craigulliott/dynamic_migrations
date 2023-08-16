@@ -29,23 +29,22 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database::Differences::ToMig
           end
 
           it "returns the migration to create the validation" do
-            expect(to_migrations.migrations).to eql({
-              my_schema: [
-                {
-                  name: :changes_for_my_table,
-                  content: <<~RUBY.strip
-                    #
-                    # Validations
-                    #
-                    add_validation :my_table, name: :my_validation, deferrable: false, initially_deferred: false do
-                      <<~SQL
-                        my_column > 0;
-                      SQL
-                    end
-                  RUBY
-                }
-              ]
-            })
+            expect(to_migrations.migrations).to eql([
+              {
+                schema_name: :my_schema,
+                name: :changes_for_my_table,
+                content: <<~RUBY.strip
+                  #
+                  # Validations
+                  #
+                  add_validation :my_table, name: :my_validation, deferrable: false, initially_deferred: false do
+                    <<~SQL
+                      my_column > 0;
+                    SQL
+                  end
+                RUBY
+              }
+            ])
           end
 
           describe "when the loaded table has a validation with the same name but a different check clause" do
@@ -54,36 +53,31 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database::Differences::ToMig
             end
 
             it "returns the migration to update the validation by replacing it" do
-              expect(to_migrations.migrations).to eql({
-                my_schema: [
-                  {
-                    name: :changes_for_my_table,
-                    content: <<~RUBY.strip
-                      #
-                      # Remove Validations
-                      #
-                      # Removing original validation because it has changed (it is recreated below)
-                      # Changes:
-                      #   check_clause changed from `my_column > 100` to `my_column > 0`
-                      remove_validation :my_table, :my_validation
-                    RUBY
-                  },
-                  {
-                    name: :changes_for_my_table,
-                    content: <<~RUBY.strip
-                      #
-                      # Validations
-                      #
-                      # Recreating this validation
-                      add_validation :my_table, name: :my_validation, deferrable: false, initially_deferred: false do
-                        <<~SQL
-                          my_column > 0;
-                        SQL
-                      end
-                    RUBY
-                  }
-                ]
-              })
+              expect(to_migrations.migrations).to eql([
+                {
+                  schema_name: :my_schema,
+                  name: :changes_for_my_table,
+                  content: <<~RUBY.strip
+                    #
+                    # Remove Validations
+                    #
+                    # Removing original validation because it has changed (it is recreated below)
+                    # Changes:
+                    #   check_clause changed from `my_column > 100` to `my_column > 0`
+                    remove_validation :my_table, :my_validation
+
+                    #
+                    # Validations
+                    #
+                    # Recreating this validation
+                    add_validation :my_table, name: :my_validation, deferrable: false, initially_deferred: false do
+                      <<~SQL
+                        my_column > 0;
+                      SQL
+                    end
+                  RUBY
+                }
+              ])
             end
           end
 
@@ -93,7 +87,7 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database::Differences::ToMig
             end
 
             it "returns no migrations because there are no differences" do
-              expect(to_migrations.migrations).to eql({})
+              expect(to_migrations.migrations).to eql([])
             end
           end
         end
@@ -104,26 +98,25 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database::Differences::ToMig
           end
 
           it "returns the migration to create the validation and description" do
-            expect(to_migrations.migrations).to eql({
-              my_schema: [
-                {
-                  name: :changes_for_my_table,
-                  content: <<~RUBY.strip
-                    #
-                    # Validations
-                    #
-                    my_validation_comment = <<~COMMENT
-                      Description of my validation
-                    COMMENT
-                    add_validation :my_table, name: :my_validation, deferrable: false, initially_deferred: false, comment: my_validation_comment do
-                      <<~SQL
-                        my_column > 0;
-                      SQL
-                    end
-                  RUBY
-                }
-              ]
-            })
+            expect(to_migrations.migrations).to eql([
+              {
+                schema_name: :my_schema,
+                name: :changes_for_my_table,
+                content: <<~RUBY.strip
+                  #
+                  # Validations
+                  #
+                  my_validation_comment = <<~COMMENT
+                    Description of my validation
+                  COMMENT
+                  add_validation :my_table, name: :my_validation, deferrable: false, initially_deferred: false, comment: my_validation_comment do
+                    <<~SQL
+                      my_column > 0;
+                    SQL
+                  end
+                RUBY
+              }
+            ])
           end
 
           describe "when the loaded table has the same validation but a different description" do
@@ -132,19 +125,18 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database::Differences::ToMig
             end
 
             it "returns the migration to update the description" do
-              expect(to_migrations.migrations).to eql({
-                my_schema: [{
-                  name: :changes_for_my_table,
-                  content: <<~RUBY.strip
-                    #
-                    # Validations
-                    #
-                    set_validation_comment :my_table, :my_validation, <<~COMMENT
-                      Description of my validation
-                    COMMENT
-                  RUBY
-                }]
-              })
+              expect(to_migrations.migrations).to eql([{
+                schema_name: :my_schema,
+                name: :changes_for_my_table,
+                content: <<~RUBY.strip
+                  #
+                  # Validations
+                  #
+                  set_validation_comment :my_table, :my_validation, <<~COMMENT
+                    Description of my validation
+                  COMMENT
+                RUBY
+              }])
             end
           end
 
@@ -154,7 +146,7 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database::Differences::ToMig
             end
 
             it "returns no migrations because there are no differences" do
-              expect(to_migrations.migrations).to eql({})
+              expect(to_migrations.migrations).to eql([])
             end
           end
         end

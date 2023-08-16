@@ -29,19 +29,18 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database::Differences::ToMig
           end
 
           it "returns the migration to create the index" do
-            expect(to_migrations.migrations).to eql({
-              my_schema: [
-                {
-                  name: :changes_for_my_table,
-                  content: <<~RUBY.strip
-                    #
-                    # Indexes
-                    #
-                    add_index :my_table, :my_column, name: :my_index, unique: false, using: :btree, sort: :asc
-                  RUBY
-                }
-              ]
-            })
+            expect(to_migrations.migrations).to eql([
+              {
+                schema_name: :my_schema,
+                name: :changes_for_my_table,
+                content: <<~RUBY.strip
+                  #
+                  # Indexes
+                  #
+                  add_index :my_table, :my_column, name: :my_index, unique: false, using: :btree, sort: :asc
+                RUBY
+              }
+            ])
           end
 
           describe "when the loaded table has a index with the same name but a different order" do
@@ -50,32 +49,27 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database::Differences::ToMig
             end
 
             it "returns the migration to update the index by replacing it" do
-              expect(to_migrations.migrations).to eql({
-                my_schema: [
-                  {
-                    name: :changes_for_my_table,
-                    content: <<~RUBY.strip
-                      #
-                      # Remove Indexes
-                      #
-                      # Removing original index because it has changed (it is recreated below)
-                      # Changes:
-                      #   order changed from `desc` to `asc`
-                      remove_index :my_table, :my_index
-                    RUBY
-                  },
-                  {
-                    name: :changes_for_my_table,
-                    content: <<~RUBY.strip
-                      #
-                      # Indexes
-                      #
-                      # Recreating this index
-                      add_index :my_table, :my_column, name: :my_index, unique: false, using: :btree, sort: :asc
-                    RUBY
-                  }
-                ]
-              })
+              expect(to_migrations.migrations).to eql([
+                {
+                  schema_name: :my_schema,
+                  name: :changes_for_my_table,
+                  content: <<~RUBY.strip
+                    #
+                    # Remove Indexes
+                    #
+                    # Removing original index because it has changed (it is recreated below)
+                    # Changes:
+                    #   order changed from `desc` to `asc`
+                    remove_index :my_table, :my_index
+
+                    #
+                    # Indexes
+                    #
+                    # Recreating this index
+                    add_index :my_table, :my_column, name: :my_index, unique: false, using: :btree, sort: :asc
+                  RUBY
+                }
+              ])
             end
           end
 
@@ -89,32 +83,27 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database::Differences::ToMig
             end
 
             it "returns the migration to update the index by replacing it" do
-              expect(to_migrations.migrations).to eql({
-                my_schema: [
-                  {
-                    name: :changes_for_my_table,
-                    content: <<~RUBY.strip
-                      #
-                      # Remove Indexes
-                      #
-                      # Removing original index because it has changed (it is recreated below)
-                      # Changes:
-                      #   column_names changed from `[:my_column, :my_other_column]` to `[:my_column]`
-                      remove_index :my_table, :my_index
-                    RUBY
-                  },
-                  {
-                    name: :changes_for_my_table,
-                    content: <<~RUBY.strip
-                      #
-                      # Indexes
-                      #
-                      # Recreating this index
-                      add_index :my_table, :my_column, name: :my_index, unique: false, using: :btree, sort: :asc
-                    RUBY
-                  }
-                ]
-              })
+              expect(to_migrations.migrations).to eql([
+                {
+                  schema_name: :my_schema,
+                  name: :changes_for_my_table,
+                  content: <<~RUBY.strip
+                    #
+                    # Remove Indexes
+                    #
+                    # Removing original index because it has changed (it is recreated below)
+                    # Changes:
+                    #   column_names changed from `[:my_column, :my_other_column]` to `[:my_column]`
+                    remove_index :my_table, :my_index
+
+                    #
+                    # Indexes
+                    #
+                    # Recreating this index
+                    add_index :my_table, :my_column, name: :my_index, unique: false, using: :btree, sort: :asc
+                  RUBY
+                }
+              ])
             end
           end
 
@@ -124,7 +113,7 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database::Differences::ToMig
             end
 
             it "returns no migrations because there are no differences" do
-              expect(to_migrations.migrations).to eql({})
+              expect(to_migrations.migrations).to eql([])
             end
           end
         end
@@ -135,21 +124,20 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database::Differences::ToMig
           end
 
           it "returns the migration to create the index and description" do
-            expect(to_migrations.migrations).to eql({
-              my_schema: [
-                {
-                  name: :changes_for_my_table,
-                  content: <<~RUBY.strip
-                    #
-                    # Indexes
-                    #
-                    add_index :my_table, :my_column, name: :my_index, unique: false, using: :btree, sort: :asc, comment: <<~COMMENT
-                      Description of my index
-                    COMMENT
-                  RUBY
-                }
-              ]
-            })
+            expect(to_migrations.migrations).to eql([
+              {
+                schema_name: :my_schema,
+                name: :changes_for_my_table,
+                content: <<~RUBY.strip
+                  #
+                  # Indexes
+                  #
+                  add_index :my_table, :my_column, name: :my_index, unique: false, using: :btree, sort: :asc, comment: <<~COMMENT
+                    Description of my index
+                  COMMENT
+                RUBY
+              }
+            ])
           end
 
           describe "when the loaded table has the same index but a different description" do
@@ -158,19 +146,18 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database::Differences::ToMig
             end
 
             it "returns the migration to update the description" do
-              expect(to_migrations.migrations).to eql({
-                my_schema: [{
-                  name: :changes_for_my_table,
-                  content: <<~RUBY.strip
-                    #
-                    # Indexes
-                    #
-                    set_index_comment :my_table, :my_index, <<~COMMENT
-                      Description of my index
-                    COMMENT
-                  RUBY
-                }]
-              })
+              expect(to_migrations.migrations).to eql([{
+                schema_name: :my_schema,
+                name: :changes_for_my_table,
+                content: <<~RUBY.strip
+                  #
+                  # Indexes
+                  #
+                  set_index_comment :my_table, :my_index, <<~COMMENT
+                    Description of my index
+                  COMMENT
+                RUBY
+              }])
             end
           end
 
@@ -180,7 +167,7 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database::Differences::ToMig
             end
 
             it "returns no migrations because there are no differences" do
-              expect(to_migrations.migrations).to eql({})
+              expect(to_migrations.migrations).to eql([])
             end
           end
         end

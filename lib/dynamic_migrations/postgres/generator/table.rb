@@ -13,20 +13,30 @@ module DynamicMigrations
             raise NoTableCommentError, "Refusing to generate create_table migration, no description was provided for `#{table.schema.name}`.`#{table.name}`"
           end
 
-          add_migration table.schema.name, table.name, :create_table, table.name, code_comment, <<~RUBY
-            table_comment = <<~COMMENT
-              #{indent table.description}
-            COMMENT
-            create_table :#{table.name}, #{table_options table} do |t|
-              #{indent table_columns(table.columns)}
-            end
-          RUBY
+          add_fragment schema: table.schema,
+            table: table,
+            migration_method: :create_table,
+            object: table,
+            code_comment: code_comment,
+            migration: <<~RUBY
+              table_comment = <<~COMMENT
+                #{indent table.description}
+              COMMENT
+              create_table :#{table.name}, #{table_options table} do |t|
+                #{indent table_columns(table.columns)}
+              end
+            RUBY
         end
 
         def drop_table table, code_comment = nil
-          add_migration table.schema.name, table.name, :drop_table, table.name, code_comment, <<~RUBY
-            drop_table :#{table.name}, force: true
-          RUBY
+          add_fragment schema: table.schema,
+            table: table,
+            migration_method: :drop_table,
+            object: table,
+            code_comment: code_comment,
+            migration: <<~RUBY
+              drop_table :#{table.name}, force: true
+            RUBY
         end
 
         # add a comment to a table
@@ -37,18 +47,28 @@ module DynamicMigrations
             raise MissingDescriptionError
           end
 
-          add_migration table.schema.name, table.name, :set_table_comment, table.name, code_comment, <<~RUBY
-            set_table_comment :#{table.name}, <<~COMMENT
-              #{indent description}
-            COMMENT
-          RUBY
+          add_fragment schema: table.schema,
+            table: table,
+            migration_method: :set_table_comment,
+            object: table,
+            code_comment: code_comment,
+            migration: <<~RUBY
+              set_table_comment :#{table.name}, <<~COMMENT
+                #{indent description}
+              COMMENT
+            RUBY
         end
 
         # remove the comment from a table
         def remove_table_comment table, code_comment = nil
-          add_migration table.schema.name, table.name, :remove_table_comment, table.name, code_comment, <<~RUBY
-            remove_table_comment :#{table.name}
-          RUBY
+          add_fragment schema: table.schema,
+            table: table,
+            migration_method: :remove_table_comment,
+            object: table,
+            code_comment: code_comment,
+            migration: <<~RUBY
+              remove_table_comment :#{table.name}
+            RUBY
         end
 
         private

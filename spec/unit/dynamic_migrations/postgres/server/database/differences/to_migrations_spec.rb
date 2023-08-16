@@ -30,7 +30,7 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database::Differences::ToMig
   describe :migrations do
     # this is tested much more thoroughly via all the files in ./to_migrations/*
     it "returns no migrations because there are no differences" do
-      expect(to_migrations.migrations).to eql({})
+      expect(to_migrations.migrations).to eql([])
     end
   end
 end

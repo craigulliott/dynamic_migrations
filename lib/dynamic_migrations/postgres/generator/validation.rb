@@ -28,19 +28,29 @@ module DynamicMigrations
             validation_sql << ";"
           end
 
-          add_migration validation.table.schema.name, validation.table.name, :add_validation, validation.name, code_comment, (comment_sql + <<~RUBY)
-            add_validation :#{validation.table.name}, #{options_syntax} do
-              <<~SQL
-                #{indent validation_sql}
-              SQL
-            end
-          RUBY
+          add_fragment schema: validation.table.schema,
+            table: validation.table,
+            migration_method: :add_validation,
+            object: validation,
+            code_comment: code_comment,
+            migration: comment_sql + <<~RUBY
+              add_validation :#{validation.table.name}, #{options_syntax} do
+                <<~SQL
+                  #{indent validation_sql}
+                SQL
+              end
+            RUBY
         end
 
         def remove_validation validation, code_comment = nil
-          add_migration validation.table.schema.name, validation.table.name, :remove_validation, validation.name, code_comment, <<~RUBY
-            remove_validation :#{validation.table.name}, :#{validation.name}
-          RUBY
+          add_fragment schema: validation.table.schema,
+            table: validation.table,
+            migration_method: :remove_validation,
+            object: validation,
+            code_comment: code_comment,
+            migration: <<~RUBY
+              remove_validation :#{validation.table.name}, :#{validation.name}
+            RUBY
         end
 
         def recreate_validation original_validation, updated_validation
@@ -68,18 +78,28 @@ module DynamicMigrations
             raise MissingDescriptionError
           end
 
-          add_migration validation.table.schema.name, validation.table.name, :set_validation_comment, validation.name, code_comment, <<~RUBY
-            set_validation_comment :#{validation.table.name}, :#{validation.name}, <<~COMMENT
-              #{indent description}
-            COMMENT
-          RUBY
+          add_fragment schema: validation.table.schema,
+            table: validation.table,
+            migration_method: :set_validation_comment,
+            object: validation,
+            code_comment: code_comment,
+            migration: <<~RUBY
+              set_validation_comment :#{validation.table.name}, :#{validation.name}, <<~COMMENT
+                #{indent description}
+              COMMENT
+            RUBY
         end
 
         # remove the comment from a validation
         def remove_validation_comment validation, code_comment = nil
-          add_migration validation.table.schema.name, validation.table.name, :remove_validation_comment, validation.name, code_comment, <<~RUBY
-            remove_validation_comment :#{validation.table.name}, :#{validation.name}
-          RUBY
+          add_fragment schema: validation.table.schema,
+            table: validation.table,
+            migration_method: :remove_validation_comment,
+            object: validation,
+            code_comment: code_comment,
+            migration: <<~RUBY
+              remove_validation_comment :#{validation.table.name}, :#{validation.name}
+            RUBY
         end
       end
     end

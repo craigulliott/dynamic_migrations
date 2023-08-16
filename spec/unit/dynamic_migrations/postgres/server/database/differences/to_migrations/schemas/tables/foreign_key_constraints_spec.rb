@@ -35,19 +35,18 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database::Differences::ToMig
           end
 
           it "returns the migration to create the foreign_key" do
-            expect(to_migrations.migrations).to eql({
-              my_schema: [
-                {
-                  name: :changes_for_my_table,
-                  content: <<~RUBY.strip
-                    #
-                    # Foreign Keys
-                    #
-                    add_foreign_key :my_table, :my_column, :my_foreign_table, :my_foreign_column, name: :my_foreign_key, initially_deferred: false, deferrable: false, on_delete: :no_action, on_update: :no_action
-                  RUBY
-                }
-              ]
-            })
+            expect(to_migrations.migrations).to eql([
+              {
+                schema_name: :my_schema,
+                name: :changes_for_my_table,
+                content: <<~RUBY.strip
+                  #
+                  # Foreign Keys
+                  #
+                  add_foreign_key :my_table, :my_column, :my_foreign_table, :my_foreign_column, name: :my_foreign_key, initially_deferred: false, deferrable: false, on_delete: :no_action, on_update: :no_action
+                RUBY
+              }
+            ])
           end
 
           describe "when the loaded table has a foreign_key with the same name but a different deferrable value" do
@@ -56,32 +55,27 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database::Differences::ToMig
             end
 
             it "returns the migration to update the foreign_key by replacing it" do
-              expect(to_migrations.migrations).to eql({
-                my_schema: [
-                  {
-                    name: :changes_for_my_table,
-                    content: <<~RUBY.strip
-                      #
-                      # Remove Foreign Keys
-                      #
-                      # Removing original foreign key constraint because it has changed (it is recreated below)
-                      # Changes:
-                      #   deferrable changed from `true` to `false`
-                      remove_foreign_key :my_table, :my_foreign_key
-                    RUBY
-                  },
-                  {
-                    name: :changes_for_my_table,
-                    content: <<~RUBY.strip
-                      #
-                      # Foreign Keys
-                      #
-                      # Recreating this foreign key constraint
-                      add_foreign_key :my_table, :my_column, :my_foreign_table, :my_foreign_column, name: :my_foreign_key, initially_deferred: false, deferrable: false, on_delete: :no_action, on_update: :no_action
-                    RUBY
-                  }
-                ]
-              })
+              expect(to_migrations.migrations).to eql([
+                {
+                  schema_name: :my_schema,
+                  name: :changes_for_my_table,
+                  content: <<~RUBY.strip
+                    #
+                    # Remove Foreign Keys
+                    #
+                    # Removing original foreign key constraint because it has changed (it is recreated below)
+                    # Changes:
+                    #   deferrable changed from `true` to `false`
+                    remove_foreign_key :my_table, :my_foreign_key
+
+                    #
+                    # Foreign Keys
+                    #
+                    # Recreating this foreign key constraint
+                    add_foreign_key :my_table, :my_column, :my_foreign_table, :my_foreign_column, name: :my_foreign_key, initially_deferred: false, deferrable: false, on_delete: :no_action, on_update: :no_action
+                  RUBY
+                }
+              ])
             end
           end
 
@@ -91,7 +85,7 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database::Differences::ToMig
             end
 
             it "returns no migrations because there are no differences" do
-              expect(to_migrations.migrations).to eql({})
+              expect(to_migrations.migrations).to eql([])
             end
           end
         end
@@ -102,21 +96,20 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database::Differences::ToMig
           end
 
           it "returns the migration to create the foreign_key and description" do
-            expect(to_migrations.migrations).to eql({
-              my_schema: [
-                {
-                  name: :changes_for_my_table,
-                  content: <<~RUBY.strip
-                    #
-                    # Foreign Keys
-                    #
-                    add_foreign_key :my_table, :my_column, :my_foreign_table, :my_foreign_column, name: :my_foreign_key, initially_deferred: false, deferrable: false, on_delete: :no_action, on_update: :no_action, comment: <<~COMMENT
-                      Description of my foreign_key
-                    COMMENT
-                  RUBY
-                }
-              ]
-            })
+            expect(to_migrations.migrations).to eql([
+              {
+                schema_name: :my_schema,
+                name: :changes_for_my_table,
+                content: <<~RUBY.strip
+                  #
+                  # Foreign Keys
+                  #
+                  add_foreign_key :my_table, :my_column, :my_foreign_table, :my_foreign_column, name: :my_foreign_key, initially_deferred: false, deferrable: false, on_delete: :no_action, on_update: :no_action, comment: <<~COMMENT
+                    Description of my foreign_key
+                  COMMENT
+                RUBY
+              }
+            ])
           end
 
           describe "when the loaded table has the same foreign_key but a different description" do
@@ -125,19 +118,18 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database::Differences::ToMig
             end
 
             it "returns the migration to update the description" do
-              expect(to_migrations.migrations).to eql({
-                my_schema: [{
-                  name: :changes_for_my_table,
-                  content: <<~RUBY.strip
-                    #
-                    # Foreign Keys
-                    #
-                    set_foreign_key_comment :my_table, :my_foreign_key, <<~COMMENT
-                      Description of my foreign_key
-                    COMMENT
-                  RUBY
-                }]
-              })
+              expect(to_migrations.migrations).to eql([{
+                schema_name: :my_schema,
+                name: :changes_for_my_table,
+                content: <<~RUBY.strip
+                  #
+                  # Foreign Keys
+                  #
+                  set_foreign_key_comment :my_table, :my_foreign_key, <<~COMMENT
+                    Description of my foreign_key
+                  COMMENT
+                RUBY
+              }])
             end
           end
 
@@ -147,7 +139,7 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database::Differences::ToMig
             end
 
             it "returns no migrations because there are no differences" do
-              expect(to_migrations.migrations).to eql({})
+              expect(to_migrations.migrations).to eql([])
             end
           end
         end

@@ -29,19 +29,18 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database::Differences::ToMig
           end
 
           it "returns the migration to create the primary_key" do
-            expect(to_migrations.migrations).to eql({
-              my_schema: [
-                {
-                  name: :changes_for_my_table,
-                  content: <<~RUBY.strip
-                    #
-                    # Primary Key
-                    #
-                    add_primary_key :my_table, :my_column, name: :my_primary_key
-                  RUBY
-                }
-              ]
-            })
+            expect(to_migrations.migrations).to eql([
+              {
+                schema_name: :my_schema,
+                name: :changes_for_my_table,
+                content: <<~RUBY.strip
+                  #
+                  # Primary Key
+                  #
+                  add_primary_key :my_table, :my_column, name: :my_primary_key
+                RUBY
+              }
+            ])
           end
 
           describe "when the loaded table has a primary_key on a different column" do
@@ -54,32 +53,27 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database::Differences::ToMig
             end
 
             it "returns the migration to update the primary_key by replacing it" do
-              expect(to_migrations.migrations).to eql({
-                my_schema: [
-                  {
-                    name: :changes_for_my_table,
-                    content: <<~RUBY.strip
-                      #
-                      # Remove Primary Keys
-                      #
-                      # Removing original primary key because it has changed (it is recreated below)
-                      # Changes:
-                      #   column_names changed from `[:my_other_column]` to `[:my_column]`
-                      remove_primary_key :my_table, :my_primary_key
-                    RUBY
-                  },
-                  {
-                    name: :changes_for_my_table,
-                    content: <<~RUBY.strip
-                      #
-                      # Primary Key
-                      #
-                      # Recreating this primary key
-                      add_primary_key :my_table, :my_column, name: :my_primary_key
-                    RUBY
-                  }
-                ]
-              })
+              expect(to_migrations.migrations).to eql([
+                {
+                  schema_name: :my_schema,
+                  name: :changes_for_my_table,
+                  content: <<~RUBY.strip
+                    #
+                    # Remove Primary Keys
+                    #
+                    # Removing original primary key because it has changed (it is recreated below)
+                    # Changes:
+                    #   column_names changed from `[:my_other_column]` to `[:my_column]`
+                    remove_primary_key :my_table, :my_primary_key
+
+                    #
+                    # Primary Key
+                    #
+                    # Recreating this primary key
+                    add_primary_key :my_table, :my_column, name: :my_primary_key
+                  RUBY
+                }
+              ])
             end
           end
 
@@ -89,7 +83,7 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database::Differences::ToMig
             end
 
             it "returns no migrations because there are no differences" do
-              expect(to_migrations.migrations).to eql({})
+              expect(to_migrations.migrations).to eql([])
             end
           end
         end

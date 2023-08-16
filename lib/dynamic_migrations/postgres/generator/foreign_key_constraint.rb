@@ -29,15 +29,26 @@ module DynamicMigrations
 
           options_syntax = options.map { |k, v| "#{k}: #{v}" }.join(", ")
 
-          add_migration foreign_key_constraint.table.schema.name, foreign_key_constraint.table.name, :add_foreign_key, foreign_key_constraint.name, code_comment, <<~RUBY
-            add_foreign_key :#{foreign_key_constraint.table.name}, #{column_names}, :#{foreign_key_constraint.foreign_table.name}, #{foreign_column_names}, #{options_syntax}
-          RUBY
+          add_fragment schema: foreign_key_constraint.table.schema,
+            table: foreign_key_constraint.table,
+            migration_method: :add_foreign_key,
+            object: foreign_key_constraint,
+            code_comment: code_comment,
+            dependent_table: foreign_key_constraint.foreign_table,
+            migration: <<~RUBY
+              add_foreign_key :#{foreign_key_constraint.table.name}, #{column_names}, :#{foreign_key_constraint.foreign_table.name}, #{foreign_column_names}, #{options_syntax}
+            RUBY
         end
 
         def remove_foreign_key_constraint foreign_key_constraint, code_comment = nil
-          add_migration foreign_key_constraint.table.schema.name, foreign_key_constraint.table.name, :remove_foreign_key, foreign_key_constraint.name, code_comment, <<~RUBY
-            remove_foreign_key :#{foreign_key_constraint.table.name}, :#{foreign_key_constraint.name}
-          RUBY
+          add_fragment schema: foreign_key_constraint.table.schema,
+            table: foreign_key_constraint.table,
+            migration_method: :remove_foreign_key,
+            object: foreign_key_constraint,
+            code_comment: code_comment,
+            migration: <<~RUBY
+              remove_foreign_key :#{foreign_key_constraint.table.name}, :#{foreign_key_constraint.name}
+            RUBY
         end
 
         def recreate_foreign_key_constraint original_foreign_key_constraint, updated_foreign_key_constraint
@@ -65,18 +76,28 @@ module DynamicMigrations
             raise MissingDescriptionError
           end
 
-          add_migration foreign_key_constraint.table.schema.name, foreign_key_constraint.table.name, :set_foreign_key_constraint_comment, foreign_key_constraint.name, code_comment, <<~RUBY
-            set_foreign_key_comment :#{foreign_key_constraint.table.name}, :#{foreign_key_constraint.name}, <<~COMMENT
-              #{indent description}
-            COMMENT
-          RUBY
+          add_fragment schema: foreign_key_constraint.table.schema,
+            table: foreign_key_constraint.table,
+            migration_method: :set_foreign_key_constraint_comment,
+            object: foreign_key_constraint,
+            code_comment: code_comment,
+            migration: <<~RUBY
+              set_foreign_key_comment :#{foreign_key_constraint.table.name}, :#{foreign_key_constraint.name}, <<~COMMENT
+                #{indent description}
+              COMMENT
+            RUBY
         end
 
         # remove the comment from a foreign_key_constraint
         def remove_foreign_key_constraint_comment foreign_key_constraint, code_comment = nil
-          add_migration foreign_key_constraint.table.schema.name, foreign_key_constraint.table.name, :remove_foreign_key_constraint_comment, foreign_key_constraint.name, code_comment, <<~RUBY
-            remove_foreign_key_comment :#{foreign_key_constraint.table.name}, :#{foreign_key_constraint.name}
-          RUBY
+          add_fragment schema: foreign_key_constraint.table.schema,
+            table: foreign_key_constraint.table,
+            migration_method: :remove_foreign_key_constraint_comment,
+            object: foreign_key_constraint,
+            code_comment: code_comment,
+            migration: <<~RUBY
+              remove_foreign_key_comment :#{foreign_key_constraint.table.name}, :#{foreign_key_constraint.name}
+            RUBY
         end
       end
     end
