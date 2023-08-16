@@ -32,6 +32,21 @@ module DynamicMigrations
               raise NotConnectedError
             end
           end
+
+          # Opens a connection to the database server, and yields the provided block
+          # before automatically closing the connection again. This is useful for
+          # executing one time queries against the database server.
+          def with_connection &block
+            # create a temporary connection to the server
+            connect
+            # perform work with the connection
+            # todo: `yield connection` would have been preferred, but rbs/steep doesnt understand that syntax
+            if block.is_a? Proc
+              block.call connection
+            end
+            # close the connection
+            disconnect
+          end
         end
       end
     end

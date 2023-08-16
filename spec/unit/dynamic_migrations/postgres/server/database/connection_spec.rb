@@ -75,5 +75,15 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database do
         end
       end
     end
+
+    describe :with_connection do
+      it "yields with a connection argument" do
+        connection = nil
+        database.with_connection do |c|
+          connection = c
+        end
+        expect(connection).to be_a(PG::Connection)
+      end
+    end
   end
 end
