@@ -24,3 +24,6 @@ dynamic_migrations.code-workspace
 .ruby-version
 
 /local_notes.md
+
+# dont accidentally commit a compiled gem
+*.gem
