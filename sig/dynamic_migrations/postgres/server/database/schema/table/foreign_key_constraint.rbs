@@ -17,9 +17,9 @@ module DynamicMigrations
               attr_reader initially_deferred: bool
               attr_reader on_delete: referential_actions
               attr_reader on_update: referential_actions
-              attr_reader description: String | nil
+              attr_reader description: String?
 
-              def initialize: (database_or_configuration source, Table table, Array[Column] columns, Table foreign_table, Array[Column] foreign_columns, Symbol name, ?deferrable: bool, ?initially_deferred: bool, ?description: String | nil, ?on_delete: referential_actions, ?on_update: referential_actions) -> void
+              def initialize: (database_or_configuration source, Table table, Array[Column] columns, Table foreign_table, Array[Column] foreign_columns, Symbol name, ?deferrable: bool, ?initially_deferred: bool, ?description: String?, ?on_delete: referential_actions, ?on_update: referential_actions) -> void
               def columns: -> Array[Column]
               def column_names: -> Array[Symbol]
               def foreign_columns: -> Array[Column]

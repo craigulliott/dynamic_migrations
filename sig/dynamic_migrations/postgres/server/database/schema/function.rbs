@@ -7,13 +7,13 @@ module DynamicMigrations
       class Database
         class Schema
           class Function < Source
-            attr_reader schema: untyped
-            attr_reader name: untyped
-            attr_reader definition: untyped
-            attr_reader description: nil
+            attr_reader schema: Schema
+            attr_reader name: Symbol
+            attr_reader definition: String
+            attr_reader description: String?
             attr_reader triggers: Array[Schema::Table::Trigger]
-            def initialize: (untyped source, untyped schema, untyped name, untyped definition, ?description: nil) -> void
-            def has_description?: -> false
+            def initialize: (database_or_configuration source, Schema schema, Symbol name, String definition, ?description: String?) -> void
+            def has_description?: -> bool
             def add_trigger: (Schema::Table::Trigger trigger) -> void
             def differences_descriptions: (Function other_function) -> Array[String]
 

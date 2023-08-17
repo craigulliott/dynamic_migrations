@@ -6,7 +6,7 @@ module DynamicMigrations
     class Generator
       class Fragment
         @content: String
-        @code_comment: String | nil
+        @code_comment: String?
 
         attr_reader schema_name: Symbol
         attr_reader migration_method: Symbol
@@ -14,12 +14,12 @@ module DynamicMigrations
         # table_name can be nil because some migrations, such
         # as ones which pertain to functions and creating/dropping
         # schemas don't require tables
-        attr_reader table_name: Symbol | nil
+        attr_reader table_name: Symbol?
         # dependecy on a table is optional
-        attr_reader dependency_schema_name: Symbol | nil
-        attr_reader dependency_table_name: Symbol | nil
+        attr_reader dependency_schema_name: Symbol?
+        attr_reader dependency_table_name: Symbol?
 
-        def initialize: (Symbol schema_name, Symbol | nil table_name, Symbol migration_method, Symbol object_name, String | nil code_comment, String content) -> void
+        def initialize: (Symbol schema_name, Symbol? table_name, Symbol migration_method, Symbol object_name, String? code_comment, String content) -> void
         def to_s: -> String
         def has_code_comment?: -> bool
         def dependency: -> ({schema_name: Symbol, table_name: Symbol} | nil)

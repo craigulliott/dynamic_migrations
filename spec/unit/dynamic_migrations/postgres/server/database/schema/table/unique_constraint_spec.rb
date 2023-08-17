@@ -26,7 +26,7 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database::Schema::Table::Uni
 
       it "returns the expected value via a getter of the same name" do
         unique_constraint = DynamicMigrations::Postgres::Server::Database::Schema::Table::UniqueConstraint.new :configuration, table, [column], :unique_constraint_name, description: "foo bar"
-        expect(unique_constraint.description).to be "foo bar"
+        expect(unique_constraint.description).to eq "foo bar"
       end
     end
 

@@ -23,9 +23,9 @@ module DynamicMigrations
               attr_reader type: index_types
               attr_reader order: index_orders
               attr_reader nulls_position: index_null_positions
-              attr_reader description: String | nil
+              attr_reader description: String?
 
-              def initialize: (database_or_configuration source, Table table, Array[Column] columns, Symbol name, ?unique: bool, ?where: String | nil, ?type: index_types, ?include_columns: Array[Column], ?order: index_orders, ?nulls_position: index_null_positions, ?description: String | nil) -> void
+              def initialize: (database_or_configuration source, Table table, Array[Column] columns, Symbol name, ?unique: bool, ?where: String?, ?type: index_types, ?include_columns: Array[Column], ?order: index_orders, ?nulls_position: index_null_positions, ?description: String?) -> void
               def columns: -> Array[Column]
               def column_names: -> Array[Symbol]
               def include_columns: -> Array[Column]

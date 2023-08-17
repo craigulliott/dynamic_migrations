@@ -21,6 +21,15 @@ module DynamicMigrations
             options[:array] = true
           end
 
+          # comment has to be last
+          if column.description
+            options[:comment] = <<~RUBY
+              <<~COMMENT
+                #{indent column.description}
+              COMMENT
+            RUBY
+          end
+
           options_syntax = options.map { |k, v| "#{k}: #{v}" }.join(", ")
 
           data_type = column.data_type
@@ -34,9 +43,7 @@ module DynamicMigrations
             object: column,
             code_comment: code_comment,
             migration: <<~RUBY
-              add_column :#{column.table.name}, :#{column.name}, :#{data_type}, #{options_syntax}, comment: <<~COMMENT
-                #{indent column.description}
-              COMMENT
+              add_column :#{column.table.name}, :#{column.name}, :#{data_type}, #{options_syntax}
             RUBY
         end
 

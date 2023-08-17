@@ -9,7 +9,7 @@ module PG
     host: String,
     port: Integer,
     user: String,
-    password: String | nil,
+    password: String?,
     dbname: Symbol,
     sslmode: "prefer"
 

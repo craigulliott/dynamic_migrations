@@ -7,13 +7,13 @@ module DynamicMigrations
             class Column < Source
               attr_reader table: Table
               attr_reader name: Symbol
-              attr_reader description: String
+              attr_reader description: String?
               attr_reader null: bool
               attr_reader default: untyped
               attr_reader data_type: Symbol
               attr_reader array: bool
               attr_reader interval_type: Symbol?
-              def initialize: (database_or_configuration source, Table table, Symbol name, Symbol data_type, ?null: bool, ?default: untyped, ?description: String | nil, ?interval_type: Symbol | nil) -> void
+              def initialize: (database_or_configuration source, Table table, Symbol name, Symbol data_type, ?null: bool, ?default: untyped, ?description: String?, ?interval_type: Symbol?) -> void
               def has_description?: -> bool
               def array?: -> bool
 

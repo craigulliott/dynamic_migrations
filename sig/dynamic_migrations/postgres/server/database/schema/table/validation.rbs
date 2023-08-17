@@ -12,9 +12,9 @@ module DynamicMigrations
               attr_reader check_clause: String
               attr_reader deferrable: bool
               attr_reader initially_deferred: bool
-              attr_reader description: String | nil
+              attr_reader description: String?
 
-              def initialize: (database_or_configuration source, Table table, Array[Column] columns, Symbol name, String check_clause, ?deferrable: bool, ?initially_deferred: bool, ?description: String | nil) -> void
+              def initialize: (database_or_configuration source, Table table, Array[Column] columns, Symbol name, String check_clause, ?deferrable: bool, ?initially_deferred: bool, ?description: String?) -> void
               def columns: -> Array[Column]
               def column_names: -> Array[Symbol]
               def has_description?: -> bool

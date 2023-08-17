@@ -5,14 +5,14 @@ module DynamicMigrations
   module Postgres
     class Generator
       module Function
-        def create_function: (Postgres::Server::Database::Schema::Function function, ?nil | String code_comment) -> Fragment
-        def update_function: (Postgres::Server::Database::Schema::Function function, ?nil | String code_comment) -> Fragment
-        def drop_function: (Postgres::Server::Database::Schema::Function function, ?nil | String code_comment) -> Fragment
-        def set_function_comment: (Postgres::Server::Database::Schema::Function function, ?nil | String code_comment) -> Fragment
-        def remove_function_comment: (Postgres::Server::Database::Schema::Function function, ?nil | String code_comment) -> Fragment
+        def create_function: (Postgres::Server::Database::Schema::Function function, ?String? code_comment) -> Fragment
+        def update_function: (Postgres::Server::Database::Schema::Function function, ?String? code_comment) -> Fragment
+        def drop_function: (Postgres::Server::Database::Schema::Function function, ?String? code_comment) -> Fragment
+        def set_function_comment: (Postgres::Server::Database::Schema::Function function, ?String? code_comment) -> Fragment
+        def remove_function_comment: (Postgres::Server::Database::Schema::Function function, ?String? code_comment) -> Fragment
 
         # these come from the generator object (which this module is included into)
-        def add_fragment: (schema: Server::Database::Schema, migration_method: Symbol, object: untyped, migration: String, ?table: nil | Server::Database::Schema::Table, ?code_comment: nil | String, ?dependent_table: nil | Server::Database::Schema::Table) -> untyped
+        def add_fragment: (schema: Server::Database::Schema, migration_method: Symbol, object: untyped, migration: String, ?table: nil | Server::Database::Schema::Table, ?code_comment: String?, ?dependent_table: nil | Server::Database::Schema::Table) -> untyped
         def indent: (String str) -> String
       end
     end

@@ -16,7 +16,7 @@ module DynamicMigrations
             attr_reader schema: Schema
             attr_reader name: Symbol
             attr_reader description: String?
-            def initialize: (database_or_configuration source, Schema schema, Symbol name, ?description: String | nil) -> void
+            def initialize: (database_or_configuration source, Schema schema, Symbol name, ?description: String?) -> void
             def has_description?: -> bool
             def add_primary_key: (Symbol name, Array[Symbol] column_names, **untyped) -> untyped
             def has_primary_key?: -> bool

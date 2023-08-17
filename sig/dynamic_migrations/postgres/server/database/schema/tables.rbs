@@ -4,9 +4,9 @@ module DynamicMigrations
       class Database
         class Schema < Source
           module Tables
-            @tables: Hash[Symbol, untyped]
+            @tables: Hash[Symbol, Table]
 
-            def add_table: (Symbol table_name, ?description: String | nil) -> Table
+            def add_table: (Symbol table_name, ?description: String?) -> Table
             def table: (Symbol table_name) -> Table
             def has_table?: (Symbol table_name) -> bool
             def tables: -> Array[Table]

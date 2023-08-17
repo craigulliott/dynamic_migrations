@@ -9,9 +9,9 @@ module DynamicMigrations
 
               attr_reader table: Table
               attr_reader name: Symbol
-              attr_reader description: String | nil
+              attr_reader description: String?
 
-              def initialize: (database_or_configuration source, Table table, Array[Column] columns, Symbol name, ?description: String | nil) -> void
+              def initialize: (database_or_configuration source, Table table, Array[Column] columns, Symbol name, ?description: String?) -> void
               def columns: -> Array[Column]
               def column_names: -> Array[Symbol]
               def has_description?: -> bool

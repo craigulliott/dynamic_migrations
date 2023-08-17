@@ -26,7 +26,7 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database::Schema::Table::Ind
 
       it "returns the expected value via a getter of the same name" do
         index = DynamicMigrations::Postgres::Server::Database::Schema::Table::Index.new :configuration, table, [column], :index_name, description: "foo bar"
-        expect(index.description).to be "foo bar"
+        expect(index.description).to eq "foo bar"
       end
     end
 
@@ -64,7 +64,7 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database::Schema::Table::Ind
 
       it "returns the expected value via a getter of the same name" do
         index = DynamicMigrations::Postgres::Server::Database::Schema::Table::Index.new :configuration, table, [column], :index_name, where: "my_column IS TRIUE"
-        expect(index.where).to be "my_column IS TRIUE"
+        expect(index.where).to eq "my_column IS TRIUE"
       end
     end
 

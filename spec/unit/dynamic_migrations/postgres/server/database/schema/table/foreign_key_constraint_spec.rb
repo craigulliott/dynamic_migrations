@@ -27,7 +27,7 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database::Schema::Table::For
 
       it "returns the expected value via a getter of the same name" do
         foreign_key_constraint = DynamicMigrations::Postgres::Server::Database::Schema::Table::ForeignKeyConstraint.new :configuration, table, [column], foreign_table, [foreign_column], :foreign_key_constraint_name, description: "foo bar"
-        expect(foreign_key_constraint.description).to be "foo bar"
+        expect(foreign_key_constraint.description).to eq "foo bar"
       end
     end
 

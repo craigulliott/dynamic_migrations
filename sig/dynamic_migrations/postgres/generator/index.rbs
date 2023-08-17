@@ -5,14 +5,14 @@ module DynamicMigrations
   module Postgres
     class Generator
       module Index
-        def add_index: (Postgres::Server::Database::Schema::Table::Index index, ?nil | String code_comment) -> Fragment
-        def remove_index: (Postgres::Server::Database::Schema::Table::Index index, ?nil | String code_comment) -> Fragment
+        def add_index: (Postgres::Server::Database::Schema::Table::Index index, ?String? code_comment) -> Fragment
+        def remove_index: (Postgres::Server::Database::Schema::Table::Index index, ?String? code_comment) -> Fragment
         def recreate_index: (Postgres::Server::Database::Schema::Table::Index original_index, Postgres::Server::Database::Schema::Table::Index updated_index) -> Array[Fragment]
-        def set_index_comment: (Postgres::Server::Database::Schema::Table::Index index, ?nil | String code_comment) -> Fragment
-        def remove_index_comment: (Postgres::Server::Database::Schema::Table::Index index, ?nil | String code_comment) -> Fragment
+        def set_index_comment: (Postgres::Server::Database::Schema::Table::Index index, ?String? code_comment) -> Fragment
+        def remove_index_comment: (Postgres::Server::Database::Schema::Table::Index index, ?String? code_comment) -> Fragment
 
         # these come from the generator object (which this module is included into)
-        def add_fragment: (schema: Server::Database::Schema, migration_method: Symbol, object: untyped, migration: String, ?table: nil | Server::Database::Schema::Table, ?code_comment: nil | String, ?dependent_table: nil | Server::Database::Schema::Table) -> untyped
+        def add_fragment: (schema: Server::Database::Schema, migration_method: Symbol, object: untyped, migration: String, ?table: nil | Server::Database::Schema::Table, ?code_comment: String?, ?dependent_table: nil | Server::Database::Schema::Table) -> untyped
         def indent: (String str) -> String
         end
     end

@@ -5,14 +5,14 @@ module DynamicMigrations
   module Postgres
     class Generator
       module Column
-        def add_column: (Postgres::Server::Database::Schema::Table::Column column, ?nil | String code_comment) -> Fragment
-        def change_column: (Postgres::Server::Database::Schema::Table::Column column, ?nil | String code_comment) -> Fragment
-        def remove_column: (Postgres::Server::Database::Schema::Table::Column column, ?nil | String code_comment) -> Fragment
-        def set_column_comment: (Postgres::Server::Database::Schema::Table::Column column, ?nil | String code_comment) -> Fragment
-        def remove_column_comment: (Postgres::Server::Database::Schema::Table::Column column, ?nil | String code_comment) -> Fragment
+        def add_column: (Postgres::Server::Database::Schema::Table::Column column, ?String? code_comment) -> Fragment
+        def change_column: (Postgres::Server::Database::Schema::Table::Column column, ?String? code_comment) -> Fragment
+        def remove_column: (Postgres::Server::Database::Schema::Table::Column column, ?String? code_comment) -> Fragment
+        def set_column_comment: (Postgres::Server::Database::Schema::Table::Column column, ?String? code_comment) -> Fragment
+        def remove_column_comment: (Postgres::Server::Database::Schema::Table::Column column, ?String? code_comment) -> Fragment
 
         # these come from the generator object (which this module is included into)
-        def add_fragment: (schema: Server::Database::Schema, migration_method: Symbol, object: untyped, migration: String, ?table: nil | Server::Database::Schema::Table, ?code_comment: nil | String, ?dependent_table: nil | Server::Database::Schema::Table) -> untyped
+        def add_fragment: (schema: Server::Database::Schema, migration_method: Symbol, object: untyped, migration: String, ?table: nil | Server::Database::Schema::Table, ?code_comment: String?, ?dependent_table: nil | Server::Database::Schema::Table) -> untyped
         def indent: (String str) -> String
 
         class NoColumnCommentError < StandardError

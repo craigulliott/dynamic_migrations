@@ -13,15 +13,15 @@ module DynamicMigrations
               attr_reader event_manipulation: Symbol
               attr_reader action_timing: Symbol
               attr_reader action_order: Integer
-              attr_reader action_condition: nil | String
+              attr_reader action_condition: String?
               attr_reader action_statement: String
               attr_reader action_orientation: Symbol
               attr_reader function: Function
-              attr_reader action_reference_old_table: nil | Symbol
-              attr_reader action_reference_new_table: nil | Symbol
-              attr_reader description: nil | String
+              attr_reader action_reference_old_table: Symbol?
+              attr_reader action_reference_new_table: Symbol?
+              attr_reader description: String?
 
-              def initialize: (database_or_configuration source, Table table, Symbol name, action_timing: Symbol, event_manipulation: Symbol, action_order: Integer, action_statement: String, action_orientation: Symbol, function: Function, ?action_condition: String | nil, ?action_reference_old_table: nil | Symbol, ?action_reference_new_table: nil | Symbol, ?description: nil | String) -> void
+              def initialize: (database_or_configuration source, Table table, Symbol name, action_timing: Symbol, event_manipulation: Symbol, action_order: Integer, action_statement: String, action_orientation: Symbol, function: Function, ?action_condition: String?, ?action_reference_old_table: Symbol?, ?action_reference_new_table: Symbol?, ?description: String?) -> void
               def has_description?: -> false
               def differences_descriptions: (Trigger other_trigger) -> Array[String]
 

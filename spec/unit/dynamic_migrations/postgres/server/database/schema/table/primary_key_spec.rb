@@ -26,7 +26,7 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database::Schema::Table::Pri
 
       it "returns the expected value via a getter of the same name" do
         primary_key = DynamicMigrations::Postgres::Server::Database::Schema::Table::PrimaryKey.new :configuration, table, [column], :primary_key_name, description: "foo bar"
-        expect(primary_key.description).to be "foo bar"
+        expect(primary_key.description).to eq "foo bar"
       end
     end
 

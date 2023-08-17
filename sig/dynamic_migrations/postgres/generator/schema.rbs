@@ -5,11 +5,11 @@ module DynamicMigrations
   module Postgres
     class Generator
       module Schema
-        def create_schema: (Postgres::Server::Database::Schema schema, ?nil | String code_comment) -> Fragment
-        def drop_schema: (Postgres::Server::Database::Schema schema, ?nil | String code_comment) -> Fragment
+        def create_schema: (Postgres::Server::Database::Schema schema, ?String? code_comment) -> Fragment
+        def drop_schema: (Postgres::Server::Database::Schema schema, ?String? code_comment) -> Fragment
 
         # these come from the generator object (which this module is included into)
-        def add_fragment: (schema: Server::Database::Schema, migration_method: Symbol, object: untyped, migration: String, ?table: nil | Server::Database::Schema::Table, ?code_comment: nil | String, ?dependent_table: nil | Server::Database::Schema::Table) -> untyped
+        def add_fragment: (schema: Server::Database::Schema, migration_method: Symbol, object: untyped, migration: String, ?table: nil | Server::Database::Schema::Table, ?code_comment: String?, ?dependent_table: nil | Server::Database::Schema::Table) -> untyped
       end
     end
   end

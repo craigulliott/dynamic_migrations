@@ -45,7 +45,8 @@ module DynamicMigrations
 
                 unless description.nil?
                   raise ExpectedStringError, description unless description.is_a? String
-                  @description = description
+                  @description = description.strip
+                  @description = nil if description == ''
                 end
               end
 
