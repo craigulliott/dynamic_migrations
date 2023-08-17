@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.2.2](https://github.com/craigulliott/dynamic_migrations/compare/v3.2.1...v3.2.2) (2023-08-17)
+
+
+### Bug Fixes
+
+* automatically strip whitespace off validation check_clause ([f7a3b91](https://github.com/craigulliott/dynamic_migrations/commit/f7a3b91e694db83a5aefcd25e50985c05aaf97e2))
+
 ## [3.2.1](https://github.com/craigulliott/dynamic_migrations/compare/v3.2.0...v3.2.1) (2023-08-17)
 
 
