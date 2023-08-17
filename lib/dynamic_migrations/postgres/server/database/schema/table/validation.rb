@@ -44,7 +44,7 @@ module DynamicMigrations
                 @name = name
 
                 raise ExpectedStringError, check_clause unless check_clause.is_a? String
-                @check_clause = check_clause
+                @check_clause = check_clause.strip
 
                 unless description.nil?
                   raise ExpectedStringError, description unless description.is_a? String
