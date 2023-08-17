@@ -49,7 +49,7 @@ module DynamicMigrations
                 unless description.nil?
                   raise ExpectedStringError, description unless description.is_a? String
                   @description = description.strip
-                  @description = nil if description == ''
+                  @description = nil if description == ""
                 end
 
                 raise ExpectedBooleanError, deferrable unless [true, false].include?(deferrable)
