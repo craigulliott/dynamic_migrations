@@ -1,5 +1,13 @@
 # Changelog
 
+## [3.2.1](https://github.com/craigulliott/dynamic_migrations/compare/v3.2.0...v3.2.1) (2023-08-17)
+
+
+### Bug Fixes
+
+* making column descriptions default ([c384225](https://github.com/craigulliott/dynamic_migrations/commit/c3842254841c677efb777a1beb519754a4e85cc1))
+* trimming object descriptions when saving ([c384225](https://github.com/craigulliott/dynamic_migrations/commit/c3842254841c677efb777a1beb519754a4e85cc1))
+
 ## [3.2.0](https://github.com/craigulliott/dynamic_migrations/compare/v3.1.1...v3.2.0) (2023-08-16)
 
 
