@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.3.1](https://github.com/craigulliott/dynamic_migrations/compare/v3.3.0...v3.3.1) (2023-08-18)
+
+
+### Bug Fixes
+
+* automatically stripping whitespace from trigger parameters and conditions ([be229be](https://github.com/craigulliott/dynamic_migrations/commit/be229be3e3e6c416edfe4e4b0946fda5f520844a))
+
 ## [3.3.0](https://github.com/craigulliott/dynamic_migrations/compare/v3.2.2...v3.3.0) (2023-08-18)
 
 
