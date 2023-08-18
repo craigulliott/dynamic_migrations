@@ -1,5 +1,19 @@
 # Changelog
 
+## [3.3.0](https://github.com/craigulliott/dynamic_migrations/compare/v3.2.2...v3.3.0) (2023-08-18)
+
+
+### Features
+
+* adding parameters to triggers ([0d48466](https://github.com/craigulliott/dynamic_migrations/commit/0d484664dd344c34804580fb939a2807339a0552))
+
+
+### Bug Fixes
+
+* only accepting action_order for loaded triggers, and calculating its value dynamically for configured triggers ([0d48466](https://github.com/craigulliott/dynamic_migrations/commit/0d484664dd344c34804580fb939a2807339a0552))
+* providing full function definition within specs (to conform with updated pg_spec_helper gem) ([0d48466](https://github.com/craigulliott/dynamic_migrations/commit/0d484664dd344c34804580fb939a2807339a0552))
+* removing unused action_statement from triggers ([0d48466](https://github.com/craigulliott/dynamic_migrations/commit/0d484664dd344c34804580fb939a2807339a0552))
+
 ## [3.2.2](https://github.com/craigulliott/dynamic_migrations/compare/v3.2.1...v3.2.2) (2023-08-17)
 
 
