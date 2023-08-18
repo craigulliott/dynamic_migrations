@@ -92,7 +92,7 @@ module DynamicMigrations
                   table.add_trigger trigger_name, action_timing: trigger_definition[:action_timing],
                     event_manipulation: trigger_definition[:event_manipulation],
                     action_order: trigger_definition[:action_order],
-                    action_statement: trigger_definition[:action_statement],
+                    parameters: trigger_definition[:parameters],
                     action_orientation: trigger_definition[:action_orientation],
                     function: function,
                     action_condition: trigger_definition[:action_condition],

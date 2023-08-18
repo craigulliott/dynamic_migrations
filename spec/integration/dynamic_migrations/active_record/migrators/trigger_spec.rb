@@ -57,6 +57,18 @@ RSpec.describe DynamicMigrations::ActiveRecord::Migrators do
                     EXECUTE FUNCTION my_schema.my_function();
             SQL
           end
+
+          it "generates the expected sql for a trigger which includes parameters" do
+            migration.add_trigger(:my_table, name: :my_trigger, parameters: "'true'", action_timing: :before, event_manipulation: :insert, action_orientation: :row, function_schema_name: :my_schema, function_name: :my_function, action_condition: "NEW.my_column != 0")
+
+            expect(migration).to executed_sql <<~SQL
+              CREATE TRIGGER my_trigger
+                BEFORE INSERT ON my_schema.my_table
+                  FOR EACH row
+                    WHEN (NEW.my_column != 0)
+                    EXECUTE FUNCTION my_schema.my_function('true');
+            SQL
+          end
         end
 
         describe :remove_trigger do

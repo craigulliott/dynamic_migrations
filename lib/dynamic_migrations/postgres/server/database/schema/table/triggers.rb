@@ -38,13 +38,13 @@ module DynamicMigrations
               end
 
               # adds a new trigger to this table, and returns it
-              def add_trigger name, action_timing:, event_manipulation:, action_order:, action_statement:, action_orientation:, function:, action_condition: nil, action_reference_old_table: nil, action_reference_new_table: nil, description: nil
+              def add_trigger name, action_timing:, event_manipulation:, parameters:, action_orientation:, function:, action_order: nil, action_condition: nil, action_reference_old_table: nil, action_reference_new_table: nil, description: nil
                 if has_trigger? name
                   raise(TriggerAlreadyExistsError, "Trigger #{name} already exists")
                 end
                 included_target = self
                 if included_target.is_a? Table
-                  new_trigger = @triggers[name] = Trigger.new source, included_target, name, action_timing: action_timing, event_manipulation: event_manipulation, action_order: action_order, action_statement: action_statement, action_orientation: action_orientation, function: function, action_condition: action_condition, action_reference_old_table: action_reference_old_table, action_reference_new_table: action_reference_new_table, description: description
+                  new_trigger = @triggers[name] = Trigger.new source, included_target, name, action_timing: action_timing, event_manipulation: event_manipulation, action_order: action_order, parameters: parameters, action_orientation: action_orientation, function: function, action_condition: action_condition, action_reference_old_table: action_reference_old_table, action_reference_new_table: action_reference_new_table, description: description
                 else
                   raise ModuleIncludedIntoUnexpectedTargetError, included_target
                 end

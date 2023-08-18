@@ -216,8 +216,9 @@ module DynamicMigrations
         fragment
       end
 
-      def indent multi_line_string
-        multi_line_string.gsub("\n", "\n  ")
+      def indent multi_line_string, levels = 1
+        spaces = "  " * levels
+        multi_line_string.gsub("\n", "\n#{spaces}")
       end
 
       def strip_empty_lines multi_line_string

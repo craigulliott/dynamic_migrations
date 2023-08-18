@@ -7,7 +7,7 @@ PATH
 GEM
   remote: https://rubygems.org/
   specs:
-    activesupport (7.0.6)
+    activesupport (7.0.7)
       concurrent-ruby (~> 1.0, >= 1.0.2)
       i18n (>= 1.6, < 2)
       minitest (>= 5.1)
@@ -34,7 +34,7 @@ GEM
       ast (~> 2.4.1)
       racc
     pg (1.5.3)
-    pg_spec_helper (1.8.3)
+    pg_spec_helper (1.8.4)
       pg (~> 1.5)
     racc (1.7.1)
     rainbow (3.1.1)
@@ -87,7 +87,7 @@ GEM
     standard-performance (1.1.2)
       lint_roller (~> 1.1)
       rubocop-performance (~> 1.18.0)
-    steep (1.5.2)
+    steep (1.5.3)
       activesupport (>= 5.1)
       concurrent-ruby (>= 1.1.10)
       csv (>= 3.0.9)

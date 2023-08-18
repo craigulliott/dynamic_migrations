@@ -31,10 +31,10 @@ module DynamicMigrations
               raise ExpectedSymbolError, name unless name.is_a? Symbol
               @name = name
 
-              unless definition.is_a?(String) && definition.strip != ""
-                raise ExpectedDefinitionError, definition
+              unless definition.is_a?(String) && definition.strip != "" && definition.strip.end_with?("END;")
+                raise ExpectedDefinitionError, "Definition must be a string, and end with `END;`. Definition provided:\n#{definition}"
               end
-              @definition = definition
+              @definition = definition.strip
 
               unless description.nil?
                 raise ExpectedStringError, description unless description.is_a? String

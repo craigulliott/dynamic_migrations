@@ -5,7 +5,7 @@ module DynamicMigrations
   module ActiveRecord
     module Migrators
       module Trigger
-        def add_trigger: (Symbol table_name, name: Symbol, action_timing: Symbol, event_manipulation: Symbol, action_orientation: Symbol, function_schema_name: Symbol, function_name: Symbol, ?action_condition: String?, ?action_reference_old_table: Symbol?, ?action_reference_new_table: Symbol?, ?comment: String?) -> void
+        def add_trigger: (Symbol table_name, name: Symbol, action_timing: Symbol, event_manipulation: Symbol, action_orientation: Symbol, function_schema_name: Symbol, function_name: Symbol, ?parameters: String?, ?action_condition: String?, ?action_reference_old_table: Symbol?, ?action_reference_new_table: Symbol?, ?comment: String?) -> void
         def remove_trigger: (Symbol table_name, Symbol trigger_name) -> void
         def set_trigger_comment: (Symbol table_name, Symbol trigger_name, String comment) -> void
         def remove_trigger_comment: (Symbol table_name, Symbol trigger_name) -> void

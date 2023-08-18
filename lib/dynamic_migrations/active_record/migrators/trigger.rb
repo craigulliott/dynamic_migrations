@@ -16,7 +16,7 @@ module DynamicMigrations
         end
 
         # create a postgres trigger
-        def add_trigger table_name, name:, action_timing:, event_manipulation:, action_orientation:, function_schema_name:, function_name:, action_condition: nil, action_reference_old_table: nil, action_reference_new_table: nil, comment: nil
+        def add_trigger table_name, name:, action_timing:, event_manipulation:, action_orientation:, function_schema_name:, function_name:, parameters: nil, action_condition: nil, action_reference_old_table: nil, action_reference_new_table: nil, comment: nil
           unless [:insert, :delete, :update].include? event_manipulation
             raise UnexpectedEventManipulationError, event_manipulation
           end
@@ -53,7 +53,7 @@ module DynamicMigrations
               #{timing_sql} ON #{schema_name}.#{table_name} #{temp_tables_sql}
                 FOR EACH #{action_orientation}
                   #{condition_sql}
-                  EXECUTE FUNCTION #{function_schema_name}.#{function_name}();
+                  EXECUTE FUNCTION #{function_schema_name}.#{function_name}(#{parameters});
           SQL
 
           if comment.is_a? String

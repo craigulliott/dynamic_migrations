@@ -67,7 +67,12 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database::Differences do
 
         before(:each) do
           comparison.add_table :my_table
-          comparison.add_function :my_function, "NEW.my_column = 0"
+          comparison.add_function :my_function, <<~SQL
+            BEGIN
+              NEW.column = 0;
+              RETURN NEW;
+            END;
+          SQL
         end
 
         it "returns the expected object" do

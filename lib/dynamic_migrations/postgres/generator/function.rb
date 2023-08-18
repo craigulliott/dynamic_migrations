@@ -20,10 +20,6 @@ module DynamicMigrations
           optional_options_syntax = (options_syntax == "") ? "" : ", #{options_syntax}"
 
           fn_sql = function.definition.strip
-          # ensure that the function ends with a semicolon
-          unless fn_sql.end_with? ";"
-            fn_sql << ";"
-          end
 
           add_fragment schema: function.schema,
             table: function.triggers.first&.table,
@@ -33,7 +29,7 @@ module DynamicMigrations
             migration: comment_sql + <<~RUBY
               create_function :#{function.name}#{optional_options_syntax} do
                 <<~SQL
-                  #{indent fn_sql}
+                  #{indent fn_sql, 2}
                 SQL
               end
             RUBY
@@ -41,10 +37,6 @@ module DynamicMigrations
 
         def update_function function, code_comment = nil
           fn_sql = function.definition.strip
-          # ensure that the function ends with a semicolon
-          unless fn_sql.end_with? ";"
-            fn_sql << ";"
-          end
 
           add_fragment schema: function.schema,
             table: function.triggers.first&.table,
@@ -54,7 +46,7 @@ module DynamicMigrations
             migration: <<~RUBY
               update_function :#{function.name} do
                 <<~SQL
-                  #{indent fn_sql}
+                  #{indent fn_sql, 2}
                 SQL
               end
             RUBY

@@ -198,7 +198,7 @@ module DynamicMigrations
                 :event_manipulation,
                 :action_order,
                 :action_condition,
-                :action_statement,
+                :parameters,
                 :action_orientation,
                 :action_reference_old_table,
                 :action_reference_new_table,

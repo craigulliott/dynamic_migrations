@@ -132,8 +132,10 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database do
                       describe "after a function and corresponding trigger has been added" do
                         before :each do
                           pg_helper.create_function :my_schema, :my_function, <<~SQL
-                            -- example function
-                            NEW.my_column = TRUE
+                            BEGIN
+                              NEW.column = 0;
+                              RETURN NEW;
+                            END;
                           SQL
                           pg_helper.create_trigger :my_schema, :my_table, :my_trigger, action_timing: :before, event_manipulation: :insert, action_orientation: :row, function_schema: :my_schema, function_name: :my_function, action_condition: "NEW.my_column IS FALSE"
                         end

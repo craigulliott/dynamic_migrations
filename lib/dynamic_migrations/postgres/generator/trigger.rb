@@ -28,6 +28,10 @@ module DynamicMigrations
             options[:action_condition] = ":#{trigger.action_condition}"
           end
 
+          unless trigger.parameters.nil?
+            options[:parameters] = "\"#{trigger.parameters}\""
+          end
+
           unless trigger.action_reference_old_table.nil?
             options[:action_reference_old_table] = ":#{trigger.action_reference_old_table}"
           end

@@ -35,22 +35,14 @@ module DynamicMigrations
                     '.{35,} WHEN ((.+)) EXECUTE FUNCTION'
                   )
                 ) [1] ELSE NULL END AS action_condition,
-                p_n.nspname AS function_schema,
-                p.proname AS function_name,
-                p.prosrc AS function_definition,
                 SUBSTRING(
                   pg_get_triggerdef(t.oid)
                   FROM
-                    POSITION(
-                      ('EXECUTE FUNCTION') IN (
-                        SUBSTRING(
-                          pg_get_triggerdef(t.oid)
-                          FROM
-                            48
-                        )
-                      )
-                    ) + 47
-                ) AS action_statement,
+                  '\\(([\d\w_''-]+)\\)$'
+                ) AS parameters,
+                p_n.nspname AS function_schema,
+                p.proname AS function_name,
+                p.prosrc AS function_definition,
                 CASE t.tgtype & 1 WHEN 1 THEN 'row' ELSE 'statement' END AS action_orientation,
                 CASE t.tgtype & 66 WHEN 2 THEN 'before' WHEN 64 THEN 'instead_of' ELSE 'after' END AS action_timing,
                 t.tgoldtable AS action_reference_old_table,
@@ -112,7 +104,7 @@ module DynamicMigrations
                 function_schema: row["function_schema"].to_sym,
                 function_name: row["function_name"].to_sym,
                 function_definition: row["function_definition"],
-                action_statement: row["action_statement"],
+                parameters: row["parameters"],
                 action_orientation: row["action_orientation"].to_sym,
                 action_timing: row["action_timing"].to_sym,
                 # `action_reference_old_table` and `action_reference_new_table` can be null

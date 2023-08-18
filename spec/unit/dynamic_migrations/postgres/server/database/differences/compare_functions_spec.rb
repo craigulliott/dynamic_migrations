@@ -6,11 +6,20 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database::Differences do
   let(:server) { DynamicMigrations::Postgres::Server.new pg_helper.host, pg_helper.port, pg_helper.username, pg_helper.password }
   let(:database) { DynamicMigrations::Postgres::Server::Database.new server, :my_database }
 
+  let(:function_definition) {
+    <<~SQL
+      BEGIN
+        NEW.column = 0;
+        RETURN NEW;
+      END;
+    SQL
+  }
+
   let(:configured_schema) { database.add_configured_schema :my_schema }
-  let(:configured_function) { configured_schema.add_function :my_function, "NEW.my_column = 0" }
+  let(:configured_function) { configured_schema.add_function :my_function, function_definition }
 
   let(:loaded_schema) { database.add_loaded_schema :my_schema }
-  let(:loaded_function) { loaded_schema.add_function :my_function, "NEW.my_column = 0" }
+  let(:loaded_function) { loaded_schema.add_function :my_function, function_definition }
 
   describe :compare_functions do
     describe "when base schema has no functions" do
@@ -28,7 +37,7 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database::Differences do
         let(:comparison) { loaded_schema }
 
         before(:each) do
-          comparison.add_function :function_name, "NEW.my_column = 0"
+          comparison.add_function :function_name, function_definition
         end
 
         it "returns the expected object" do
@@ -45,7 +54,7 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database::Differences do
       let(:base) { configured_schema }
 
       before(:each) do
-        base.add_function :function_name, "NEW.my_column = 0"
+        base.add_function :function_name, function_definition
       end
 
       describe "when comparison schema has no functions" do
@@ -56,7 +65,12 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database::Differences do
             function_name: {
               exists: true,
               definition: {
-                value: "NEW.my_column = 0",
+                value: <<~SQL.strip,
+                  BEGIN
+                    NEW.column = 0;
+                    RETURN NEW;
+                  END;
+                SQL
                 matches: false
               },
               description: {
@@ -72,7 +86,7 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database::Differences do
         let(:comparison) { loaded_schema }
 
         before(:each) do
-          comparison.add_function :function_name, "NEW.my_column = 0"
+          comparison.add_function :function_name, function_definition
         end
 
         it "returns the expected object" do
@@ -80,7 +94,12 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database::Differences do
             function_name: {
               exists: true,
               definition: {
-                value: "NEW.my_column = 0",
+                value: <<~SQL.strip,
+                  BEGIN
+                    NEW.column = 0;
+                    RETURN NEW;
+                  END;
+                SQL
                 matches: true
               },
               description: {
@@ -96,7 +115,14 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database::Differences do
         let(:comparison) { loaded_schema }
 
         before(:each) do
-          comparison.add_function :function_name, "NEW.my_column = 1", description: "this function has a description"
+          different_function_definition = <<~SQL
+            BEGIN
+              NEW.column = 1;
+              RETURN NEW;
+            END;
+          SQL
+
+          comparison.add_function :function_name, different_function_definition, description: "this function has a description"
         end
 
         it "returns the expected object" do
@@ -104,7 +130,12 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database::Differences do
             function_name: {
               exists: true,
               definition: {
-                value: "NEW.my_column = 0",
+                value: <<~SQL.strip,
+                  BEGIN
+                    NEW.column = 0;
+                    RETURN NEW;
+                  END;
+                SQL
                 matches: false
               },
               description: {

@@ -13,7 +13,7 @@ module DynamicMigrations
 
         # these come from the generator object (which this module is included into)
         def add_fragment: (schema: Server::Database::Schema, migration_method: Symbol, object: untyped, migration: String, ?table: nil | Server::Database::Schema::Table, ?code_comment: String?, ?dependent_table: nil | Server::Database::Schema::Table) -> untyped
-        def indent: (String str) -> String
+        def indent: (String migration, ?Integer levels) -> String
       end
     end
   end

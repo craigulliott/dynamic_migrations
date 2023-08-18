@@ -14,10 +14,7 @@ module DynamicMigrations
               class UnexpectedEventManipulationError < StandardError
               end
 
-              class UnexpectedActionOrderError < StandardError
-              end
-
-              class UnexpectedActionStatementError < StandardError
+              class UnexpectedParametersError < StandardError
               end
 
               class UnexpectedActionOrientationError < StandardError
@@ -35,13 +32,15 @@ module DynamicMigrations
               class ExpectedFunctionError < StandardError
               end
 
+              class UnexpectedActionOrderError < StandardError
+              end
+
               attr_reader :table
               attr_reader :name
               attr_reader :event_manipulation
               attr_reader :action_timing
-              attr_reader :action_order
               attr_reader :action_condition
-              attr_reader :action_statement
+              attr_reader :parameters
               attr_reader :action_orientation
               attr_reader :function
               attr_reader :action_reference_old_table
@@ -49,7 +48,7 @@ module DynamicMigrations
               attr_reader :description
 
               # initialize a new object to represent a validation in a postgres table
-              def initialize source, table, name, action_timing:, event_manipulation:, action_order:, action_statement:, action_orientation:, function:, action_condition: nil, action_reference_old_table: nil, action_reference_new_table: nil, description: nil
+              def initialize source, table, name, action_timing:, event_manipulation:, parameters:, action_orientation:, function:, action_order: nil, action_condition: nil, action_reference_old_table: nil, action_reference_new_table: nil, description: nil
                 super source
 
                 unless table.is_a? Table
@@ -72,20 +71,27 @@ module DynamicMigrations
                 end
                 @event_manipulation = event_manipulation
 
-                unless action_order.is_a?(Integer) && action_order >= 1
-                  raise UnexpectedActionOrderError, action_order
+                if from_configuration?
+                  unless action_order.nil?
+                    raise UnexpectedActionOrderError, "Unexpected `action_order` argument. Action order is calculated dynamically for configured triggers."
+                  end
+
+                else
+                  unless action_order.is_a?(Integer) && action_order >= 1
+                    raise UnexpectedActionOrderError, "Missing valid `action_order` argument. Action order must be provided for triggers loaded from the database."
+                  end
+                  @action_order = action_order
                 end
-                @action_order = action_order
 
                 unless action_condition.nil? || action_condition.is_a?(String)
                   raise ExpectedStringError, action_condition
                 end
                 @action_condition = action_condition
 
-                unless action_statement.is_a?(String) && action_statement[/\AEXECUTE FUNCTION [a-z]+(_[a-z]+)*\.[a-z]+(_[a-z]+)*\(\)\z/]
-                  raise UnexpectedActionStatementError, "unexpected action statement `#{action_statement}`, currently only `EXECUTE FUNCTION function_name()` statements are supported"
+                unless parameters.nil? || (parameters.is_a?(String) && parameters[/\A'[\w\d_ -]+'(, ?'[\w\d_ -]+')*\z/])
+                  raise UnexpectedParametersError, "unexpected parameters `#{parameters}`, currently only a comma seeparated list of strings is supported"
                 end
-                @action_statement = action_statement
+                @parameters = parameters
 
                 unless [:row, :statement].include? action_orientation
                   raise UnexpectedActionOrientationError, action_orientation
@@ -120,6 +126,42 @@ module DynamicMigrations
                 end
               end
 
+              def action_order
+                # if the source is the database, then return the locally stored
+                # representation of the action order
+                if from_database?
+                  action_order = @action_order
+                  if action_order.nil?
+                    raise "Missing valid action_order. This should be impossible."
+                  end
+                  action_order
+
+                # otherwise return the dynamically calculated action order, this is calculated
+                # by returning this triggers index in the list of alphabetically sorted triggers
+                # for this triggers table
+                else
+                  pos = @table.triggers.sort_by(&:name).index(self)
+                  if pos.nil?
+                    raise "Trigger not found in table triggers list. This should be impossible."
+                  end
+                  pos + 1
+                end
+              end
+
+              def action_condition= new_action_condition
+                unless new_action_condition.nil? || new_action_condition.is_a?(String)
+                  raise ExpectedStringError, new_action_condition
+                end
+                @action_condition = new_action_condition
+              end
+
+              def parameters= new_parameters
+                unless new_parameters.nil? || new_parameters.is_a?(String)
+                  raise ExpectedStringError, new_parameters
+                end
+                @parameters = new_parameters
+              end
+
               # return true if this has a description, otherwise false
               def has_description?
                 !@description.nil?
@@ -131,7 +173,7 @@ module DynamicMigrations
                   :action_timing,
                   :action_order,
                   :action_condition,
-                  :action_statement,
+                  :parameters,
                   :action_orientation,
                   :action_reference_old_table,
                   :action_reference_new_table

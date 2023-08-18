@@ -5,25 +5,33 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database::Schema::Function d
   let(:server) { DynamicMigrations::Postgres::Server.new pg_helper.host, pg_helper.port, pg_helper.username, pg_helper.password }
   let(:database) { DynamicMigrations::Postgres::Server::Database.new server, :my_database }
   let(:schema) { DynamicMigrations::Postgres::Server::Database::Schema.new :configuration, database, :my_schema }
-  let(:function) { DynamicMigrations::Postgres::Server::Database::Schema::Function.new :configuration, schema, :my_function, "NEW.column = 0" }
+  let(:function) { DynamicMigrations::Postgres::Server::Database::Schema::Function.new :configuration, schema, :my_function, function_definition }
   let(:table) { DynamicMigrations::Postgres::Server::Database::Schema::Table.new :configuration, schema, :my_table }
+  let(:function_definition) {
+    <<~SQL
+      BEGIN
+        NEW.column = 0;
+        RETURN NEW;
+      END;
+    SQL
+  }
 
   describe :initialize do
     it "instantiates a new function without raising an error" do
       expect {
-        DynamicMigrations::Postgres::Server::Database::Schema::Function.new :configuration, schema, :my_function, "NEW.column = 0"
+        DynamicMigrations::Postgres::Server::Database::Schema::Function.new :configuration, schema, :my_function, function_definition
       }.to_not raise_error
     end
 
     it "raises an error if providing an invalid schema" do
       expect {
-        DynamicMigrations::Postgres::Server::Database::Schema::Function.new :configuration, "not a schema object", :my_function, "NEW.column = 0"
+        DynamicMigrations::Postgres::Server::Database::Schema::Function.new :configuration, "not a schema object", :my_function, function_definition
       }.to raise_error DynamicMigrations::Postgres::Server::Database::Schema::Function::ExpectedSchemaError
     end
 
     it "raises an error if providing an invalid function name" do
       expect {
-        DynamicMigrations::Postgres::Server::Database::Schema::Function.new :configuration, schema, "my_function", "NEW.column = 0"
+        DynamicMigrations::Postgres::Server::Database::Schema::Function.new :configuration, schema, "my_function", function_definition
       }.to raise_error DynamicMigrations::ExpectedSymbolError
     end
 
@@ -36,13 +44,13 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database::Schema::Function d
     describe "when providing an optional description" do
       it "instantiates a new function without raising an error" do
         expect {
-          DynamicMigrations::Postgres::Server::Database::Schema::Function.new :configuration, schema, :my_function, "NEW.column = 0", description: "a valid description of my function"
+          DynamicMigrations::Postgres::Server::Database::Schema::Function.new :configuration, schema, :my_function, function_definition, description: "a valid description of my function"
         }.to_not raise_error
       end
 
       it "raises an error if providing an invalid description" do
         expect {
-          DynamicMigrations::Postgres::Server::Database::Schema::Function.new :configuration, schema, :my_function, "NEW.column = 0", description: :an_invalid_description_type
+          DynamicMigrations::Postgres::Server::Database::Schema::Function.new :configuration, schema, :my_function, function_definition, description: :an_invalid_description_type
         }.to raise_error DynamicMigrations::ExpectedStringError
       end
     end
@@ -62,7 +70,12 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database::Schema::Function d
 
   describe :definition do
     it "returns the expected definition" do
-      expect(function.definition).to eq("NEW.column = 0")
+      expect(function.definition).to eq(<<~SQL.strip)
+        BEGIN
+          NEW.column = 0;
+          RETURN NEW;
+        END;
+      SQL
     end
   end
 
@@ -72,7 +85,7 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database::Schema::Function d
     end
 
     describe "after a trigger has been added which references this function" do
-      let(:trigger) { DynamicMigrations::Postgres::Server::Database::Schema::Table::Trigger.new :configuration, table, :trigger_name, event_manipulation: :insert, action_order: 1, action_condition: nil, action_statement: "EXECUTE FUNCTION checklists.foo()", action_orientation: :row, action_timing: :before, function: function }
+      let(:trigger) { DynamicMigrations::Postgres::Server::Database::Schema::Table::Trigger.new :configuration, table, :trigger_name, event_manipulation: :insert, action_order: nil, action_condition: nil, parameters: nil, action_orientation: :row, action_timing: :before, function: function }
 
       before(:each) do
         trigger
@@ -92,7 +105,7 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database::Schema::Function d
     end
 
     describe "when a description was provided at initialization" do
-      let(:function_with_description) { DynamicMigrations::Postgres::Server::Database::Schema::Function.new :configuration, schema, :my_function, "NEW.column = 0", description: "a valid description of my function" }
+      let(:function_with_description) { DynamicMigrations::Postgres::Server::Database::Schema::Function.new :configuration, schema, :my_function, function_definition, description: "a valid description of my function" }
       it "returns the expected description" do
         expect(function_with_description.description).to eq("a valid description of my function")
       end
@@ -107,7 +120,7 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database::Schema::Function d
     end
 
     describe "when a description was provided at initialization" do
-      let(:function_with_description) { DynamicMigrations::Postgres::Server::Database::Schema::Function.new :configuration, schema, :my_function, "NEW.column = 0", description: "a valid description of my function" }
+      let(:function_with_description) { DynamicMigrations::Postgres::Server::Database::Schema::Function.new :configuration, schema, :my_function, function_definition, description: "a valid description of my function" }
       it "returns true" do
         expect(function_with_description.has_description?).to be(true)
       end
@@ -121,11 +134,26 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database::Schema::Function d
 
   describe :differences_descriptions do
     describe "when compared to a function which has a different definition" do
-      let(:different_function) { DynamicMigrations::Postgres::Server::Database::Schema::Function.new :configuration, schema, :my_function, "NEW.different_column = 0" }
+      let(:different_function) {
+        DynamicMigrations::Postgres::Server::Database::Schema::Function.new :configuration, schema, :my_function, <<~SQL
+          BEGIN
+            NEW.different_column = 0;
+            RETURN NEW;
+          END;
+        SQL
+      }
 
       it "returns the expected array which describes the differences" do
         expect(function.differences_descriptions(different_function)).to eql([
-          "definition changed from `NEW.column = 0` to `NEW.different_column = 0`"
+          <<~CHANGES.strip
+            definition changed from `BEGIN
+              NEW.column = 0;
+              RETURN NEW;
+            END;` to `BEGIN
+              NEW.different_column = 0;
+              RETURN NEW;
+            END;`
+          CHANGES
         ])
       end
     end

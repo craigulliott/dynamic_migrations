@@ -37,13 +37,19 @@ RSpec.describe DynamicMigrations::ActiveRecord::Migrators do
         describe :create_function do
           it "generates the expected sql" do
             migration.create_function :my_table, :my_function do
-              "NEW.column = 0"
+              <<~SQL
+                BEGIN
+                  NEW.column = 0;
+                  RETURN NEW;
+                END
+              SQL
             end
 
             expect(migration).to executed_sql <<~SQL
               CREATE FUNCTION my_schema.my_function() returns trigger language plpgsql AS
-              $$BEGIN NEW.column = 0;
-              RETURN NEW;
+              $$BEGIN
+                NEW.column = 0;
+                RETURN NEW;
               END$$;
             SQL
           end
@@ -58,7 +64,12 @@ RSpec.describe DynamicMigrations::ActiveRecord::Migrators do
         describe :update_function do
           it "generates the expected sql" do
             migration.update_function :my_table, :my_function do
-              "NEW.column = 0"
+              <<~SQL
+                BEGIN
+                  NEW.column = 0;
+                  RETURN NEW;
+                END
+              SQL
             end
 
             assert_existance_sql = <<~SQL
@@ -75,8 +86,9 @@ RSpec.describe DynamicMigrations::ActiveRecord::Migrators do
 
             update_sql = <<~SQL
               CREATE OR REPLACE FUNCTION my_schema.my_function() returns trigger language plpgsql AS
-              $$BEGIN NEW.column = 0;
-              RETURN NEW;
+              $$BEGIN
+                NEW.column = 0;
+                RETURN NEW;
               END$$;
             SQL
 

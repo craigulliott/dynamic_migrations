@@ -8,11 +8,25 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database::Differences do
 
   let(:configured_schema) { database.add_configured_schema :my_schema }
   let(:configured_table) { configured_schema.add_table :my_table }
-  let(:configured_function) { configured_schema.add_function :function_name, "NEW.column = 0" }
+  let(:configured_function) {
+    configured_schema.add_function :function_name, <<~SQL
+      BEGIN
+        NEW.column = 0;
+        RETURN NEW;
+      END;
+    SQL
+  }
 
   let(:loaded_schema) { database.add_loaded_schema :my_schema }
   let(:loaded_table) { loaded_schema.add_table :my_table }
-  let(:loaded_function) { loaded_schema.add_function :function_name, "NEW.column = 0" }
+  let(:loaded_function) {
+    loaded_schema.add_function :function_name, <<~SQL
+      BEGIN
+        NEW.column = 0;
+        RETURN NEW;
+      END;
+    SQL
+  }
 
   describe :compare_triggers do
     describe "when base table has no triggers" do
@@ -30,7 +44,7 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database::Differences do
         let(:comparison) { loaded_table }
 
         before(:each) do
-          comparison.add_trigger :trigger_name, event_manipulation: :insert, action_order: 1, action_condition: nil, action_statement: "EXECUTE FUNCTION checklists.foo()", action_orientation: :row, action_timing: :before, function: loaded_function
+          comparison.add_trigger :trigger_name, event_manipulation: :insert, action_order: 1, action_condition: nil, parameters: nil, action_orientation: :row, action_timing: :before, function: loaded_function
         end
 
         it "returns the expected object" do
@@ -47,7 +61,7 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database::Differences do
       let(:base) { configured_table }
 
       before(:each) do
-        base.add_trigger :trigger_name, event_manipulation: :insert, action_order: 1, action_condition: nil, action_statement: "EXECUTE FUNCTION checklists.foo()", action_orientation: :row, action_timing: :before, function: configured_function
+        base.add_trigger :trigger_name, event_manipulation: :insert, action_order: nil, action_condition: nil, parameters: nil, action_orientation: :row, action_timing: :before, function: configured_function
       end
 
       describe "when comparison table has no triggers" do
@@ -73,8 +87,8 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database::Differences do
                 value: nil,
                 matches: false
               },
-              action_statement: {
-                value: "EXECUTE FUNCTION checklists.foo()",
+              parameters: {
+                value: nil,
                 matches: false
               },
               action_orientation: {
@@ -102,7 +116,7 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database::Differences do
         let(:comparison) { loaded_table }
 
         before(:each) do
-          comparison.add_trigger :trigger_name, event_manipulation: :insert, action_order: 1, action_condition: nil, action_statement: "EXECUTE FUNCTION checklists.foo()", action_orientation: :row, action_timing: :before, function: loaded_function
+          comparison.add_trigger :trigger_name, event_manipulation: :insert, action_order: 1, action_condition: nil, parameters: nil, action_orientation: :row, action_timing: :before, function: loaded_function
         end
 
         it "returns the expected object" do
@@ -125,8 +139,8 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database::Differences do
                 value: nil,
                 matches: true
               },
-              action_statement: {
-                value: "EXECUTE FUNCTION checklists.foo()",
+              parameters: {
+                value: nil,
                 matches: true
               },
               action_orientation: {
@@ -154,7 +168,7 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database::Differences do
         let(:comparison) { loaded_table }
 
         before(:each) do
-          comparison.add_trigger :trigger_name, event_manipulation: :insert, action_order: 1, action_condition: nil, action_statement: "EXECUTE FUNCTION checklists.foo()", action_orientation: :row, action_timing: :after, function: loaded_function
+          comparison.add_trigger :trigger_name, event_manipulation: :insert, action_order: 1, action_condition: nil, parameters: nil, action_orientation: :row, action_timing: :after, function: loaded_function
         end
 
         it "returns the expected object" do
@@ -177,8 +191,8 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database::Differences do
                 value: nil,
                 matches: true
               },
-              action_statement: {
-                value: "EXECUTE FUNCTION checklists.foo()",
+              parameters: {
+                value: nil,
                 matches: true
               },
               action_orientation: {

@@ -5,16 +5,24 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database::Schema do
   let(:server) { DynamicMigrations::Postgres::Server.new pg_helper.host, pg_helper.port, pg_helper.username, pg_helper.password }
   let(:database) { DynamicMigrations::Postgres::Server::Database.new server, :my_database }
   let(:schema) { DynamicMigrations::Postgres::Server::Database::Schema.new :configuration, database, :my_schema }
+  let(:function_definition) {
+    <<~SQL
+      BEGIN
+        NEW.column = 0;
+        RETURN NEW;
+      END;
+    SQL
+  }
 
   describe :Functions do
     describe :add_function do
       it "creates a new function object" do
-        expect(schema.add_function(:function_name, "NEW.column = 0")).to be_a DynamicMigrations::Postgres::Server::Database::Schema::Function
+        expect(schema.add_function(:function_name, function_definition)).to be_a DynamicMigrations::Postgres::Server::Database::Schema::Function
       end
 
       it "raises an error if providing an invalid function name" do
         expect {
-          schema.add_function "function_name", "NEW.column = 0"
+          schema.add_function "function_name", function_definition
         }.to raise_error DynamicMigrations::ExpectedSymbolError
       end
 
@@ -26,12 +34,12 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database::Schema do
 
       describe "when a function already exists" do
         before(:each) do
-          schema.add_function(:function_name, "NEW.column = 0")
+          schema.add_function(:function_name, function_definition)
         end
 
         it "raises an error if using the same function name" do
           expect {
-            schema.add_function(:function_name, "NEW.column = 0")
+            schema.add_function(:function_name, function_definition)
           }.to raise_error DynamicMigrations::Postgres::Server::Database::Schema::FunctionAlreadyExistsError
         end
       end
@@ -45,7 +53,7 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database::Schema do
       end
 
       describe "after the expected function has been added" do
-        let(:function) { schema.add_function :function_name, "NEW.column = 0" }
+        let(:function) { schema.add_function :function_name, function_definition }
 
         before(:each) do
           function
@@ -63,7 +71,7 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database::Schema do
       end
 
       describe "after the expected function has been added" do
-        let(:function) { schema.add_function :function_name, "NEW.column = 0" }
+        let(:function) { schema.add_function :function_name, function_definition }
 
         before(:each) do
           function
@@ -82,7 +90,7 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database::Schema do
       end
 
       describe "after the expected function has been added" do
-        let(:function) { schema.add_function :function_name, "NEW.column = 0" }
+        let(:function) { schema.add_function :function_name, function_definition }
 
         before(:each) do
           function
@@ -100,7 +108,7 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database::Schema do
       end
 
       describe "after the expected function has been added" do
-        let(:function) { schema.add_function :function_name, "NEW.column = 0" }
+        let(:function) { schema.add_function :function_name, function_definition }
 
         before(:each) do
           function

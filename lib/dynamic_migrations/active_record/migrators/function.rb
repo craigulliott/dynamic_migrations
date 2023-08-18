@@ -18,17 +18,10 @@ module DynamicMigrations
             fn_sql = block.call.strip
           end
 
-          # ensure that the function ends with a semicolon
-          unless fn_sql.end_with? ";"
-            fn_sql << ";"
-          end
-
           # schema_name was not provided to this method, it comes from the migration class
           execute <<~SQL
             CREATE FUNCTION #{schema_name}.#{function_name}() returns trigger language plpgsql AS
-            $$BEGIN #{fn_sql}
-            RETURN NEW;
-            END$$;
+            $$#{fn_sql}$$;
           SQL
 
           if comment.is_a? String
@@ -44,11 +37,6 @@ module DynamicMigrations
           # todo - remove this once steep/rbs can better handle blocks
           unless block.is_a? NilClass
             fn_sql = block.call.strip
-          end
-
-          # ensure that the function ends with a semicolon
-          unless fn_sql.end_with? ";"
-            fn_sql << ";"
           end
 
           # schema_name was not provided to this method, it comes from the migration class
@@ -72,9 +60,7 @@ module DynamicMigrations
           # create or replace will update the function
           execute <<~SQL
             CREATE OR REPLACE FUNCTION #{schema_name}.#{function_name}() returns trigger language plpgsql AS
-            $$BEGIN #{fn_sql}
-            RETURN NEW;
-            END$$;
+            $$#{fn_sql}$$;
           SQL
 
           if comment.is_a? String

@@ -8,20 +8,21 @@ module DynamicMigrations
         class Schema
           class Table
             class Trigger < Source
+              @action_order: Integer?
               attr_reader table: Table
               attr_reader name: Symbol
               attr_reader event_manipulation: Symbol
               attr_reader action_timing: Symbol
-              attr_reader action_order: Integer
               attr_reader action_condition: String?
-              attr_reader action_statement: String
+              attr_reader parameters: String?
               attr_reader action_orientation: Symbol
               attr_reader function: Function
               attr_reader action_reference_old_table: Symbol?
               attr_reader action_reference_new_table: Symbol?
               attr_reader description: String?
 
-              def initialize: (database_or_configuration source, Table table, Symbol name, action_timing: Symbol, event_manipulation: Symbol, action_order: Integer, action_statement: String, action_orientation: Symbol, function: Function, ?action_condition: String?, ?action_reference_old_table: Symbol?, ?action_reference_new_table: Symbol?, ?description: String?) -> void
+              def initialize: (database_or_configuration source, Table table, Symbol name, action_timing: Symbol, event_manipulation: Symbol, parameters: String?, action_orientation: Symbol, function: Function, ?action_order: Integer?, ?action_condition: String?, ?action_reference_old_table: Symbol?, ?action_reference_new_table: Symbol?, ?description: String?) -> void
+              def action_order: -> Integer
               def has_description?: -> false
               def differences_descriptions: (Trigger other_trigger) -> Array[String]
 
@@ -31,10 +32,7 @@ module DynamicMigrations
               class UnexpectedEventManipulationError < StandardError
               end
 
-              class UnexpectedActionOrderError < StandardError
-              end
-
-              class UnexpectedActionStatementError < StandardError
+              class UnexpectedParametersError < StandardError
               end
 
               class UnexpectedActionOrientationError < StandardError
@@ -50,6 +48,9 @@ module DynamicMigrations
               end
 
               class ExpectedFunctionError < StandardError
+              end
+
+              class UnexpectedActionOrderError < StandardError
               end
             end
           end

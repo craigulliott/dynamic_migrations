@@ -12,11 +12,25 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database::Differences::ToMig
   describe :Triggers do
     describe :migrations do
       describe "when the loaded and configured database have the same function, table and column" do
-        let(:configured_function) { configured_schema.add_function :my_function, "new.column = 0" }
+        let(:configured_function) {
+          configured_schema.add_function :my_function, <<~SQL
+            BEGIN
+              NEW.column = 0;
+              RETURN NEW;
+            END;
+          SQL
+        }
         let(:configured_table) { configured_schema.add_table :my_table }
         let(:configured_column) { configured_table.add_column :my_column, :integer }
 
-        let(:loaded_function) { loaded_schema.add_function :my_function, "new.column = 0" }
+        let(:loaded_function) {
+          loaded_schema.add_function :my_function, <<~SQL
+            BEGIN
+              NEW.column = 0;
+              RETURN NEW;
+            END;
+          SQL
+        }
         let(:loaded_table) { loaded_schema.add_table :my_table }
         let(:loaded_column) { loaded_table.add_column :my_column, :integer }
 
@@ -30,7 +44,7 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database::Differences::ToMig
 
         describe "when the configured table has a trigger" do
           before(:each) do
-            configured_table.add_trigger :my_trigger, event_manipulation: :insert, action_order: 1, action_condition: nil, action_statement: "EXECUTE FUNCTION checklists.foo()", action_orientation: :row, action_timing: :before, function: configured_function
+            configured_table.add_trigger :my_trigger, event_manipulation: :insert, action_order: nil, action_condition: nil, parameters: nil, action_orientation: :row, action_timing: :before, function: configured_function
           end
 
           it "returns the migration to create the trigger" do
@@ -50,7 +64,7 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database::Differences::ToMig
 
           describe "when the loaded table has a trigger with the same name but a different action_timing" do
             before(:each) do
-              loaded_table.add_trigger :my_trigger, event_manipulation: :insert, action_order: 1, action_condition: nil, action_statement: "EXECUTE FUNCTION checklists.foo()", action_orientation: :row, action_timing: :after, function: loaded_function
+              loaded_table.add_trigger :my_trigger, event_manipulation: :insert, action_order: 1, action_condition: nil, parameters: nil, action_orientation: :row, action_timing: :after, function: loaded_function
             end
 
             it "returns the migration to update the trigger by replacing it" do
@@ -80,7 +94,7 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database::Differences::ToMig
 
           describe "when the loaded table has an equivalent trigger" do
             before(:each) do
-              loaded_table.add_trigger :my_trigger, event_manipulation: :insert, action_order: 1, action_condition: nil, action_statement: "EXECUTE FUNCTION checklists.foo()", action_orientation: :row, action_timing: :before, function: loaded_function
+              loaded_table.add_trigger :my_trigger, event_manipulation: :insert, action_order: 1, action_condition: nil, parameters: nil, action_orientation: :row, action_timing: :before, function: loaded_function
             end
 
             it "returns no migrations because there are no differences" do
@@ -91,7 +105,7 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database::Differences::ToMig
 
         describe "when the configured table has a trigger with a description" do
           before(:each) do
-            configured_table.add_trigger :my_trigger, event_manipulation: :insert, action_order: 1, action_condition: nil, action_statement: "EXECUTE FUNCTION checklists.foo()", action_orientation: :row, action_timing: :before, function: configured_function, description: "Description of my trigger"
+            configured_table.add_trigger :my_trigger, event_manipulation: :insert, action_order: nil, action_condition: nil, parameters: nil, action_orientation: :row, action_timing: :before, function: configured_function, description: "Description of my trigger"
           end
 
           it "returns the migration to create the trigger and description" do
@@ -113,7 +127,7 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database::Differences::ToMig
 
           describe "when the loaded table has the same trigger but a different description" do
             before(:each) do
-              loaded_table.add_trigger :my_trigger, event_manipulation: :insert, action_order: 1, action_condition: nil, action_statement: "EXECUTE FUNCTION checklists.foo()", action_orientation: :row, action_timing: :before, function: loaded_function, description: "Different description of my trigger"
+              loaded_table.add_trigger :my_trigger, event_manipulation: :insert, action_order: 1, action_condition: nil, parameters: nil, action_orientation: :row, action_timing: :before, function: loaded_function, description: "Different description of my trigger"
             end
 
             it "returns the migration to update the description" do
@@ -134,7 +148,7 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database::Differences::ToMig
 
           describe "when the loaded table has an equivalent trigger and description" do
             before(:each) do
-              loaded_table.add_trigger :my_trigger, event_manipulation: :insert, action_order: 1, action_condition: nil, action_statement: "EXECUTE FUNCTION checklists.foo()", action_orientation: :row, action_timing: :before, function: loaded_function, description: "Description of my trigger"
+              loaded_table.add_trigger :my_trigger, event_manipulation: :insert, action_order: 1, action_condition: nil, parameters: nil, action_orientation: :row, action_timing: :before, function: loaded_function, description: "Description of my trigger"
             end
 
             it "returns no migrations because there are no differences" do
