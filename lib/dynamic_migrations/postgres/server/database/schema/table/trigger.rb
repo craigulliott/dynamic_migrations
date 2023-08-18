@@ -86,12 +86,12 @@ module DynamicMigrations
                 unless action_condition.nil? || action_condition.is_a?(String)
                   raise ExpectedStringError, action_condition
                 end
-                @action_condition = action_condition
+                @action_condition = action_condition&.strip
 
                 unless parameters.nil? || (parameters.is_a?(String) && parameters[/\A'[\w\d_ -]+'(, ?'[\w\d_ -]+')*\z/])
                   raise UnexpectedParametersError, "unexpected parameters `#{parameters}`, currently only a comma seeparated list of strings is supported"
                 end
-                @parameters = parameters
+                @parameters = parameters&.strip
 
                 unless [:row, :statement].include? action_orientation
                   raise UnexpectedActionOrientationError, action_orientation
@@ -152,14 +152,14 @@ module DynamicMigrations
                 unless new_action_condition.nil? || new_action_condition.is_a?(String)
                   raise ExpectedStringError, new_action_condition
                 end
-                @action_condition = new_action_condition
+                @action_condition = new_action_condition&.strip
               end
 
               def parameters= new_parameters
                 unless new_parameters.nil? || new_parameters.is_a?(String)
                   raise ExpectedStringError, new_parameters
                 end
-                @parameters = new_parameters
+                @parameters = new_parameters&.strip
               end
 
               # return true if this has a description, otherwise false
