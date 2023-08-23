@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.4.0](https://github.com/craigulliott/dynamic_migrations/compare/v3.3.1...v3.4.0) (2023-08-23)
+
+
+### Features
+
+* adding support for enums and extensions ([6e00d5f](https://github.com/craigulliott/dynamic_migrations/commit/6e00d5fc726e2a1bbeb282477c8bca92b94462cf))
+
 ## [3.3.1](https://github.com/craigulliott/dynamic_migrations/compare/v3.3.0...v3.3.1) (2023-08-18)
 
 
