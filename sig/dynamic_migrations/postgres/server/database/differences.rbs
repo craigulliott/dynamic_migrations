@@ -7,18 +7,26 @@ module DynamicMigrations
 
           def initialize: (Database database) -> void
           def to_h: -> {
-            configuration: Hash[Symbol, untyped],
-            database: Hash[Symbol, untyped]
+            configuration: {
+              schemas: Hash[Symbol, untyped],
+              extensions: Hash[Symbol, {exists: bool}]
+            },
+            database: {
+              schemas: Hash[Symbol, untyped],
+              extensions: Hash[Symbol, {exists: bool}]
+            }
           }
           def to_migrations: -> Hash[Symbol, Array[{name: Symbol, content: String}]]
 
           def self.compare_schemas: (Hash[Symbol, Schema] schemas, Hash[Symbol, Schema] comparison_schemas) -> Hash[Symbol, untyped]
+          def self.compare_extensions: (Array[Symbol] extensions, Array[Symbol] comparison_extensions) -> Hash[Symbol, untyped]
           def self.compare_schema: (Schema schema, Schema comparison_schema) -> {
             exists: true,
             tables: Hash[Symbol, untyped]
           }
           def self.compare_tables: (Hash[Symbol, Schema::Table] tables, Hash[Symbol, Schema::Table] comparison_tables) -> Hash[Symbol, untyped]
-          def self.compare_functions: (Hash[Symbol, Schema::Table] functions, Hash[Symbol, Schema::Table] comparison_functions) -> Hash[Symbol, untyped]
+          def self.compare_functions: (Hash[Symbol, Schema::Function] functions, Hash[Symbol, Schema::Function] comparison_functions) -> Hash[Symbol, untyped]
+          def self.compare_enums: (Hash[Symbol, Schema::Enum] enums, Hash[Symbol, Schema::Enum] comparison_enums) -> Hash[Symbol, untyped]
           def self.compare_table: (Schema::Table table, Schema::Table comparison_table) -> Hash[Symbol, untyped]
           def self.compare_columns: (Hash[Symbol, Schema::Table::Column] columns, Hash[Symbol, Schema::Table::Column] comparison_columns) -> Hash[Symbol, untyped]
           def self.compare_triggers: (Hash[Symbol, Schema::Table::Trigger] triggers, Hash[Symbol, Schema::Table::Trigger] comparison_triggers) -> Hash[Symbol, untyped]

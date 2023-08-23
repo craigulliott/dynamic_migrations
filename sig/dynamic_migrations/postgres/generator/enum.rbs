@@ -1,0 +1,23 @@
+# TypeProf 0.21.7
+
+# Classes
+module DynamicMigrations
+  module Postgres
+    class Generator
+      module Enum
+        def create_enum: (Server::Database::Schema::Enum enum, ?String? code_comment) -> Fragment
+        def update_enum: (Server::Database::Schema::Enum original_enum, Server::Database::Schema::Enum updated_enum, ?String? code_comment) -> Fragment
+        def drop_enum: (Server::Database::Schema::Enum enum, ?String? code_comment) -> Fragment
+        def set_enum_comment: (Server::Database::Schema::Enum enum, ?String? code_comment) -> Fragment
+        def remove_enum_comment: (Server::Database::Schema::Enum enum, ?String? code_comment) -> Fragment
+        # these come from the generator object (which this module is included into)
+        def add_fragment: (schema: Server::Database::Schema, migration_method: Symbol, object: Server::Database::Schema::Enum enum, migration: String, ?table: nil | Server::Database::Schema::Table, ?code_comment: String?, ?dependent_table: nil | Server::Database::Schema::Table) -> Fragment
+        def indent: (String migration, ?Integer levels) -> String
+
+        class UnremovableEnumValuesError < StandardError
+        end
+
+      end
+    end
+  end
+end

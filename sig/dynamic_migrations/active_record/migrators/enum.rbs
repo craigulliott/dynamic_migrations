@@ -1,0 +1,22 @@
+# TypeProf 0.21.7
+
+# Classes
+module DynamicMigrations
+  module ActiveRecord
+    module Migrators
+      module Enum
+        def create_enum: (Symbol enum_name, Array[Symbol] values) -> void
+        def add_enum_values: (Symbol enum_name, Array[Symbol] values) -> void
+        def drop_enum: (Symbol enum_name) -> void
+        def set_enum_comment: (Symbol enum_name, String comment) -> void
+        def remove_enum_comment: (Symbol enum_name) -> void
+
+        # stubbing these out, as they are available on the module which includes this module
+        def execute: (String sql) -> Array[untyped]
+        def schema_name: () -> Symbol
+        def quote: (String str) -> String
+
+      end
+    end
+  end
+end

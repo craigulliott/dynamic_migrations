@@ -2,12 +2,6 @@ module DynamicMigrations
   module Postgres
     class Generator
       class TableMigration < Migration
-        class UnexpectedTableError < StandardError
-        end
-
-        class MissingRequiredTableName < StandardError
-        end
-
         # these sections are in order for which they will appear in a migration,
         # note that removals come before additions, and that the order here optomizes
         # for dependencies (i.e. columns have to be created before indexes are added and
@@ -31,18 +25,9 @@ module DynamicMigrations
         add_structure_template [:add_trigger, :set_trigger_comment], "Triggers"
         add_structure_template [:update_function, :set_function_comment], "Update Functions"
 
-        attr_accessor :table_name
-
         def initialize schema_name, table_name
+          raise MissingRequiredSchemaName unless schema_name
           raise MissingRequiredTableName unless table_name
-          super schema_name
-          @table_name = table_name
-        end
-
-        def add_fragment fragment
-          unless @table_name == fragment.table_name
-            raise UnexpectedTableError, "Frgment is for table `#{fragment.table_name}` but migration is for table `#{@table_name}`"
-          end
           super
         end
       end

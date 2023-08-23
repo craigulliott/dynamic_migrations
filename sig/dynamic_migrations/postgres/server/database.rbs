@@ -4,6 +4,8 @@ module DynamicMigrations
       class Database
         @configured_schemas: Hash[Symbol, Schema]
         @loaded_schemas: Hash[Symbol, Schema]
+        @configured_extensions: Hash[Symbol, true]
+        @loaded_extensions: Hash[Symbol, true]
 
         include Connection
         include StructureLoader
@@ -13,6 +15,10 @@ module DynamicMigrations
         include LoadedSchemas
         include ConfiguredSchemas
         include LoadedSchemasBuilder
+        include ConfiguredExtensions
+        include LoadedExtensions
+        include EnumsLoader
+        include ExtensionsLoader
 
         attr_reader server: Server
         attr_reader name: Symbol

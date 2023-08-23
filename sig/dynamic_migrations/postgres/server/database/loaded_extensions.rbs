@@ -1,0 +1,19 @@
+module DynamicMigrations
+  module Postgres
+    class Server
+      class Database
+        module LoadedExtensions
+          @loaded_extensions: Hash[Symbol, true]
+
+          def add_loaded_extension: (Symbol extension_name) -> void
+          def has_loaded_extension?: (Symbol extension_name) -> bool
+          def loaded_extensions: -> Array[Symbol]
+
+          class LoadedExtensionAlreadyExistsError < StandardError
+          end
+
+        end
+      end
+    end
+  end
+end

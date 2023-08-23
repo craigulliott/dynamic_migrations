@@ -13,6 +13,7 @@ module DynamicMigrations
             @differences: Differences
             @differences_hash: Hash[untyped, untyped]
 
+            include Extensions
             include Schemas
             include Schemas::Functions
             include Schemas::Tables

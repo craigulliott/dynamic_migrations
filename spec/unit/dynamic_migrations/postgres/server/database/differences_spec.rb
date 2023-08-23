@@ -109,8 +109,14 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database::Differences do
   describe :to_h do
     it "returns the expected differences" do
       expect(differences.to_h).to eql({
-        configuration: {},
-        database: {}
+        configuration: {
+          schemas: {},
+          extensions: {}
+        },
+        database: {
+          schemas: {},
+          extensions: {}
+        }
       })
     end
 
@@ -124,16 +130,23 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database::Differences do
       it "returns the expected differences" do
         expect(differences.to_h).to eql({
           configuration: {
-            my_schema: {
-              exists: true,
-              tables: {},
-              functions: {}
-            }
+            schemas: {
+              my_schema: {
+                exists: true,
+                tables: {},
+                enums: {},
+                functions: {}
+              }
+            },
+            extensions: {}
           },
           database: {
-            my_schema: {
-              exists: false
-            }
+            schemas: {
+              my_schema: {
+                exists: false
+              }
+            },
+            extensions: {}
           }
         })
       end
@@ -148,18 +161,26 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database::Differences do
         it "returns the expected differences" do
           expect(differences.to_h).to eql({
             configuration: {
-              my_schema: {
-                exists: true,
-                tables: {},
-                functions: {}
-              }
+              schemas: {
+                my_schema: {
+                  exists: true,
+                  tables: {},
+                  enums: {},
+                  functions: {}
+                }
+              },
+              extensions: {}
             },
             database: {
-              my_schema: {
-                exists: true,
-                tables: {},
-                functions: {}
-              }
+              schemas: {
+                my_schema: {
+                  exists: true,
+                  tables: {},
+                  enums: {},
+                  functions: {}
+                }
+              },
+              extensions: {}
             }
           })
         end
@@ -174,39 +195,47 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database::Differences do
           it "returns the expected differences" do
             expect(differences.to_h).to eql({
               configuration: {
-                my_schema: {
-                  exists: true,
-                  tables: {
-                    my_table: {
-                      exists: true,
-                      description: {
-                        value: nil,
-                        matches: false
-                      },
-                      primary_key: {
-                        exists: false
-                      },
-                      columns: {},
-                      indexes: {},
-                      triggers: {},
-                      validations: {},
-                      foreign_key_constraints: {},
-                      unique_constraints: {}
-                    }
-                  },
-                  functions: {}
-                }
+                schemas: {
+                  my_schema: {
+                    exists: true,
+                    tables: {
+                      my_table: {
+                        exists: true,
+                        description: {
+                          value: nil,
+                          matches: false
+                        },
+                        primary_key: {
+                          exists: false
+                        },
+                        columns: {},
+                        indexes: {},
+                        triggers: {},
+                        validations: {},
+                        foreign_key_constraints: {},
+                        unique_constraints: {}
+                      }
+                    },
+                    enums: {},
+                    functions: {}
+                  }
+                },
+                extensions: {}
               },
               database: {
-                my_schema: {
-                  exists: true,
-                  tables: {
-                    my_table: {
-                      exists: false
-                    }
-                  },
-                  functions: {}
-                }
+                schemas: {
+                  my_schema: {
+                    exists: true,
+                    tables: {
+                      my_table: {
+                        exists: false
+                      }
+                    },
+                    enums: {},
+                    functions: {}
+                  }
+                },
+                extensions: {}
               }
             })
           end
@@ -221,53 +250,62 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database::Differences do
             it "returns the expected differences" do
               expect(differences.to_h).to eql({
                 configuration: {
-                  my_schema: {
-                    exists: true,
-                    tables: {
-                      my_table: {
-                        exists: true,
-                        description: {
-                          value: nil,
-                          matches: true
-                        },
-                        primary_key: {
-                          exists: false
-                        },
-                        columns: {},
-                        indexes: {},
-                        triggers: {},
-                        validations: {},
-                        foreign_key_constraints: {},
-                        unique_constraints: {}
+                  schemas: {
+                    my_schema: {
+                      exists: true,
+                      tables: {
+                        my_table: {
+                          exists: true,
+                          description: {
+                            value: nil,
+                            matches: true
+                          },
+                          primary_key: {
+                            exists: false
+                          },
+                          columns: {},
+                          indexes: {},
+                          triggers: {},
+                          validations: {},
+                          foreign_key_constraints: {},
+                          unique_constraints: {}
 
-                      }
-                    },
-                    functions: {}
-                  }
+                        }
+                      },
+                      enums: {},
+                      functions: {}
+                    }
+                  },
+                  extensions: {}
                 },
                 database: {
-                  my_schema: {
-                    exists: true,
-                    tables: {
-                      my_table: {
-                        exists: true,
-                        description: {
-                          value: nil,
-                          matches: true
-                        },
-                        primary_key: {
-                          exists: false
-                        },
-                        columns: {},
-                        indexes: {},
-                        triggers: {},
-                        validations: {},
-                        foreign_key_constraints: {},
-                        unique_constraints: {}
-                      }
-                    },
-                    functions: {}
-                  }
+                  schemas: {
+                    my_schema: {
+                      exists: true,
+                      tables: {
+                        my_table: {
+                          exists: true,
+                          description: {
+                            value: nil,
+                            matches: true
+                          },
+                          primary_key: {
+                            exists: false
+                          },
+                          columns: {},
+                          indexes: {},
+                          triggers: {},
+                          validations: {},
+                          foreign_key_constraints: {},
+                          unique_constraints: {}
+                        }
+                      },
+                      enums: {},
+                      functions: {}
+                    }
+                  },
+                  extensions: {}
+
                 }
               })
             end
@@ -280,80 +318,88 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database::Differences do
               it "returns the expected differences" do
                 expect(differences.to_h).to eql({
                   configuration: {
-                    my_schema: {
-                      exists: true,
-                      tables: {
-                        my_table: {
-                          exists: true,
-                          description: {
-                            value: nil,
-                            matches: true
-                          },
-                          primary_key: {
-                            exists: false
-                          },
-                          columns: {
-                            my_column: {
-                              exists: true,
-                              data_type: {
-                                value: :integer,
-                                matches: false
-                              },
-                              null: {
-                                value: true,
-                                matches: false
-                              },
-                              default: {
-                                value: nil,
-                                matches: false
-                              },
-                              description: {
-                                value: nil,
-                                matches: false
-                              },
-                              interval_type: {
-                                value: nil,
-                                matches: false
+                    schemas: {
+                      my_schema: {
+                        exists: true,
+                        tables: {
+                          my_table: {
+                            exists: true,
+                            description: {
+                              value: nil,
+                              matches: true
+                            },
+                            primary_key: {
+                              exists: false
+                            },
+                            columns: {
+                              my_column: {
+                                exists: true,
+                                data_type: {
+                                  value: :integer,
+                                  matches: false
+                                },
+                                null: {
+                                  value: true,
+                                  matches: false
+                                },
+                                default: {
+                                  value: nil,
+                                  matches: false
+                                },
+                                description: {
+                                  value: nil,
+                                  matches: false
+                                },
+                                interval_type: {
+                                  value: nil,
+                                  matches: false
+                                }
                               }
-                            }
-                          },
-                          indexes: {},
-                          triggers: {},
-                          validations: {},
-                          foreign_key_constraints: {},
-                          unique_constraints: {}
-                        }
-                      },
-                      functions: {}
-                    }
+                            },
+                            indexes: {},
+                            triggers: {},
+                            validations: {},
+                            foreign_key_constraints: {},
+                            unique_constraints: {}
+                          }
+                        },
+                        enums: {},
+                        functions: {}
+                      }
+                    },
+                    extensions: {}
                   },
                   database: {
-                    my_schema: {
-                      exists: true,
-                      tables: {
-                        my_table: {
-                          exists: true,
-                          description: {
-                            value: nil,
-                            matches: true
-                          },
-                          primary_key: {
-                            exists: false
-                          },
-                          columns: {
-                            my_column: {
+                    schemas: {
+                      my_schema: {
+                        exists: true,
+                        tables: {
+                          my_table: {
+                            exists: true,
+                            description: {
+                              value: nil,
+                              matches: true
+                            },
+                            primary_key: {
                               exists: false
-                            }
-                          },
-                          indexes: {},
-                          triggers: {},
-                          validations: {},
-                          foreign_key_constraints: {},
-                          unique_constraints: {}
-                        }
-                      },
-                      functions: {}
-                    }
+                            },
+                            columns: {
+                              my_column: {
+                                exists: false
+                              }
+                            },
+                            indexes: {},
+                            triggers: {},
+                            validations: {},
+                            foreign_key_constraints: {},
+                            unique_constraints: {}
+                          }
+                        },
+                        enums: {},
+                        functions: {}
+                      }
+                    },
+                    extensions: {}
                   }
                 })
               end
@@ -366,172 +412,7 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database::Differences do
                 it "returns the expected differences" do
                   expect(differences.to_h).to eql({
                     configuration: {
-                      my_schema: {
-                        exists: true,
-                        tables: {
-                          my_table: {
-                            exists: true,
-                            description: {
-                              value: nil,
-                              matches: true
-                            },
-                            primary_key: {
-                              exists: false
-                            },
-                            columns: {
-                              my_column: {
-                                exists: true,
-                                data_type: {
-                                  value: :integer,
-                                  matches: true
-                                },
-                                null: {
-                                  value: true,
-                                  matches: true
-                                },
-                                default: {
-                                  value: nil,
-                                  matches: true
-                                },
-                                description: {
-                                  value: nil,
-                                  matches: true
-                                },
-                                interval_type: {
-                                  value: nil,
-                                  matches: true
-                                }
-                              }
-                            },
-                            indexes: {},
-                            triggers: {},
-                            validations: {},
-                            foreign_key_constraints: {},
-                            unique_constraints: {}
-                          }
-                        },
-                        functions: {}
-                      }
-                    },
-                    database: {
-                      my_schema: {
-                        exists: true,
-                        tables: {
-                          my_table: {
-                            exists: true,
-                            description: {
-                              value: nil,
-                              matches: true
-                            },
-                            primary_key: {
-                              exists: false
-                            },
-                            columns: {
-                              my_column: {
-                                exists: true,
-                                data_type: {
-                                  value: :integer,
-                                  matches: true
-                                },
-                                null: {
-                                  value: true,
-                                  matches: true
-                                },
-                                default: {
-                                  value: nil,
-                                  matches: true
-                                },
-                                description: {
-                                  value: nil,
-                                  matches: true
-                                },
-                                interval_type: {
-                                  value: nil,
-                                  matches: true
-                                }
-                              }
-                            },
-                            indexes: {},
-                            triggers: {},
-                            validations: {},
-                            foreign_key_constraints: {},
-                            unique_constraints: {}
-                          }
-                        },
-                        functions: {}
-                      }
-                    }
-                  })
-                end
-
-                describe "when the configured table has a primary_key" do
-                  before(:each) do
-                    configured_table.add_primary_key :my_primary_key, [:my_column]
-                  end
-
-                  it "returns the expected differences" do
-                    expect(differences.to_h).to eql({
-                      configuration: {
-                        my_schema: {
-                          exists: true,
-                          tables: {
-                            my_table: {
-                              exists: true,
-                              description: {
-                                value: nil,
-                                matches: true
-                              },
-                              primary_key: {
-                                exists: true,
-                                name: {
-                                  value: :my_primary_key,
-                                  matches: false
-                                },
-                                column_names: {
-                                  value: [:my_column],
-                                  matches: false
-                                },
-                                description: {
-                                  value: nil,
-                                  matches: false
-                                }
-                              },
-                              columns: {
-                                my_column: {
-                                  exists: true,
-                                  data_type: {
-                                    value: :integer,
-                                    matches: true
-                                  },
-                                  null: {
-                                    value: true,
-                                    matches: true
-                                  },
-                                  default: {
-                                    value: nil,
-                                    matches: true
-                                  },
-                                  description: {
-                                    value: nil,
-                                    matches: true
-                                  },
-                                  interval_type: {
-                                    value: nil,
-                                    matches: true
-                                  }
-                                }
-                              },
-                              indexes: {},
-                              triggers: {},
-                              validations: {},
-                              foreign_key_constraints: {},
-                              unique_constraints: {}
-                            }
-                          },
-                          functions: {}
-                        }
-                      },
-                      database: {
+                      schemas: {
                         my_schema: {
                           exists: true,
                           tables: {
@@ -576,8 +457,190 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database::Differences do
                               unique_constraints: {}
                             }
                           },
+                          enums: {},
                           functions: {}
                         }
+                      },
+                      extensions: {}
+                    },
+                    database: {
+                      schemas: {
+                        my_schema: {
+                          exists: true,
+                          tables: {
+                            my_table: {
+                              exists: true,
+                              description: {
+                                value: nil,
+                                matches: true
+                              },
+                              primary_key: {
+                                exists: false
+                              },
+                              columns: {
+                                my_column: {
+                                  exists: true,
+                                  data_type: {
+                                    value: :integer,
+                                    matches: true
+                                  },
+                                  null: {
+                                    value: true,
+                                    matches: true
+                                  },
+                                  default: {
+                                    value: nil,
+                                    matches: true
+                                  },
+                                  description: {
+                                    value: nil,
+                                    matches: true
+                                  },
+                                  interval_type: {
+                                    value: nil,
+                                    matches: true
+                                  }
+                                }
+                              },
+                              indexes: {},
+                              triggers: {},
+                              validations: {},
+                              foreign_key_constraints: {},
+                              unique_constraints: {}
+                            }
+                          },
+                          enums: {},
+                          functions: {}
+                        }
+                      },
+                      extensions: {}
+                    }
+                  })
+                end
+
+                describe "when the configured table has a primary_key" do
+                  before(:each) do
+                    configured_table.add_primary_key :my_primary_key, [:my_column]
+                  end
+
+                  it "returns the expected differences" do
+                    expect(differences.to_h).to eql({
+                      configuration: {
+                        schemas: {
+                          my_schema: {
+                            exists: true,
+                            tables: {
+                              my_table: {
+                                exists: true,
+                                description: {
+                                  value: nil,
+                                  matches: true
+                                },
+                                primary_key: {
+                                  exists: true,
+                                  name: {
+                                    value: :my_primary_key,
+                                    matches: false
+                                  },
+                                  column_names: {
+                                    value: [:my_column],
+                                    matches: false
+                                  },
+                                  description: {
+                                    value: nil,
+                                    matches: false
+                                  }
+                                },
+                                columns: {
+                                  my_column: {
+                                    exists: true,
+                                    data_type: {
+                                      value: :integer,
+                                      matches: true
+                                    },
+                                    null: {
+                                      value: true,
+                                      matches: true
+                                    },
+                                    default: {
+                                      value: nil,
+                                      matches: true
+                                    },
+                                    description: {
+                                      value: nil,
+                                      matches: true
+                                    },
+                                    interval_type: {
+                                      value: nil,
+                                      matches: true
+                                    }
+                                  }
+                                },
+                                indexes: {},
+                                triggers: {},
+                                validations: {},
+                                foreign_key_constraints: {},
+                                unique_constraints: {}
+                              }
+                            },
+                            enums: {},
+                            functions: {}
+                          }
+                        },
+                        extensions: {}
+                      },
+                      database: {
+                        schemas: {
+                          my_schema: {
+                            exists: true,
+                            tables: {
+                              my_table: {
+                                exists: true,
+                                description: {
+                                  value: nil,
+                                  matches: true
+                                },
+                                primary_key: {
+                                  exists: false
+                                },
+                                columns: {
+                                  my_column: {
+                                    exists: true,
+                                    data_type: {
+                                      value: :integer,
+                                      matches: true
+                                    },
+                                    null: {
+                                      value: true,
+                                      matches: true
+                                    },
+                                    default: {
+                                      value: nil,
+                                      matches: true
+                                    },
+                                    description: {
+                                      value: nil,
+                                      matches: true
+                                    },
+                                    interval_type: {
+                                      value: nil,
+                                      matches: true
+                                    }
+                                  }
+                                },
+                                indexes: {},
+                                triggers: {},
+                                validations: {},
+                                foreign_key_constraints: {},
+                                unique_constraints: {}
+                              }
+                            },
+                            enums: {},
+                            functions: {}
+                          }
+                        },
+                        extensions: {}
+
                       }
                     })
                   end
@@ -590,124 +653,132 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database::Differences do
                     it "returns the expected differences" do
                       expect(differences.to_h).to eql({
                         configuration: {
-                          my_schema: {
-                            exists: true,
-                            tables: {
-                              my_table: {
-                                exists: true,
-                                description: {
-                                  value: nil,
-                                  matches: true
-                                },
-                                primary_key: {
+                          schemas: {
+                            my_schema: {
+                              exists: true,
+                              tables: {
+                                my_table: {
                                   exists: true,
-                                  name: {
-                                    value: :my_primary_key,
-                                    matches: true
-                                  },
-                                  column_names: {
-                                    value: [:my_column],
-                                    matches: true
-                                  },
                                   description: {
                                     value: nil,
                                     matches: true
-                                  }
-                                },
-                                columns: {
-                                  my_column: {
+                                  },
+                                  primary_key: {
                                     exists: true,
-                                    data_type: {
-                                      value: :integer,
+                                    name: {
+                                      value: :my_primary_key,
                                       matches: true
                                     },
-                                    null: {
-                                      value: true,
-                                      matches: true
-                                    },
-                                    default: {
-                                      value: nil,
+                                    column_names: {
+                                      value: [:my_column],
                                       matches: true
                                     },
                                     description: {
                                       value: nil,
                                       matches: true
-                                    },
-                                    interval_type: {
-                                      value: nil,
-                                      matches: true
                                     }
-                                  }
-                                },
-                                indexes: {},
-                                triggers: {},
-                                validations: {},
-                                foreign_key_constraints: {},
-                                unique_constraints: {}
-                              }
-                            },
-                            functions: {}
-                          }
+                                  },
+                                  columns: {
+                                    my_column: {
+                                      exists: true,
+                                      data_type: {
+                                        value: :integer,
+                                        matches: true
+                                      },
+                                      null: {
+                                        value: true,
+                                        matches: true
+                                      },
+                                      default: {
+                                        value: nil,
+                                        matches: true
+                                      },
+                                      description: {
+                                        value: nil,
+                                        matches: true
+                                      },
+                                      interval_type: {
+                                        value: nil,
+                                        matches: true
+                                      }
+                                    }
+                                  },
+                                  indexes: {},
+                                  triggers: {},
+                                  validations: {},
+                                  foreign_key_constraints: {},
+                                  unique_constraints: {}
+                                }
+                              },
+                              enums: {},
+                              functions: {}
+                            }
+                          },
+                          extensions: {}
                         },
                         database: {
-                          my_schema: {
-                            exists: true,
-                            tables: {
-                              my_table: {
-                                exists: true,
-                                description: {
-                                  value: nil,
-                                  matches: true
-                                },
-                                primary_key: {
+                          schemas: {
+                            my_schema: {
+                              exists: true,
+                              tables: {
+                                my_table: {
                                   exists: true,
-                                  name: {
-                                    value: :my_primary_key,
-                                    matches: true
-                                  },
-                                  column_names: {
-                                    value: [:my_column],
-                                    matches: true
-                                  },
                                   description: {
                                     value: nil,
                                     matches: true
-                                  }
-                                },
-                                columns: {
-                                  my_column: {
+                                  },
+                                  primary_key: {
                                     exists: true,
-                                    data_type: {
-                                      value: :integer,
+                                    name: {
+                                      value: :my_primary_key,
                                       matches: true
                                     },
-                                    null: {
-                                      value: true,
-                                      matches: true
-                                    },
-                                    default: {
-                                      value: nil,
+                                    column_names: {
+                                      value: [:my_column],
                                       matches: true
                                     },
                                     description: {
                                       value: nil,
                                       matches: true
-                                    },
-                                    interval_type: {
-                                      value: nil,
-                                      matches: true
                                     }
-                                  }
-                                },
-                                indexes: {},
-                                triggers: {},
-                                validations: {},
-                                foreign_key_constraints: {},
-                                unique_constraints: {}
-                              }
-                            },
-                            functions: {}
-                          }
+                                  },
+                                  columns: {
+                                    my_column: {
+                                      exists: true,
+                                      data_type: {
+                                        value: :integer,
+                                        matches: true
+                                      },
+                                      null: {
+                                        value: true,
+                                        matches: true
+                                      },
+                                      default: {
+                                        value: nil,
+                                        matches: true
+                                      },
+                                      description: {
+                                        value: nil,
+                                        matches: true
+                                      },
+                                      interval_type: {
+                                        value: nil,
+                                        matches: true
+                                      }
+                                    }
+                                  },
+                                  indexes: {},
+                                  triggers: {},
+                                  validations: {},
+                                  foreign_key_constraints: {},
+                                  unique_constraints: {}
+                                }
+                              },
+                              enums: {},
+                              functions: {}
+                            }
+                          },
+                          extensions: {}
                         }
                       })
                     end

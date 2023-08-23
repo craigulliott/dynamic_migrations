@@ -13,6 +13,7 @@ module DynamicMigrations
 
           include Tables
           include Functions
+          include Enums
 
           attr_reader :database
           attr_reader :name
@@ -26,6 +27,7 @@ module DynamicMigrations
             @name = name
             @tables = {}
             @functions = {}
+            @enums = {}
           end
         end
       end

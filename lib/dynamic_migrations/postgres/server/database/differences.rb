@@ -32,9 +32,36 @@ module DynamicMigrations
           # versions of the current database
           def to_h
             {
-              configuration: self.class.compare_schemas(@database.configured_schemas_hash, @database.loaded_schemas_hash),
-              database: self.class.compare_schemas(@database.loaded_schemas_hash, @database.configured_schemas_hash)
+              configuration: {
+                schemas: self.class.compare_schemas(@database.configured_schemas_hash, @database.loaded_schemas_hash),
+                extensions: self.class.compare_extensions(@database.configured_extensions, @database.loaded_extensions)
+              },
+              database: {
+                schemas: self.class.compare_schemas(@database.loaded_schemas_hash, @database.configured_schemas_hash),
+                extensions: self.class.compare_extensions(@database.loaded_extensions, @database.configured_extensions)
+              }
             }
+          end
+
+          def self.compare_extensions extensions, comparison_extensions
+            result = {}
+            # the extensions
+            extensions.each do |extension_name|
+              # compare this extension to the equivilent in the comparison list
+              # note that the comparison may be nil
+              result[extension_name] = {
+                exists: true
+              }
+            end
+            # look for any in the comparison list which were not in the base list
+            comparison_extensions.each do |extension_name|
+              unless result.key? extension_name
+                result[extension_name] = {
+                  exists: false
+                }
+              end
+            end
+            result
           end
 
           def self.compare_schemas schemas, comparison_schemas
@@ -63,10 +90,12 @@ module DynamicMigrations
 
             comparison_tables = comparison_schema.nil? ? {} : comparison_schema.tables_hash
             comparison_functions = comparison_schema.nil? ? {} : comparison_schema.functions_hash
+            comparison_enums = comparison_schema.nil? ? {} : comparison_schema.enums_hash
             {
               exists: true,
               tables: compare_tables(schema.tables_hash, comparison_tables),
-              functions: compare_functions(schema.functions_hash, comparison_functions)
+              functions: compare_functions(schema.functions_hash, comparison_functions),
+              enums: compare_enums(schema.enums_hash, comparison_enums)
             }
           end
 
@@ -151,6 +180,29 @@ module DynamicMigrations
             comparison_functions.each do |function_name, function|
               unless result.key? function_name
                 result[function_name] = {
+                  exists: false
+                }
+              end
+            end
+            result
+          end
+
+          # compare two hash representations of a set of enums and return
+          # an object which represents the provided `enums` and any differences
+          # between it and the `comparison_enums`
+          def self.compare_enums enums, comparison_enums
+            result = {}
+            # the base enums
+            enums.each do |enum_name, enum|
+              result[enum_name] = compare_record enum, comparison_enums[enum_name], [
+                :values,
+                :description
+              ]
+            end
+            # look for any in the comparison list which were not in the base list
+            comparison_enums.each do |enum_name, enum|
+              unless result.key? enum_name
+                result[enum_name] = {
                   exists: false
                 }
               end

@@ -18,6 +18,7 @@ module DynamicMigrations
                   # we process the tables and functions after we create the schema
                   # otherwise the schemas objects will not be able to be created
                   process_functions schema_name, configuration_schema[:functions], {}
+                  process_enums schema_name, configuration_schema[:enums], {}
                   process_tables schema_name, configuration_schema[:tables], {}
 
                 # if the schema exists in the database but not in the configuration
@@ -26,6 +27,7 @@ module DynamicMigrations
                   # we process the tables and functions before we drop the schema
                   # as this will drop any dependencies on the schema
                   process_functions schema_name, {}, database_schema[:functions]
+                  process_enums schema_name, {}, database_schema[:enums]
                   process_tables schema_name, {}, database_schema[:tables]
 
                   # a migration to drop the schema
@@ -36,6 +38,7 @@ module DynamicMigrations
                 # then we just need to process the tables and functions
                 else
                   process_functions schema_name, configuration_schema[:functions], database_schema[:functions]
+                  process_enums schema_name, configuration_schema[:enums], database_schema[:enums]
                   process_tables schema_name, configuration_schema[:tables], database_schema[:tables]
                 end
               end

@@ -1,0 +1,31 @@
+# TypeProf 0.21.7
+
+# Classes
+module DynamicMigrations
+  module Postgres
+    class Server
+      class Database
+        class Schema
+          module Enums
+            @enums: Hash[Symbol, Enum]
+
+            def add_enum: (Symbol enum_name, Array[Symbol] values, ?description: String?) -> nil
+            def enum: (Symbol enum_name) -> Enum
+            def has_enum?: (Symbol enum_name) -> bool
+            def enums: -> Array[Enum]
+            def enums_hash: -> Hash[Symbol, Enum]
+
+            # these come from the schema object (which this module is included into)
+            def source: -> database_or_configuration
+
+            class EnumAlreadyExistsError < StandardError
+            end
+
+            class EnumDoesNotExistError < StandardError
+            end
+          end
+        end
+      end
+    end
+  end
+end

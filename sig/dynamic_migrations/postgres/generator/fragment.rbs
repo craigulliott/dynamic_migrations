@@ -8,9 +8,10 @@ module DynamicMigrations
         @content: String
         @code_comment: String?
 
-        attr_reader schema_name: Symbol
         attr_reader migration_method: Symbol
         attr_reader object_name: Symbol
+        # schema_name can be nill for database only migrations, like `create extension`
+        attr_reader schema_name: Symbol?
         # table_name can be nil because some migrations, such
         # as ones which pertain to functions and creating/dropping
         # schemas don't require tables
@@ -19,7 +20,7 @@ module DynamicMigrations
         attr_reader dependency_schema_name: Symbol?
         attr_reader dependency_table_name: Symbol?
 
-        def initialize: (Symbol schema_name, Symbol? table_name, Symbol migration_method, Symbol object_name, String? code_comment, String content) -> void
+        def initialize: (Symbol? schema_name, Symbol? table_name, Symbol migration_method, Symbol object_name, String? code_comment, String content) -> void
         def to_s: -> String
         def has_code_comment?: -> bool
         def dependency: -> ({schema_name: Symbol, table_name: Symbol} | nil)

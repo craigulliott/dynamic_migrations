@@ -1,0 +1,17 @@
+# TypeProf 0.21.7
+
+# Classes
+module DynamicMigrations
+  module Postgres
+    class Server
+      class Database
+        module ExtensionsLoader
+          def fetch_extensions: -> Array[Symbol]
+
+          # these come from the database object (which this module is included into)
+          def connection: -> PG::Connection
+        end
+      end
+    end
+  end
+end

@@ -1,0 +1,12 @@
+# TypeProf 0.21.7
+
+# Classes
+module DynamicMigrations
+  module Postgres
+    class Generator
+      class DatabaseMigration < Migration
+        def initialize: () -> void
+      end
+    end
+  end
+end

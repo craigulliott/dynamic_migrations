@@ -10,7 +10,8 @@ module DynamicMigrations
         def recreate_primary_key: (Postgres::Server::Database::Schema::Table::PrimaryKey original_primary_key, Postgres::Server::Database::Schema::Table::PrimaryKey updated_primary_key) -> Array[Fragment]
 
         # these come from the generator object (which this module is included into)
-        def add_fragment: (schema: Server::Database::Schema, migration_method: Symbol, object: untyped, migration: String, ?table: nil | Server::Database::Schema::Table, ?code_comment: String?, ?dependent_table: nil | Server::Database::Schema::Table) -> untyped
+        def add_fragment: (migration_method: Symbol, object: untyped, migration: String, ?schema: Server::Database::Schema?, ?table: Server::Database::Schema::Table?, ?code_comment: String?, ?dependent_table: Server::Database::Schema::Table?) -> untyped
+
         def indent: (String migration, ?Integer levels) -> String
 
       end

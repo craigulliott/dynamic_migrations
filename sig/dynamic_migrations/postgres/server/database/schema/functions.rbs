@@ -7,13 +7,13 @@ module DynamicMigrations
       class Database
         class Schema
           module Functions
-            @functions: Hash[untyped, untyped]
+            @functions: Hash[Symbol, Function]
 
-            def add_function: (untyped function_name, untyped definition, ?description: nil) -> nil
-            def function: (untyped function_name) -> untyped
-            def has_function?: (untyped function_name) -> bool
-            def functions: -> Array[untyped]
-            def functions_hash: -> Hash[untyped, untyped]
+            def add_function: (Symbol function_name, String definition, ?description: String?) -> nil
+            def function: (Symbol function_name) -> Function
+            def has_function?: (Symbol function_name) -> bool
+            def functions: -> Array[Function]
+            def functions_hash: -> Hash[Symbol, Function]
 
             # these come from the schema object (which this module is included into)
             def source: -> database_or_configuration

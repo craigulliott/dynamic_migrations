@@ -2,9 +2,6 @@ module DynamicMigrations
   module Postgres
     class Generator
       class Migration
-        class UnexpectedSchemaError < StandardError
-        end
-
         class SectionNotFoundError < StandardError
         end
 
@@ -15,6 +12,29 @@ module DynamicMigrations
         end
 
         class NoFragmentsError < StandardError
+        end
+
+        class MissingRequiredTableName < StandardError
+        end
+
+        class MissingRequiredSchemaName < StandardError
+        end
+
+        class UnexpectedTableError < StandardError
+        end
+
+        class UnexpectedSchemaError < StandardError
+        end
+
+        attr_reader :table_name
+        attr_reader :schema_name
+        attr_reader :fragments
+
+        # schema_name and table_name can be nil
+        def initialize schema_name = nil, table_name = nil
+          @schema_name = schema_name
+          @table_name = table_name
+          @fragments = []
         end
 
         # Defines a new section in the migration file, this is used to group
@@ -47,23 +67,25 @@ module DynamicMigrations
           @structure_templates = []
         end
 
-        attr_reader :schema_name
-        attr_reader :fragments
-
-        def initialize schema_name
-          @schema_name = schema_name
-          @fragments = []
-        end
-
         # Add a migration fragment to this migration, if the migration is not
         # configured (via a structure template) to handle the method_name of the
         # fragment, then am error is raised. An error will also be raised if the
         # migration belongs to a different schema than the provided fragment.
         def add_fragment fragment
-          raise UnexpectedSchemaError unless @schema_name == fragment.schema_name
-
           unless supported_migration_method? fragment.migration_method
             raise UnexpectedMigrationMethodNameError, "Expected method to be a valid migrator method, got `#{fragment.migration_method}`"
+          end
+
+          # confirm the fragment is for this schema (even if both
+          # these values are nil/there is no schema)
+          unless @schema_name == fragment.schema_name
+            raise UnexpectedSchemaError, "Fragment is for schema `#{fragment.schema_name || "nil"}` but migration is for schema `#{@schema_name || "nil"}`"
+          end
+
+          # confirm this fragment is for this table, this works for database and schame
+          # migrations to, as all values should be nil
+          unless @table_name == fragment.table_name
+            raise UnexpectedTableError, "Fragment is for table `#{fragment.table_name || "nil"}` but migration is for table `#{@table_name || "nil"}`"
           end
 
           @fragments << fragment
@@ -122,25 +144,34 @@ module DynamicMigrations
           raise NoFragmentsError if fragments.empty?
 
           if fragments_for_method? :create_schema
-            "create_#{first_fragment_using_migration_method(:create_schema).schema_name}_schema".to_sym
+            :"create_#{first_fragment_using_migration_method(:create_schema).schema_name}_schema"
 
           elsif fragments_for_method? :drop_schema
-            "drop_#{first_fragment_using_migration_method(:drop_schema).schema_name}_schema".to_sym
+            :"drop_#{first_fragment_using_migration_method(:drop_schema).schema_name}_schema"
 
           elsif fragments_for_method? :create_table
-            "create_#{first_fragment_using_migration_method(:create_table).table_name}".to_sym
+            :"create_#{first_fragment_using_migration_method(:create_table).table_name}"
 
           elsif fragments_for_method? :drop_table
-            "drop_#{first_fragment_using_migration_method(:drop_table).table_name}".to_sym
+            :"drop_#{first_fragment_using_migration_method(:drop_table).table_name}"
 
           elsif all_fragments_for_method? [:create_function]
-            "create_function_#{@fragments.find { |s| s.migration_method == :create_function }&.object_name}".to_sym
+            :"create_function_#{@fragments.find { |s| s.migration_method == :create_function }&.object_name}"
 
           elsif all_fragments_for_method? [:create_function, :update_function, :drop_function, :set_function_comment, :remove_function_comment]
             :schema_functions
 
+          elsif all_fragments_for_method? [:create_enum, :add_enum_values, :drop_enum, :set_enum_comment, :remove_enum_comment]
+            :enums
+
+          elsif all_fragments_for_method? [:create_extension]
+            (@fragments.count > 1) ? :":create_extensions" : :"create_#{fragments.first&.object_name}_extension"
+
+          elsif all_fragments_for_method? [:drop_extension]
+            (@fragments.count > 1) ? :":drop_extensions" : :"drop_#{fragments.first&.object_name}_extension"
+
           elsif @fragments.first&.table_name
-            "changes_for_#{@fragments.first&.table_name}".to_sym
+            :"changes_for_#{@fragments.first&.table_name}"
 
           else
             :changes

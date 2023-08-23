@@ -2,7 +2,7 @@
 
 RSpec.describe DynamicMigrations::Postgres::Generator::Migration do
   let(:migration_class) { DynamicMigrations::Postgres::Generator::Migration }
-  let(:migration) { DynamicMigrations::Postgres::Generator::Migration.new :my_schema }
+  let(:migration) { DynamicMigrations::Postgres::Generator::Migration.new }
 
   describe :class_methods do
     describe "setting up the structure templates" do
@@ -45,14 +45,22 @@ RSpec.describe DynamicMigrations::Postgres::Generator::Migration do
     describe :initialize do
       it "initialies without error" do
         expect {
-          DynamicMigrations::Postgres::Generator::Migration.new :my_schema
+          DynamicMigrations::Postgres::Generator::Migration.new
         }.not_to raise_error
       end
     end
 
     describe :schema_name do
-      it "returns the schema_name which was set at initialization" do
-        expect(migration.schema_name).to eq :my_schema
+      it "returns nil, because no schema_name was provided at initialization" do
+        expect(migration.schema_name).to eq nil
+      end
+
+      describe "if a schema name was provided at initialization" do
+        let(:migration) { DynamicMigrations::Postgres::Generator::Migration.new :schema_name }
+
+        it "returns the expected schema_name" do
+          expect(migration.schema_name).to eq :schema_name
+        end
       end
     end
 
@@ -62,7 +70,7 @@ RSpec.describe DynamicMigrations::Postgres::Generator::Migration do
       end
 
       describe "after a fragment has been added" do
-        let(:fragment) { DynamicMigrations::Postgres::Generator::Fragment.new :my_schema, :my_table, :my_method, :my_object, "my comment", "my content" }
+        let(:fragment) { DynamicMigrations::Postgres::Generator::Fragment.new nil, nil, :my_method, :my_object, "my comment", "my content" }
 
         before(:each) do
           migration.add_fragment fragment
@@ -75,9 +83,10 @@ RSpec.describe DynamicMigrations::Postgres::Generator::Migration do
     end
 
     describe :add_fragment do
-      let(:fragment) { DynamicMigrations::Postgres::Generator::Fragment.new :my_schema, :my_table, :my_method, :my_object, "my comment", "my content" }
+      let(:migration) { DynamicMigrations::Postgres::Generator::Migration.new :schema_name, :table_name }
+      let(:fragment) { DynamicMigrations::Postgres::Generator::Fragment.new :schema_name, :table_name, :my_method, :my_object, "my comment", "my content" }
       let(:fragment_from_different_schema) { DynamicMigrations::Postgres::Generator::Fragment.new :different_schema, :my_table, :my_method, :my_object, "my comment", "my content" }
-      let(:fragment_with_invalid_method_name) { DynamicMigrations::Postgres::Generator::Fragment.new :my_schema, :my_table, :unexpected_method, :my_object, "my comment", "my content" }
+      let(:fragment_with_invalid_method_name) { DynamicMigrations::Postgres::Generator::Fragment.new :schema_name, :table_name, :unexpected_method, :my_object, "my comment", "my content" }
 
       it "adds and returns the expected fragment" do
         expect(migration.add_fragment(fragment)).to eq fragment
@@ -104,7 +113,7 @@ RSpec.describe DynamicMigrations::Postgres::Generator::Migration do
       end
 
       describe "after a fragment which is not dependent on a table has been added" do
-        let(:fragment) { DynamicMigrations::Postgres::Generator::Fragment.new :my_schema, :my_table, :my_method, :my_object, "my comment", "my content" }
+        let(:fragment) { DynamicMigrations::Postgres::Generator::Fragment.new nil, nil, :my_method, :my_object, "my comment", "my content" }
 
         before(:each) do
           migration.add_fragment fragment
@@ -116,7 +125,7 @@ RSpec.describe DynamicMigrations::Postgres::Generator::Migration do
 
         describe "after a fragment which is dependent on a table has been added" do
           let(:fragment_with_dependency) {
-            f = DynamicMigrations::Postgres::Generator::Fragment.new :my_schema, :my_table, :my_method, :my_object, "my comment", "my content"
+            f = DynamicMigrations::Postgres::Generator::Fragment.new nil, nil, :my_method, :my_object, "my comment", "my content"
             f.set_dependent_table :my_schema, :my_table
             f
           }
@@ -137,14 +146,14 @@ RSpec.describe DynamicMigrations::Postgres::Generator::Migration do
 
     describe :extract_fragments_with_dependency do
       describe "For a migration which has fragments" do
-        let(:fragment_without_dependency) { DynamicMigrations::Postgres::Generator::Fragment.new :my_schema, :my_table, :my_method, :my_object, "my comment", "my content" }
+        let(:fragment_without_dependency) { DynamicMigrations::Postgres::Generator::Fragment.new nil, nil, :my_method, :my_object, "my comment", "my content" }
         let(:fragment_with_dependency) {
-          frag = DynamicMigrations::Postgres::Generator::Fragment.new :my_schema, :my_table, :my_method, :my_object, "my comment", "my content"
+          frag = DynamicMigrations::Postgres::Generator::Fragment.new nil, nil, :my_method, :my_object, "my comment", "my content"
           frag.set_dependent_table :my_schema, :my_table
           frag
         }
         let(:fragment_with_different_dependency) {
-          frag = DynamicMigrations::Postgres::Generator::Fragment.new :my_schema, :my_table, :my_method, :my_object, "my comment", "my content"
+          frag = DynamicMigrations::Postgres::Generator::Fragment.new nil, nil, :my_method, :my_object, "my comment", "my content"
           frag.set_dependent_table :my_schema, :different_table
           frag
         }
@@ -177,7 +186,7 @@ RSpec.describe DynamicMigrations::Postgres::Generator::Migration do
       end
 
       describe "after a fragment has been added" do
-        let(:fragment) { DynamicMigrations::Postgres::Generator::Fragment.new :my_schema, :my_table, :my_method, :my_object, "my comment", "my content" }
+        let(:fragment) { DynamicMigrations::Postgres::Generator::Fragment.new nil, nil, :my_method, :my_object, "my comment", "my content" }
 
         before(:each) do
           migration.add_fragment fragment
@@ -203,7 +212,8 @@ RSpec.describe DynamicMigrations::Postgres::Generator::Migration do
       end
 
       describe "if a fragment which creates a schema has been added" do
-        let(:fragment) { DynamicMigrations::Postgres::Generator::Fragment.new :my_schema, :my_table, :create_schema, :my_object, "my comment", "my content" }
+        let(:migration) { DynamicMigrations::Postgres::Generator::Migration.new :my_schema, nil }
+        let(:fragment) { DynamicMigrations::Postgres::Generator::Fragment.new :my_schema, nil, :create_schema, :my_object, "my comment", "my content" }
 
         before(:each) do
           migration_class.add_structure_template [:create_schema], "my header"

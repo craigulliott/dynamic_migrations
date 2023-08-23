@@ -30,6 +30,7 @@ module DynamicMigrations
       include Function
       include UniqueConstraint
       include Trigger
+      include Enum
 
       # The schema name should be set before the migrations for
       # each schema's migrations are run. This is done by:

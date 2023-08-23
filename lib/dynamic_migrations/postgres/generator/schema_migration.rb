@@ -7,10 +7,18 @@ module DynamicMigrations
         # for dependencies (i.e. columns have to be created before indexes are added and
         # triggers are removed before functions are dropped)
         add_structure_template [:remove_function_comment, :drop_function], "Remove Functions"
+        add_structure_template [:remove_enum_comment, :drop_enum], "Drop Enums"
         add_structure_template [:drop_schema], "Drop this schema"
+        add_structure_template [:create_enum, :add_enum_values, :set_enum_comment], "Enums"
         add_structure_template [:create_schema], "Create this schema"
         add_structure_template [:create_function], "Functions"
         add_structure_template [:update_function, :set_function_comment], "Update Functions"
+        add_structure_template [:create_extension, :drop_extension], "Extensions"
+
+        def initialize schema_name
+          raise MissingRequiredSchemaName unless schema_name
+          super
+        end
       end
     end
   end

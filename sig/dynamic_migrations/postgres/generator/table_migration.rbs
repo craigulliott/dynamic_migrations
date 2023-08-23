@@ -5,14 +5,7 @@ module DynamicMigrations
   module Postgres
     class Generator
       class TableMigration < Migration
-        attr_reader table_name: Symbol
         def initialize: (Symbol schema_name, Symbol table_name) -> void
-
-        class UnexpectedTableError < StandardError
-        end
-
-        class MissingRequiredTableName < StandardError
-        end
       end
     end
   end

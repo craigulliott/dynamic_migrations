@@ -1,0 +1,18 @@
+module DynamicMigrations
+  module Postgres
+    class Server
+      class Database
+        module ConfiguredExtensions
+          @configured_extensions: Hash[Symbol, true]
+
+          def add_configured_extension: (Symbol extension_name) -> void
+          def has_configured_extension?: (Symbol extension_name) -> bool
+          def configured_extensions: -> Array[Symbol]
+
+          class ConfiguredExtensionAlreadyExistsError < StandardError
+          end
+        end
+      end
+    end
+  end
+end

@@ -45,6 +45,7 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database::Differences do
           expect(differences_class.compare_schema(base, comparison)).to eql({
             exists: true,
             tables: {},
+            enums: {},
             functions: {}
           })
         end
@@ -57,6 +58,7 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database::Differences do
           expect(differences_class.compare_schema(base, comparison)).to eql({
             exists: true,
             tables: {},
+            enums: {},
             functions: {}
           })
         end
@@ -87,7 +89,8 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database::Differences do
               my_function: {
                 exists: false
               }
-            }
+            },
+            enums: {}
           })
         end
       end

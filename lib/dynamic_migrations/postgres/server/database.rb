@@ -17,6 +17,10 @@ module DynamicMigrations
         include LoadedSchemas
         include ConfiguredSchemas
         include LoadedSchemasBuilder
+        include ConfiguredExtensions
+        include LoadedExtensions
+        include EnumsLoader
+        include ExtensionsLoader
 
         attr_reader :server
         attr_reader :name
@@ -29,6 +33,8 @@ module DynamicMigrations
           @name = name
           @configured_schemas = {}
           @loaded_schemas = {}
+          @configured_extensions = {}
+          @loaded_extensions = {}
         end
 
         # if `source` is :configuration then returns the configured schema with

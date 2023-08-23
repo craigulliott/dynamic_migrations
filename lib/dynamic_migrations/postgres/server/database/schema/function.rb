@@ -23,7 +23,7 @@ module DynamicMigrations
             def initialize source, schema, name, definition, description: nil
               super source
 
-              @triggers ||= []
+              @triggers = []
 
               raise ExpectedSchemaError, schema unless schema.is_a? Schema
               @schema = schema

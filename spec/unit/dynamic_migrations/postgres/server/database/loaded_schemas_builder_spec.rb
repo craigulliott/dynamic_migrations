@@ -6,10 +6,10 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database do
     let(:server) { DynamicMigrations::Postgres::Server.new pg_helper.host, pg_helper.port, pg_helper.username, pg_helper.password }
     let(:database) { DynamicMigrations::Postgres::Server::Database.new server, pg_helper.database }
 
-    describe :recursively_build_schemas_from_database do
+    describe :recursively_load_database_structure do
       it "raises an error" do
         expect {
-          database.recursively_build_schemas_from_database
+          database.recursively_load_database_structure
         }.to raise_error DynamicMigrations::Postgres::Server::Database::NotConnectedError
       end
 
@@ -19,10 +19,27 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database do
         end
 
         it "creates only the default public schema" do
-          database.recursively_build_schemas_from_database
+          database.recursively_load_database_structure
 
           expect(database.loaded_schemas).to be_a Array
           expect(database.loaded_schemas.map(&:name)).to eq([:public])
+        end
+
+        describe "after an extension has been added" do
+          before :each do
+            pg_helper.create_extension :citext
+          end
+
+          after :each do
+            pg_helper.drop_extension :citext
+          end
+
+          it "creates the expected extensions" do
+            database.recursively_load_database_structure
+
+            expect(database.loaded_extensions).to be_a Array
+            expect(database.loaded_extensions).to include :citext
+          end
         end
 
         describe "after a schema has been added" do
@@ -31,10 +48,26 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database do
           end
 
           it "creates the expected schemas" do
-            database.recursively_build_schemas_from_database
+            database.recursively_load_database_structure
 
             expect(database.loaded_schemas).to be_a Array
             expect(database.loaded_schemas.map(&:name)).to eq([:my_schema, :public])
+          end
+
+          describe "after enums have been added" do
+            before :each do
+              pg_helper.create_enum :my_schema, :my_enum, [:foo, :bar]
+              pg_helper.create_enum :my_schema, :my_other_enum, [:foo, :bar]
+            end
+
+            it "creates the expected enums" do
+              database.recursively_load_database_structure
+
+              schema = database.loaded_schema(:my_schema)
+
+              expect(schema.enums).to be_a Array
+              expect(schema.enums.map(&:name)).to eq([:my_enum, :my_other_enum])
+            end
           end
 
           describe "after tables have been added" do
@@ -44,7 +77,7 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database do
             end
 
             it "creates the expected tables" do
-              database.recursively_build_schemas_from_database
+              database.recursively_load_database_structure
 
               schema = database.loaded_schema(:my_schema)
 
@@ -61,7 +94,7 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database do
               end
 
               it "creates the expected columns" do
-                database.recursively_build_schemas_from_database
+                database.recursively_load_database_structure
 
                 table = database.loaded_schema(:my_schema).table(:my_table)
                 other_table = database.loaded_schema(:my_schema).table(:my_other_table)
@@ -79,7 +112,7 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database do
                 end
 
                 it "creates the expected validations" do
-                  database.recursively_build_schemas_from_database
+                  database.recursively_load_database_structure
 
                   table = database.loaded_schema(:my_schema).table(:my_table)
 
@@ -93,7 +126,7 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database do
                   end
 
                   it "creates the expected constraints" do
-                    database.recursively_build_schemas_from_database
+                    database.recursively_load_database_structure
 
                     table = database.loaded_schema(:my_schema).table(:my_other_table)
 
@@ -108,7 +141,7 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database do
                     end
 
                     it "creates the expected foreign keys" do
-                      database.recursively_build_schemas_from_database
+                      database.recursively_load_database_structure
 
                       table = database.loaded_schema(:my_schema).table(:my_table)
 
@@ -122,7 +155,7 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database do
                       end
 
                       it "creates the expected primary key" do
-                        database.recursively_build_schemas_from_database
+                        database.recursively_load_database_structure
 
                         table = database.loaded_schema(:my_schema).table(:my_table)
 
@@ -141,7 +174,7 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database do
                         end
 
                         it "creates the expected trigger and function" do
-                          database.recursively_build_schemas_from_database
+                          database.recursively_load_database_structure
 
                           table = database.loaded_schema(:my_schema).table(:my_table)
 

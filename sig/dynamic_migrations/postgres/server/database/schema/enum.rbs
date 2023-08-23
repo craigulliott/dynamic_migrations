@@ -1,0 +1,28 @@
+# TypeProf 0.21.7
+
+# Classes
+module DynamicMigrations
+  module Postgres
+    class Server
+      class Database
+        class Schema
+          class Enum < Source
+            attr_reader schema: Schema
+            attr_reader name: Symbol
+            attr_reader values: Array[Symbol]
+            attr_reader description: String?
+            def initialize: (database_or_configuration source, Schema schema, Symbol name, Array[Symbol] values, ?description: String?) -> void
+            def has_description?: -> bool
+            def differences_descriptions: (Enum other_enum) -> Array[String]
+
+            class ExpectedSchemaError < StandardError
+            end
+
+            class ExpectedValuesError < StandardError
+            end
+          end
+        end
+      end
+    end
+  end
+end

@@ -16,6 +16,9 @@ module DynamicMigrations
       class TableMigrationNotFound < StandardError
       end
 
+      class UnprocessableFragmentError < StandardError
+      end
+
       include Schema
       include Table
       include Column
@@ -26,6 +29,8 @@ module DynamicMigrations
       include Validation
       include Function
       include Trigger
+      include Enum
+      include Extension
 
       def initialize
         @fragments = []
@@ -36,6 +41,9 @@ module DynamicMigrations
         # a hash to hold the generated migrations orgnized by their schema and table
         # this makes it easier and faster to work with them within this method
         database_migrations = {}
+        # the database_specific_migration is for migrations which dont belong
+        # within a specific schema
+        database_specific_migration = DatabaseMigration.new
 
         # Process each fragment, and organize them into migrations. We create a shared
         # Migration for each table, and a single shared migration for any schema migrations
@@ -54,15 +62,22 @@ module DynamicMigrations
           table_name = fragment.table_name
           # If we have a table name, then add the migration fragment to a
           # TableMigration which holds all of the migrations for this table
-          if table_name
+          if table_name && schema_name
             table_migration = schema_migrations[:table_migrations][table_name] ||= TableMigration.new(schema_name, table_name)
             table_migration.add_fragment fragment
 
-          # migration fragments which do not belong to a specific table are added
+          # migration fragments which do have a schema, but do not belong to a specific table are added
           # to a dedicated SchemaMigration object
-          else
+          elsif schema_name && table_name.nil?
             schema_migration = schema_migrations[:schema_migration] ||= SchemaMigration.new(schema_name)
             schema_migration.add_fragment fragment
+
+            # migrations with no schema or table, are added to a database
+            # migration (these re really just creating/dropping extensions)
+          elsif schema_name.nil? && table_name.nil?
+            database_specific_migration.add_fragment fragment
+          else
+            raise UnprocessableFragmentError
           end
         end
 
@@ -158,6 +173,11 @@ module DynamicMigrations
         # the order is determined by their dependencies
         final_migrations = dependency_sorter.tsort
 
+        # if any database only migrations exist, then add them to the from of the array here
+        if database_specific_migration.fragments.any?
+          final_migrations.unshift database_specific_migration
+        end
+
         # return the final migrations in the expected format
         final_migrations.map do |migration|
           {
@@ -200,11 +220,11 @@ module DynamicMigrations
         @dep[node].each(&block)
       end
 
-      def add_fragment schema:, migration_method:, object:, migration:, table: nil, code_comment: nil, dependent_table: nil
+      def add_fragment migration_method:, object:, migration:, schema: nil, table: nil, code_comment: nil, dependent_table: nil
         # Remove any empty lines and whitespace from the beginning or the end of the migration and then
         # strip any empty lines witin the migration (remove the whitespace from them, not delete them).
         final_migration = strip_empty_lines(migration).strip
-        fragment = Fragment.new(schema.name, table&.name, migration_method, object.name, code_comment, final_migration)
+        fragment = Fragment.new(schema&.name, table&.name, migration_method, object.name, code_comment, final_migration)
         if dependent_table
           fragment.set_dependent_table dependent_table.schema.name, dependent_table.name
         end

@@ -104,7 +104,7 @@ module DynamicMigrations
 
           # recursively process the database and build all the schemas,
           # tables and columns
-          def recursively_build_schemas_from_database
+          def recursively_load_database_structure
             fetch_structure.each do |schema_name, schema_definition|
               schema = add_loaded_schema schema_name
 

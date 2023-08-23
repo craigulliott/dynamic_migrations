@@ -5,7 +5,7 @@ module DynamicMigrations
         module StructureLoader
           def create_database_structure_cache: -> void
           def fetch_structure: -> Hash[untyped, untyped]
-          def recursively_build_schemas_from_database: -> void
+          def recursively_load_database_structure: -> void
           def fetch_schema_names: -> Array[String]
           def fetch_table_names: (Symbol schema_name) -> Array[String]
 

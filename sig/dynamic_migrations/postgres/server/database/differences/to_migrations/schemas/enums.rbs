@@ -1,0 +1,24 @@
+# TypeProf 0.21.7
+
+# Classes
+module DynamicMigrations
+  module Postgres
+    class Server
+      class Database
+        class Differences
+          class ToMigrations
+            module Schemas
+              module Enums
+
+                private
+                def process_enums: (Symbol schema_name, untyped configuration_enums, untyped database_enums) -> void
+                def process_enum: (Symbol schema_name, Symbol enum_name, untyped configuration_enum, untyped database_enum) -> void
+
+              end
+            end
+          end
+        end
+      end
+    end
+  end
+end

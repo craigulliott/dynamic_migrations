@@ -5,6 +5,7 @@ module DynamicMigrations
         class Schema < Source
           include Functions
           include Tables
+          include Enums
 
           attr_reader database: Database
           attr_reader name: Symbol
