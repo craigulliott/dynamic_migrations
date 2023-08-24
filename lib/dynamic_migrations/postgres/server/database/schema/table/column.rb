@@ -29,6 +29,9 @@ module DynamicMigrations
                 @name = name
 
                 @data_type = data_type
+                raise ExpectedSymbolError, data_type unless data_type.is_a? Symbol
+                @data_type = data_type
+
                 @null = null
                 @default = default
 

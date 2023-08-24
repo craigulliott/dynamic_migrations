@@ -27,6 +27,12 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database::Schema::Table::Col
       }.to raise_error DynamicMigrations::ExpectedSymbolError
     end
 
+    it "raises an error if providing a string instead of a symbol for the data type" do
+      expect {
+        DynamicMigrations::Postgres::Server::Database::Schema::Table::Column.new :configuration, table, :my_column, "integer"
+      }.to raise_error DynamicMigrations::ExpectedSymbolError
+    end
+
     describe "when providing an optional description" do
       it "instantiates a new column without raising an error" do
         expect {
