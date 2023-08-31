@@ -73,32 +73,32 @@ module DynamicMigrations
 
         def referential_action_to_sql referential_action
           case referential_action
-            #  Produce an error indicating that the deletion or update would create a
-            # foreign key constraint violation. If the constraint is deferred, this
-            # error will be produced at constraint check time if there still exist
-            # any referencing rows. This is the default action.
+          # Produce an error indicating that the deletion or update would create a
+          # foreign key constraint violation. If the constraint is deferred, this
+          # error will be produced at constraint check time if there still exist
+          # any referencing rows. This is the default action.
           when :no_action
             "NO ACTION"
 
-            # Produce an error indicating that the deletion or update would create a
-            # foreign key constraint violation. This is the same as NO ACTION except
-            # that the check is not deferrable.
+          # Produce an error indicating that the deletion or update would create a
+          # foreign key constraint violation. This is the same as NO ACTION except
+          # that the check is not deferrable.
           when :restrict
             "RESTRICT"
 
-            # Delete any rows referencing the deleted row, or update the values of
-            # the referencing column(s) to the new values of the referenced columns,
-            # respectively.
+          # Delete any rows referencing the deleted row, or update the values of
+          # the referencing column(s) to the new values of the referenced columns,
+          # respectively.
           when :cascade
             "CASCADE"
 
-            # Set all of the referencing columns, or a specified subset of the
-            # referencing columns, to null.
+          # Set all of the referencing columns, or a specified subset of the
+          # referencing columns, to null.
           when :set_null
             "SET NULL"
 
-            # Set all of the referencing columns, or a specified subset of the
-            # referencing columns, to their default values.
+          # Set all of the referencing columns, or a specified subset of the
+          # referencing columns, to their default values.
           when :set_default
             "SET DEFAULT"
 
