@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.4.1](https://github.com/craigulliott/dynamic_migrations/compare/v3.4.0...v3.4.1) (2023-08-24)
+
+
+### Bug Fixes
+
+* validate that data type is a symbol ([f888f81](https://github.com/craigulliott/dynamic_migrations/commit/f888f819fdcd10772161f890024b937486c56c34))
+
 ## [3.4.0](https://github.com/craigulliott/dynamic_migrations/compare/v3.3.1...v3.4.0) (2023-08-23)
 
 
