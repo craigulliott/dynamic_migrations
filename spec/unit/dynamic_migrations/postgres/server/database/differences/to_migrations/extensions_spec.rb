@@ -22,7 +22,7 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database::Differences::ToMig
               #
               # Create Extension
               #
-              create_extension :my_extension
+              create_extension "my_extension"
             RUBY
           }])
         end
@@ -51,7 +51,7 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database::Differences::ToMig
               #
               # Drop Extension
               #
-              drop_extension :my_extension
+              drop_extension "my_extension"
             RUBY
           }])
         end
