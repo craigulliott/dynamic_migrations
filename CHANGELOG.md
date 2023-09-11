@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.5.3](https://github.com/craigulliott/dynamic_migrations/compare/v3.5.2...v3.5.3) (2023-09-11)
+
+
+### Bug Fixes
+
+* accepting nil or false for existence check when calculating differences (because if the schema doesn't exist we wont have table objects to test against) ([de63879](https://github.com/craigulliott/dynamic_migrations/commit/de638791035a0a1ad4658149777aa6e2ac7dc2ed))
+
 ## [3.5.2](https://github.com/craigulliott/dynamic_migrations/compare/v3.5.1...v3.5.2) (2023-09-11)
 
 
