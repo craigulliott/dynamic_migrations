@@ -89,7 +89,7 @@ module DynamicMigrations
           description = index.description
 
           if description.nil?
-            raise MissingDescriptionError
+            raise MissingDescriptionError, "Missing required description for index `#{index.name}` in table `#{index.table.schema.name}.#{index.table.name}`"
           end
 
           add_fragment schema: index.table.schema,

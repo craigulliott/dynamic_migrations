@@ -73,7 +73,7 @@ module DynamicMigrations
           description = foreign_key_constraint.description
 
           if description.nil?
-            raise MissingDescriptionError
+            raise MissingDescriptionError, "Missing required description for foreign_key_constraint `#{foreign_key_constraint.name}` in table `#{foreign_key_constraint.table.schema.name}.#{foreign_key_constraint.table.name}`"
           end
 
           add_fragment schema: foreign_key_constraint.table.schema,

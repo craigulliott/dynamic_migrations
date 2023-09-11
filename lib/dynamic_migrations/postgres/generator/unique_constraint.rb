@@ -67,7 +67,7 @@ module DynamicMigrations
           description = unique_constraint.description
 
           if description.nil?
-            raise MissingDescriptionError
+            raise MissingDescriptionError, "Missing required description for unique_constraint `#{unique_constraint.name}` in table `#{unique_constraint.table.schema.name}.#{unique_constraint.table.name}`"
           end
 
           add_fragment schema: unique_constraint.table.schema,

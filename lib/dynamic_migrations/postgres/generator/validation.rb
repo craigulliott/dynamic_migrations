@@ -75,7 +75,7 @@ module DynamicMigrations
           description = validation.description
 
           if description.nil?
-            raise MissingDescriptionError
+            raise MissingDescriptionError, "Missing required description for validation `#{validation.name}` in table `#{validation.table.schema.name}.#{validation.table.name}`"
           end
 
           add_fragment schema: validation.table.schema,

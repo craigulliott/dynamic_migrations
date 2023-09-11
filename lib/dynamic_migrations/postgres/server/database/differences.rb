@@ -136,7 +136,7 @@ module DynamicMigrations
               comparison_foreign_key_constraints = comparison_table.foreign_key_constraints_hash
               comparison_unique_constraints = comparison_table.unique_constraints_hash
             else
-              comparison_primary_key = {}
+              comparison_primary_key = nil
               comparison_columns = {}
               comparison_indexes = {}
               comparison_triggers = {}

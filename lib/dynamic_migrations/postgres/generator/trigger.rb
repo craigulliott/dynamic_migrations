@@ -93,7 +93,7 @@ module DynamicMigrations
           description = trigger.description
 
           if description.nil?
-            raise MissingDescriptionError
+            raise MissingDescriptionError, "Missing required description for trigger `#{trigger.name}` on table `#{trigger.table.schema.name}.#{trigger.table.name}`"
           end
 
           add_fragment schema: trigger.table.schema,

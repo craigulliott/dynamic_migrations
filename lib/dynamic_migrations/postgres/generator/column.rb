@@ -92,7 +92,7 @@ module DynamicMigrations
           description = column.description
 
           if description.nil?
-            raise MissingDescriptionError
+            raise MissingDescriptionError, "Missing required description for column `#{column.name}` in table `#{column.table.schema.name}.#{column.table.name}`"
           end
 
           add_fragment schema: column.table.schema,
