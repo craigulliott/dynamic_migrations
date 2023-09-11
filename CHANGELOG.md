@@ -1,5 +1,18 @@
 # Changelog
 
+## [3.5.0](https://github.com/craigulliott/dynamic_migrations/compare/v3.4.1...v3.5.0) (2023-09-11)
+
+
+### Features
+
+* adding rbs signatures to built gem so they are available in other projects ([03221b0](https://github.com/craigulliott/dynamic_migrations/commit/03221b0aa56acb9f1287f1d83c80570128793c7c))
+
+
+### Bug Fixes
+
+* fixing broken test around db extension migrations ([cdd6fab](https://github.com/craigulliott/dynamic_migrations/commit/cdd6fabaeecc6d5c51f744222eb5b81f5c2ff759))
+* wrapping extension name in quotes, removing rogue semicolon from generated method name ([a6bdbd4](https://github.com/craigulliott/dynamic_migrations/commit/a6bdbd4710efdd07821425259be2a7cd609bc637))
+
 ## [3.4.1](https://github.com/craigulliott/dynamic_migrations/compare/v3.4.0...v3.4.1) (2023-08-24)
 
 
