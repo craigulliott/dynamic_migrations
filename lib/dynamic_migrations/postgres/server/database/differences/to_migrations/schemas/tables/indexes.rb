@@ -20,14 +20,14 @@ module DynamicMigrations
                   def process_index schema_name, table_name, index_name, configuration_index, database_index
                     # If the index exists in the configuration but not in the database
                     # then we have to create it.
-                    if configuration_index[:exists] == true && database_index[:exists] == false
+                    if configuration_index[:exists] == true && !database_index[:exists]
                       # a migration to create the index
                       index = @database.configured_schema(schema_name).table(table_name).index(index_name)
                       @generator.add_index index
 
                     # If the schema exists in the database but not in the configuration
                     # then we need to delete it.
-                    elsif configuration_index[:exists] == false && database_index[:exists] == true
+                    elsif database_index[:exists] == true && !configuration_index[:exists]
                       # a migration to create the index
                       index = @database.loaded_schema(schema_name).table(table_name).index(index_name)
                       @generator.remove_index index

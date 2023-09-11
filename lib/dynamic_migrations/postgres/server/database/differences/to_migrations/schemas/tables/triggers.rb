@@ -20,14 +20,14 @@ module DynamicMigrations
                   def process_trigger schema_name, table_name, trigger_name, configuration_trigger, database_trigger
                     # If the trigger exists in the configuration but not in the database
                     # then we have to create it.
-                    if configuration_trigger[:exists] == true && database_trigger[:exists] == false
+                    if configuration_trigger[:exists] == true && !database_trigger[:exists]
                       # a migration to create the trigger
                       trigger = @database.configured_schema(schema_name).table(table_name).trigger(trigger_name)
                       @generator.add_trigger trigger
 
                     # If the schema exists in the database but not in the configuration
                     # then we need to delete it.
-                    elsif configuration_trigger[:exists] == false && database_trigger[:exists] == true
+                    elsif database_trigger[:exists] == true && !configuration_trigger[:exists]
                       # a migration to create the trigger
                       trigger = @database.loaded_schema(schema_name).table(table_name).trigger(trigger_name)
                       @generator.remove_trigger trigger

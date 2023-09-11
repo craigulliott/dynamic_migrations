@@ -20,14 +20,14 @@ module DynamicMigrations
                   def process_foreign_key_constraint schema_name, table_name, foreign_key_constraint_name, configuration_foreign_key_constraint, database_foreign_key_constraint
                     # If the foreign_key_constraint exists in the configuration but not in the database
                     # then we have to create it.
-                    if configuration_foreign_key_constraint[:exists] == true && database_foreign_key_constraint[:exists] == false
+                    if configuration_foreign_key_constraint[:exists] == true && !database_foreign_key_constraint[:exists]
                       # a migration to create the foreign_key_constraint
                       foreign_key_constraint = @database.configured_schema(schema_name).table(table_name).foreign_key_constraint(foreign_key_constraint_name)
                       @generator.add_foreign_key_constraint foreign_key_constraint
 
                     # If the schema exists in the database but not in the configuration
                     # then we need to delete it.
-                    elsif configuration_foreign_key_constraint[:exists] == false && database_foreign_key_constraint[:exists] == true
+                    elsif database_foreign_key_constraint[:exists] == true && !configuration_foreign_key_constraint[:exists]
                       # a migration to create the foreign_key_constraint
                       foreign_key_constraint = @database.loaded_schema(schema_name).table(table_name).foreign_key_constraint(foreign_key_constraint_name)
                       @generator.remove_foreign_key_constraint foreign_key_constraint

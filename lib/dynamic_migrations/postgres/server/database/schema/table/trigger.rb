@@ -88,7 +88,8 @@ module DynamicMigrations
                 end
                 @action_condition = action_condition&.strip
 
-                unless parameters.nil? || (parameters.is_a?(String) && parameters[/\A'[\w\d_ -]+'(, ?'[\w\d_ -]+')*\z/])
+                is_comma_sperated_list_of_strings = (parameters.is_a?(String) && parameters[/\A'[\w\d_ -]+'(, ?'[\w\d_ -]+')*\z/])
+                unless parameters.nil? || is_comma_sperated_list_of_strings
                   raise UnexpectedParametersError, "unexpected parameters `#{parameters}`, currently only a comma seeparated list of strings is supported"
                 end
                 @parameters = parameters&.strip

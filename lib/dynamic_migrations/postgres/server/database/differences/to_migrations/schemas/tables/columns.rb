@@ -20,14 +20,14 @@ module DynamicMigrations
                   def process_column schema_name, table_name, column_name, configuration_column, database_column
                     # If the column exists in the configuration but not in the database
                     # then we have to create it.
-                    if configuration_column[:exists] == true && database_column[:exists] == false
+                    if configuration_column[:exists] == true && !database_column[:exists]
                       # a migration to create the column
                       column = @database.configured_schema(schema_name).table(table_name).column(column_name)
                       @generator.add_column column
 
                     # If the schema exists in the database but not in the configuration
                     # then we need to delete it.
-                    elsif configuration_column[:exists] == false && database_column[:exists] == true
+                    elsif database_column[:exists] == true && !configuration_column[:exists]
                       # a migration to create the column
                       column = @database.loaded_schema(schema_name).table(table_name).column(column_name)
                       @generator.remove_column column

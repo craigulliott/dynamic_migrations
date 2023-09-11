@@ -15,7 +15,7 @@ module DynamicMigrations
           def add_loaded_schema schema_name
             raise ExpectedSymbolError, schema_name unless schema_name.is_a? Symbol
             if has_loaded_schema? schema_name
-              raise(LoadedSchemaAlreadyExistsError, "Loaded schema #{schema_name} already exists")
+              raise LoadedSchemaAlreadyExistsError, "Loaded schema #{schema_name} already exists"
             end
             included_target = self
             if included_target.is_a? Database
@@ -36,8 +36,12 @@ module DynamicMigrations
           # returns the loaded schema object for the provided schema name, and raises an
           # error if the schema does not exist
           def loaded_schema schema_name
-            raise ExpectedSymbolError, schema_name unless schema_name.is_a? Symbol
-            raise LoadedSchemaDoesNotExistError unless has_loaded_schema? schema_name
+            unless schema_name.is_a? Symbol
+              raise ExpectedSymbolError, schema_name
+            end
+            unless has_loaded_schema? schema_name
+              raise LoadedSchemaDoesNotExistError, "Loaded schema `#{schema_name}` does not exist"
+            end
             @loaded_schemas[schema_name]
           end
 

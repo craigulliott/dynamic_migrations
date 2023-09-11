@@ -20,14 +20,14 @@ module DynamicMigrations
                   def process_validation schema_name, table_name, validation_name, configuration_validation, database_validation
                     # If the validation exists in the configuration but not in the database
                     # then we have to create it.
-                    if configuration_validation[:exists] == true && database_validation[:exists] == false
+                    if configuration_validation[:exists] == true && !database_validation[:exists]
                       # a migration to create the validation
                       validation = @database.configured_schema(schema_name).table(table_name).validation(validation_name)
                       @generator.add_validation validation
 
                     # If the schema exists in the database but not in the configuration
                     # then we need to delete it.
-                    elsif configuration_validation[:exists] == false && database_validation[:exists] == true
+                    elsif database_validation[:exists] == true && !configuration_validation[:exists]
                       # a migration to create the validation
                       validation = @database.loaded_schema(schema_name).table(table_name).validation(validation_name)
                       @generator.remove_validation validation
