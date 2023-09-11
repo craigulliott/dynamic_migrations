@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.5.1](https://github.com/craigulliott/dynamic_migrations/compare/v3.5.0...v3.5.1) (2023-09-11)
+
+
+### Bug Fixes
+
+* missing primary key should be represented by nil when building differences, and added some more descriptive error messages ([491c1c2](https://github.com/craigulliott/dynamic_migrations/commit/491c1c2d7c2128f3f4ad3f2a21b0b52c67029185))
+
 ## [3.5.0](https://github.com/craigulliott/dynamic_migrations/compare/v3.4.1...v3.5.0) (2023-09-11)
 
 
