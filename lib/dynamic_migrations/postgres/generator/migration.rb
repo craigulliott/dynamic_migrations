@@ -165,10 +165,10 @@ module DynamicMigrations
             :enums
 
           elsif all_fragments_for_method? [:create_extension]
-            (@fragments.count > 1) ? :":create_extensions" : :"create_#{fragments.first&.object_name}_extension"
+            (@fragments.count > 1) ? :create_extensions : :"create_#{fragments.first&.object_name}_extension"
 
           elsif all_fragments_for_method? [:drop_extension]
-            (@fragments.count > 1) ? :":drop_extensions" : :"drop_#{fragments.first&.object_name}_extension"
+            (@fragments.count > 1) ? :drop_extensions : :"drop_#{fragments.first&.object_name}_extension"
 
           elsif @fragments.first&.table_name
             :"changes_for_#{@fragments.first&.table_name}"

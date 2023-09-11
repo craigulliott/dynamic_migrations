@@ -8,7 +8,7 @@ module DynamicMigrations
             object: extension_name,
             code_comment: code_comment,
             migration: <<~RUBY
-              create_extension :#{extension_name}
+              create_extension "#{extension_name}"
             RUBY
         end
 
@@ -18,7 +18,7 @@ module DynamicMigrations
             object: extension_name,
             code_comment: code_comment,
             migration: <<~RUBY
-              drop_extension :#{extension_name}
+              drop_extension "#{extension_name}"
             RUBY
         end
       end
