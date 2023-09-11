@@ -10,7 +10,7 @@ module DynamicMigrations
               def process_schema schema_name, configuration_schema, database_schema
                 # if the schema exists in the configuration but not in the database
                 # then we have to create it
-                if configuration_schema[:exists] == true && database_schema[:exists] == false
+                if configuration_schema[:exists] == true && !database_schema[:exists]
                   # a migration to create the schema
                   schema = @database.configured_schema schema_name
                   @generator.create_schema schema
@@ -23,7 +23,7 @@ module DynamicMigrations
 
                 # if the schema exists in the database but not in the configuration
                 # then we need to delete it
-                elsif configuration_schema[:exists] == false && database_schema[:exists] == true
+                elsif database_schema[:exists] == true && !configuration_schema[:exists]
                   # we process the tables and functions before we drop the schema
                   # as this will drop any dependencies on the schema
                   process_functions schema_name, {}, database_schema[:functions]

@@ -19,7 +19,7 @@ module DynamicMigrations
                 def process_enum schema_name, enum_name, configuration_enum, database_enum
                   # If the enum exists in the configuration but not in the database
                   # then we have to create it.
-                  if configuration_enum[:exists] == true && database_enum[:exists] == false
+                  if configuration_enum[:exists] == true && !database_enum[:exists]
                     # a migration to create the enum
                     enum = @database.configured_schema(schema_name).enum(enum_name)
                     @generator.create_enum enum
@@ -30,7 +30,7 @@ module DynamicMigrations
 
                   # If the schema exists in the database but not in the configuration
                   # then we need to delete it.
-                  elsif configuration_enum[:exists] == false && database_enum[:exists] == true
+                  elsif database_enum[:exists] == true && !configuration_enum[:exists]
                     # a migration to create the enum
                     enum = @database.loaded_schema(schema_name).enum(enum_name)
                     @generator.drop_enum enum

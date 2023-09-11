@@ -19,14 +19,14 @@ module DynamicMigrations
                 def process_function schema_name, function_name, configuration_function, database_function
                   # If the function exists in the configuration but not in the database
                   # then we have to create it.
-                  if configuration_function[:exists] == true && database_function[:exists] == false
+                  if configuration_function[:exists] == true && !database_function[:exists]
                     # a migration to create the function
                     function = @database.configured_schema(schema_name).function(function_name)
                     @generator.create_function function
 
                   # If the schema exists in the database but not in the configuration
                   # then we need to delete it.
-                  elsif configuration_function[:exists] == false && database_function[:exists] == true
+                  elsif database_function[:exists] == true && !configuration_function[:exists]
                     # a migration to create the function
                     function = @database.loaded_schema(schema_name).function(function_name)
                     @generator.drop_function function

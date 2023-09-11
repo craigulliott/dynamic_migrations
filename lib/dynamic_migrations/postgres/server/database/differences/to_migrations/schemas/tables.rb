@@ -19,7 +19,7 @@ module DynamicMigrations
                 def process_table schema_name, table_name, configuration_table, database_table
                   # If the table exists in the configuration but not in the database
                   # then we have to create it.
-                  if configuration_table[:exists] == true && database_table[:exists] == false
+                  if configuration_table[:exists] == true && !database_table[:exists]
                     # a migration to create the table
                     table = @database.configured_schema(schema_name).table(table_name)
                     @generator.create_table table
@@ -30,7 +30,7 @@ module DynamicMigrations
 
                   # If the schema exists in the database but not in the configuration
                   # then we need to delete it.
-                  elsif configuration_table[:exists] == false && database_table[:exists] == true
+                  elsif database_table[:exists] == true && !configuration_table[:exists]
                     # we process everything else before we drop the table, because the other
                     # database objects are dependent on the table
                     process_dependents schema_name, table_name, {}, database_table
