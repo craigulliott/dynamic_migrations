@@ -1,5 +1,13 @@
 # Changelog
 
+## [3.6.7](https://github.com/craigulliott/dynamic_migrations/compare/v3.6.6...v3.6.7) (2023-09-13)
+
+
+### Bug Fixes
+
+* removing duplicate single quotes ([8d7eb44](https://github.com/craigulliott/dynamic_migrations/commit/8d7eb447fef0a702cacb37714905dcb85728a821))
+* updating spec `quot` method to match active records implementation ([674a7d8](https://github.com/craigulliott/dynamic_migrations/commit/674a7d86bbf70ee8304ade2539344ed26ef2a650))
+
 ## [3.6.6](https://github.com/craigulliott/dynamic_migrations/compare/v3.6.5...v3.6.6) (2023-09-13)
 
 
