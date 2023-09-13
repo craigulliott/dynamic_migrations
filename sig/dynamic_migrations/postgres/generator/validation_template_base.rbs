@@ -5,9 +5,9 @@ module DynamicMigrations
   module Postgres
     class Generator
       class ValidationTemplateBase
-        @code_comment: untyped
 
         attr_reader validation: untyped
+        attr_reader code_comment: String?
 
         def initialize: (untyped validation, untyped code_comment) -> void
 

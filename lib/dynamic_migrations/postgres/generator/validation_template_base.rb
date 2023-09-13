@@ -6,6 +6,7 @@ module DynamicMigrations
         end
 
         attr_reader :validation
+        attr_reader :code_comment
 
         def initialize validation, code_comment
           @validation = validation

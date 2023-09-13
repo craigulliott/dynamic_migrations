@@ -6,6 +6,7 @@ module DynamicMigrations
         end
 
         attr_reader :trigger
+        attr_reader :code_comment
 
         def initialize trigger, code_comment
           @trigger = trigger

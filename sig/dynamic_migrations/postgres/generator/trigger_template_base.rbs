@@ -3,9 +3,9 @@ module DynamicMigrations
   module Postgres
     class Generator
       class TriggerTemplateBase
-        @code_comment: untyped
 
         attr_reader trigger: untyped
+        attr_reader code_comment: String?
 
         def initialize: (untyped trigger, untyped code_comment) -> void
 
