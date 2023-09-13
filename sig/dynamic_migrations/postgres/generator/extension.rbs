@@ -9,7 +9,7 @@ module DynamicMigrations
         def disable_extension: (Symbol extension_name, ?String? code_comment) -> Fragment
 
         # these come from the generator object (which this module is included into)
-        def add_fragment: (migration_method: Symbol, object: untyped, migration: String, ?schema: Server::Database::Schema?, ?table: Server::Database::Schema::Table?, ?code_comment: String?, ?dependent_table: Server::Database::Schema::Table?) -> untyped
+        def add_fragment: (migration_method: Symbol, object: untyped, migration: String, ?schema: Server::Database::Schema?, ?table: Server::Database::Schema::Table?, ?code_comment: String?, ?dependent_table: Server::Database::Schema::Table?, ?dependent_function: Server::Database::Schema::Function?, ?dependent_enum: Server::Database::Schema::Enum?) -> Fragment
       end
     end
   end

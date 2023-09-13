@@ -92,11 +92,10 @@ module DynamicMigrations
                 end
                 @action_condition = action_condition&.strip
 
-                is_comma_sperated_list_of_strings = (parameters.is_a?(String) && parameters[/\A'[\w\d_ -]+'(, ?'[\w\d_ -]+')*\z/])
-                unless parameters.nil? || is_comma_sperated_list_of_strings
-                  raise UnexpectedParametersError, "unexpected parameters `#{parameters}`, currently only a comma seeparated list of strings is supported"
+                unless parameters.is_a?(Array) && parameters.all? { |p| p.is_a? String }
+                  raise UnexpectedParametersError, "unexpected parameters `#{parameters}`, currently only an array of strings is supported"
                 end
-                @parameters = parameters&.strip
+                @parameters = parameters
 
                 unless [:row, :statement].include? action_orientation
                   raise UnexpectedActionOrientationError, action_orientation
@@ -167,11 +166,12 @@ module DynamicMigrations
                 @action_condition = new_action_condition&.strip
               end
 
-              def parameters= new_parameters
-                unless new_parameters.nil? || new_parameters.is_a?(String)
-                  raise ExpectedStringError, new_parameters
+              def add_parameter new_parameter
+                unless new_parameter.is_a? String
+                  raise UnexpectedParametersError, "unexpected parameter `#{new_parameter}`, can only add strings to the list of parameters"
                 end
-                @parameters = new_parameters&.strip
+
+                @parameters << new_parameter
               end
 
               # return true if this has a description, otherwise false

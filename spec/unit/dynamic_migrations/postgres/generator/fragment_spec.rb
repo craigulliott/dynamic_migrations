@@ -40,7 +40,7 @@ RSpec.describe DynamicMigrations::Postgres::Generator::Fragment do
       expect(fragment.dependency_schema_name).to eq nil
     end
 
-    describe "after a dependency has been added" do
+    describe "after a table dependency has been added" do
       before(:each) do
         fragment.set_dependent_table :dependent_schema, :dependent_table
       end
@@ -67,6 +67,38 @@ RSpec.describe DynamicMigrations::Postgres::Generator::Fragment do
     end
   end
 
+  describe :dependency_function_name do
+    it "returns nil, because a dependency has not been added" do
+      expect(fragment.dependency_function_name).to be_nil
+    end
+
+    describe "after a dependency has been added" do
+      before(:each) do
+        fragment.set_dependent_function :dependent_schema, :dependent_function
+      end
+
+      it "returns the expected dependency_function_name" do
+        expect(fragment.dependency_function_name).to eq :dependent_function
+      end
+    end
+  end
+
+  describe :dependency_enum_name do
+    it "returns nil, because a dependency has not been added" do
+      expect(fragment.dependency_enum_name).to be_nil
+    end
+
+    describe "after a dependency has been added" do
+      before(:each) do
+        fragment.set_dependent_enum :dependent_schema, :dependent_enum
+      end
+
+      it "returns the expected dependency_enum_name" do
+        expect(fragment.dependency_enum_name).to eq :dependent_enum
+      end
+    end
+  end
+
   describe :to_s do
     it "returns the finalized content from the fragment which was set at initialization (combining the comment and the content)" do
       expect(fragment.to_s).to eq <<~CONTENT.strip
@@ -89,18 +121,18 @@ RSpec.describe DynamicMigrations::Postgres::Generator::Fragment do
     end
   end
 
-  describe :dependency do
-    it "returns nil, because a dependency has not been added" do
-      expect(fragment.dependency).to be_nil
+  describe :table_dependency do
+    it "returns nil, because a table_dependency has not been added" do
+      expect(fragment.table_dependency).to be_nil
     end
 
-    describe "after a dependency has been added" do
+    describe "after a table_dependency has been added" do
       before(:each) do
         fragment.set_dependent_table :dependent_schema, :dependent_table
       end
 
-      it "returns the expected dependency" do
-        expect(fragment.dependency).to eql({
+      it "returns the expected table_dependency" do
+        expect(fragment.table_dependency).to eql({
           schema_name: :dependent_schema,
           table_name: :dependent_table
         })
@@ -108,9 +140,9 @@ RSpec.describe DynamicMigrations::Postgres::Generator::Fragment do
     end
   end
 
-  describe :is_dependent_on? do
+  describe :is_dependent_on_table? do
     it "returns false, because a dependency has not been added" do
-      expect(fragment.is_dependent_on?(:dependent_schema, :dependent_table)).to be false
+      expect(fragment.is_dependent_on_table?(:dependent_schema, :dependent_table)).to be false
     end
 
     describe "after a dependency has been added" do
@@ -119,11 +151,11 @@ RSpec.describe DynamicMigrations::Postgres::Generator::Fragment do
       end
 
       it "returns true if the provided schema_name and table_name matches the fragments dependency" do
-        expect(fragment.is_dependent_on?(:dependent_schema, :dependent_table)).to be true
+        expect(fragment.is_dependent_on_table?(:dependent_schema, :dependent_table)).to be true
       end
 
       it "returns false if the provided schema_name and table_name does not matche the fragments dependency" do
-        expect(fragment.is_dependent_on?(:another_schema, :another_table)).to be false
+        expect(fragment.is_dependent_on_table?(:another_schema, :another_table)).to be false
       end
     end
   end
@@ -134,6 +166,24 @@ RSpec.describe DynamicMigrations::Postgres::Generator::Fragment do
 
       expect(fragment.dependency_schema_name).to eq :dependent_schema
       expect(fragment.dependency_table_name).to eq :dependent_table
+    end
+  end
+
+  describe :set_dependent_function do
+    it "sets the dependent_schema and dependent_function" do
+      fragment.set_dependent_function :dependent_schema, :dependent_function
+
+      expect(fragment.dependency_schema_name).to eq :dependent_schema
+      expect(fragment.dependency_function_name).to eq :dependent_function
+    end
+  end
+
+  describe :set_dependent_enum do
+    it "sets the dependent_schema and dependent_enum" do
+      fragment.set_dependent_enum :dependent_schema, :dependent_enum
+
+      expect(fragment.dependency_schema_name).to eq :dependent_schema
+      expect(fragment.dependency_enum_name).to eq :dependent_enum
     end
   end
 end

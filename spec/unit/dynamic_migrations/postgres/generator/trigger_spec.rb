@@ -21,7 +21,7 @@ RSpec.describe DynamicMigrations::Postgres::Generator do
 
     describe :add_trigger do
       describe "for a row based 'after update' trigger" do
-        let(:trigger) { table.add_trigger :my_trigger, event_manipulation: :insert, action_order: nil, action_condition: nil, parameters: nil, action_orientation: :row, action_timing: :before, function: function, description: "Comment for this trigger" }
+        let(:trigger) { table.add_trigger :my_trigger, event_manipulation: :insert, action_order: nil, action_condition: nil, parameters: [], action_orientation: :row, action_timing: :before, function: function, description: "Comment for this trigger" }
 
         it "should return the expected short hand ruby syntax to add a trigger" do
           expect(generator.add_trigger(trigger).to_s).to eq <<~RUBY.strip
@@ -33,7 +33,7 @@ RSpec.describe DynamicMigrations::Postgres::Generator do
       end
 
       describe "for a statement based 'after update' trigger" do
-        let(:trigger) { table.add_trigger :my_trigger, event_manipulation: :insert, action_order: nil, action_condition: nil, parameters: nil, action_orientation: :statement, action_timing: :before, function: function, description: "Comment for this trigger" }
+        let(:trigger) { table.add_trigger :my_trigger, event_manipulation: :insert, action_order: nil, action_condition: nil, parameters: [], action_orientation: :statement, action_timing: :before, function: function, description: "Comment for this trigger" }
 
         it "should return the expected ruby syntax to add a trigger" do
           expect(generator.add_trigger(trigger).to_s).to eq <<~RUBY.strip
@@ -45,11 +45,11 @@ RSpec.describe DynamicMigrations::Postgres::Generator do
       end
 
       describe "for a trigger with parameters" do
-        let(:trigger) { table.add_trigger :my_trigger, event_manipulation: :insert, action_order: nil, action_condition: nil, parameters: "'true'", action_orientation: :statement, action_timing: :before, function: function, description: "Comment for this trigger" }
+        let(:trigger) { table.add_trigger :my_trigger, event_manipulation: :insert, action_order: nil, action_condition: nil, parameters: ["true"], action_orientation: :statement, action_timing: :before, function: function, description: "Comment for this trigger" }
 
         it "should return the expected ruby syntax to add a trigger" do
           expect(generator.add_trigger(trigger).to_s).to eq <<~RUBY.strip
-            add_trigger :my_table, name: :my_trigger, action_timing: :before, event_manipulation: :insert, action_orientation: :statement, function_schema_name: :my_schema, function_name: :function_name, parameters: "'true'", comment: <<~COMMENT
+            add_trigger :my_table, name: :my_trigger, action_timing: :before, event_manipulation: :insert, action_orientation: :statement, function_schema_name: :my_schema, function_name: :function_name, parameters: ["true"], comment: <<~COMMENT
               Comment for this trigger
             COMMENT
           RUBY
@@ -59,7 +59,7 @@ RSpec.describe DynamicMigrations::Postgres::Generator do
 
     describe :remove_trigger do
       describe "for simple trigger" do
-        let(:trigger) { table.add_trigger :my_trigger, event_manipulation: :insert, action_order: nil, action_condition: nil, parameters: nil, action_orientation: :row, action_timing: :before, function: function }
+        let(:trigger) { table.add_trigger :my_trigger, event_manipulation: :insert, action_order: nil, action_condition: nil, parameters: [], action_orientation: :row, action_timing: :before, function: function }
 
         it "should return the expected ruby syntax to remove a trigger" do
           expect(generator.remove_trigger(trigger).to_s).to eq <<~RUBY.strip
@@ -74,9 +74,9 @@ RSpec.describe DynamicMigrations::Postgres::Generator do
         let(:loaded_schema) { DynamicMigrations::Postgres::Server::Database::Schema.new :database, database, :my_schema }
         let(:loaded_table) { DynamicMigrations::Postgres::Server::Database::Schema::Table.new :database, loaded_schema, :my_table, description: "Comment for this table" }
         let(:loaded_function) { loaded_schema.add_function :function_name, function_definition }
-        let(:loaded_trigger) { loaded_table.add_trigger :my_trigger, event_manipulation: :insert, action_order: 1, action_condition: nil, parameters: nil, action_orientation: :row, action_timing: :before, function: loaded_function }
+        let(:loaded_trigger) { loaded_table.add_trigger :my_trigger, event_manipulation: :insert, action_order: 1, action_condition: nil, parameters: [], action_orientation: :row, action_timing: :before, function: loaded_function }
 
-        let(:configured_trigger) { table.add_trigger :my_trigger, event_manipulation: :insert, action_order: nil, action_condition: nil, parameters: nil, action_orientation: :row, action_timing: :after, function: function }
+        let(:configured_trigger) { table.add_trigger :my_trigger, event_manipulation: :insert, action_order: nil, action_condition: nil, parameters: [], action_orientation: :row, action_timing: :after, function: function }
 
         it "should return the expected ruby syntax to recreate a trigger" do
           remove = <<~RUBY.strip
@@ -96,7 +96,7 @@ RSpec.describe DynamicMigrations::Postgres::Generator do
 
     describe :set_trigger_comment do
       describe "for simple trigger" do
-        let(:trigger) { table.add_trigger :my_trigger, event_manipulation: :insert, action_order: nil, action_condition: nil, parameters: nil, action_orientation: :row, action_timing: :before, function: function, description: "My trigger comment" }
+        let(:trigger) { table.add_trigger :my_trigger, event_manipulation: :insert, action_order: nil, action_condition: nil, parameters: [], action_orientation: :row, action_timing: :before, function: function, description: "My trigger comment" }
 
         it "should return the expected ruby syntax to set a trigger comment" do
           expect(generator.set_trigger_comment(trigger).to_s).to eq <<~RUBY.strip
@@ -110,7 +110,7 @@ RSpec.describe DynamicMigrations::Postgres::Generator do
 
     describe :remove_trigger_comment do
       describe "for simple trigger" do
-        let(:trigger) { table.add_trigger :my_trigger, event_manipulation: :insert, action_order: nil, action_condition: nil, parameters: nil, action_orientation: :row, action_timing: :before, function: function, description: "My trigger comment" }
+        let(:trigger) { table.add_trigger :my_trigger, event_manipulation: :insert, action_order: nil, action_condition: nil, parameters: [], action_orientation: :row, action_timing: :before, function: function, description: "My trigger comment" }
 
         it "should return the expected ruby syntax to remove a trigger comment" do
           expect(generator.remove_trigger_comment(trigger).to_s).to eq <<~RUBY.strip

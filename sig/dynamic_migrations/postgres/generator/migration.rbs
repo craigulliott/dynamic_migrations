@@ -18,8 +18,12 @@ module DynamicMigrations
         attr_reader fragments: Array[Fragment]
         def initialize: (?Symbol? schema_name, ?Symbol? table_name) -> void
         def add_fragment: (Fragment fragment) -> void
-        def dependencies: -> Array[{schema_name: Symbol, table_name: Symbol}]
-        def extract_fragments_with_dependency: (Symbol schema_name, Symbol table_name) -> Array[Fragment]
+        def table_dependencies: -> Array[{schema_name: Symbol, table_name: Symbol}]
+        def enum_dependencies: -> Array[{schema_name: Symbol, enum_name: Symbol}]
+        def function_dependencies: -> Array[{schema_name: Symbol, function_name: Symbol}]
+
+        def extract_fragments_with_table_dependency: (Symbol schema_name, Symbol table_name) -> Array[Fragment]
+
         def content: -> String
         def name: -> (:changes | :schema_functions | Symbol)
 

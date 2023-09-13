@@ -85,7 +85,7 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database::Schema::Function d
     end
 
     describe "after a trigger has been added which references this function" do
-      let(:trigger) { DynamicMigrations::Postgres::Server::Database::Schema::Table::Trigger.new :configuration, table, :trigger_name, event_manipulation: :insert, action_order: nil, action_condition: nil, parameters: nil, action_orientation: :row, action_timing: :before, function: function }
+      let(:trigger) { DynamicMigrations::Postgres::Server::Database::Schema::Table::Trigger.new :configuration, table, :trigger_name, event_manipulation: :insert, action_order: nil, action_condition: nil, parameters: [], action_orientation: :row, action_timing: :before, function: function }
 
       before(:each) do
         trigger

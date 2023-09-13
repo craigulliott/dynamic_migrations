@@ -55,7 +55,7 @@ RSpec.describe DynamicMigrations::ActiveRecord::Migrators do
           end
 
           it "generates the expected sql for a trigger which includes parameters" do
-            migration.add_trigger(:my_table, name: :my_trigger, parameters: "'true'", action_timing: :before, event_manipulation: :insert, action_orientation: :row, function_schema_name: :my_schema, function_name: :my_function, action_condition: "NEW.my_column != 0")
+            migration.add_trigger(:my_table, name: :my_trigger, parameters: ["true"], action_timing: :before, event_manipulation: :insert, action_orientation: :row, function_schema_name: :my_schema, function_name: :my_function, action_condition: "NEW.my_column != 0")
 
             expect(migration).to executed_sql <<~SQL
               CREATE TRIGGER my_trigger

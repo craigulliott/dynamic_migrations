@@ -22,17 +22,17 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database::Schema::Table do
       end
 
       it "creates a new trigger object" do
-        expect(table.add_trigger(:trigger_name, event_manipulation: :insert, action_order: nil, action_condition: nil, parameters: nil, action_orientation: :row, action_timing: :before, function: function)).to be_a DynamicMigrations::Postgres::Server::Database::Schema::Table::Trigger
+        expect(table.add_trigger(:trigger_name, event_manipulation: :insert, action_order: nil, action_condition: nil, parameters: [], action_orientation: :row, action_timing: :before, function: function)).to be_a DynamicMigrations::Postgres::Server::Database::Schema::Table::Trigger
       end
 
       describe "when a trigger already exists" do
         before(:each) do
-          table.add_trigger(:trigger_name, event_manipulation: :insert, action_order: nil, action_condition: nil, parameters: nil, action_orientation: :row, action_timing: :before, function: function)
+          table.add_trigger(:trigger_name, event_manipulation: :insert, action_order: nil, action_condition: nil, parameters: [], action_orientation: :row, action_timing: :before, function: function)
         end
 
         it "raises an error if using the same trigger name" do
           expect {
-            table.add_trigger(:trigger_name, event_manipulation: :insert, action_order: nil, action_condition: nil, parameters: nil, action_orientation: :row, action_timing: :before, function: function)
+            table.add_trigger(:trigger_name, event_manipulation: :insert, action_order: nil, action_condition: nil, parameters: [], action_orientation: :row, action_timing: :before, function: function)
           }.to raise_error DynamicMigrations::Postgres::Server::Database::Schema::Table::TriggerAlreadyExistsError
         end
       end
@@ -47,7 +47,7 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database::Schema::Table do
 
       describe "after the expected trigger has been added" do
         let(:column) { table.add_column :column_name, :boolean }
-        let(:trigger) { table.add_trigger :trigger_name, event_manipulation: :insert, action_order: nil, action_condition: nil, parameters: nil, action_orientation: :row, action_timing: :before, function: function }
+        let(:trigger) { table.add_trigger :trigger_name, event_manipulation: :insert, action_order: nil, action_condition: nil, parameters: [], action_orientation: :row, action_timing: :before, function: function }
 
         before(:each) do
           column
@@ -67,7 +67,7 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database::Schema::Table do
 
       describe "after the expected trigger has been added" do
         let(:column) { table.add_column :column_name, :boolean }
-        let(:trigger) { table.add_trigger :trigger_name, event_manipulation: :insert, action_order: nil, action_condition: nil, parameters: nil, action_orientation: :row, action_timing: :before, function: function }
+        let(:trigger) { table.add_trigger :trigger_name, event_manipulation: :insert, action_order: nil, action_condition: nil, parameters: [], action_orientation: :row, action_timing: :before, function: function }
 
         before(:each) do
           column
@@ -88,7 +88,7 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database::Schema::Table do
 
       describe "after the expected trigger has been added" do
         let(:column) { table.add_column :column_name, :boolean }
-        let(:trigger) { table.add_trigger :trigger_name, event_manipulation: :insert, action_order: nil, action_condition: nil, parameters: nil, action_orientation: :row, action_timing: :before, function: function }
+        let(:trigger) { table.add_trigger :trigger_name, event_manipulation: :insert, action_order: nil, action_condition: nil, parameters: [], action_orientation: :row, action_timing: :before, function: function }
 
         before(:each) do
           column
@@ -108,7 +108,7 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database::Schema::Table do
 
       describe "after the expected trigger has been added" do
         let(:column) { table.add_column :column_name, :boolean }
-        let(:trigger) { table.add_trigger :trigger_name, event_manipulation: :insert, action_order: nil, action_condition: nil, parameters: nil, action_orientation: :row, action_timing: :before, function: function }
+        let(:trigger) { table.add_trigger :trigger_name, event_manipulation: :insert, action_order: nil, action_condition: nil, parameters: [], action_orientation: :row, action_timing: :before, function: function }
 
         before(:each) do
           column

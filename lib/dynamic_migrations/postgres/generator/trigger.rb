@@ -61,8 +61,8 @@ module DynamicMigrations
               options[:action_condition] = "\"#{trigger.action_condition}\""
             end
 
-            unless trigger.parameters.nil?
-              options[:parameters] = "\"#{trigger.parameters}\""
+            unless trigger.parameters.empty?
+              options[:parameters] = "[\"#{trigger.parameters.join('", "')}\"]"
             end
 
             unless trigger.action_reference_old_table.nil?
@@ -88,6 +88,8 @@ module DynamicMigrations
               migration_method: :add_trigger,
               object: trigger,
               code_comment: code_comment,
+              dependent_function: trigger.function,
+              # also need dependent_enum
               migration: <<~RUBY
                 #{method_name} :#{trigger.table.name}, #{options_syntax}
               RUBY

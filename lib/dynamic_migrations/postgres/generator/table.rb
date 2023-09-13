@@ -13,19 +13,35 @@ module DynamicMigrations
             raise NoTableCommentError, "Refusing to generate create_table migration, no description was provided for `#{table.schema.name}`.`#{table.name}`"
           end
 
-          add_fragment schema: table.schema,
+          # We only add the columns that are not enums from within the add_table block, this
+          # is because columns that are enums require those enums to be created first and we
+          # want to create those as seperate fragments which have the correct dependency metadata
+          columns_without_enums = table.columns.reject(&:enum)
+          columns_with_enums = table.columns.select(&:enum)
+
+          fragments = []
+          fragments << add_fragment(schema: table.schema,
             table: table,
             migration_method: :create_table,
             object: table,
             code_comment: code_comment,
             migration: <<~RUBY
               table_comment = <<~COMMENT
-                #{indent table.description}
+                #{indent table.description || ""}
               COMMENT
               create_table :#{table.name}, #{table_options table} do |t|
-                #{indent table_columns(table.columns)}
+                #{indent table_columns(columns_without_enums)}
               end
             RUBY
+          )
+
+          # seperately add the columns that are enums (so dependency managment works correctly)
+          fragments += columns_with_enums.map do |column|
+            add_column column
+          end
+
+          # return all the fragments (we do this with all generators so e can more easily test the methods)
+          fragments
         end
 
         def drop_table table, code_comment = nil

@@ -48,6 +48,8 @@ module DynamicMigrations
           add_fragment schema: column.table.schema,
             table: column.table,
             migration_method: :add_column,
+            # this will be nil if the column is not an enum
+            dependent_enum: column.enum,
             object: column,
             code_comment: code_comment,
             migration: <<~RUBY
@@ -77,6 +79,8 @@ module DynamicMigrations
           add_fragment schema: column.table.schema,
             table: column.table,
             migration_method: :change_column,
+            # this will be nil if the column is not an enum
+            dependent_enum: column.enum,
             object: column,
             code_comment: code_comment,
             migration: <<~RUBY

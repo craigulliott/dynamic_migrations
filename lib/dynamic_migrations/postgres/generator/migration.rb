@@ -96,18 +96,34 @@ module DynamicMigrations
         # Return an array of table dependencies for this migration, this array comes from
         # combining any table dependencies from each fragment.
         # Will raise an error if no fragments have been provided.
-        def dependencies
+        def table_dependencies
           raise NoFragmentsError if fragments.empty?
-          @fragments.map(&:dependency).compact
+          @fragments.map(&:table_dependency).compact
+        end
+
+        # Return an array of function dependencies for this migration, this array comes from
+        # combining any function dependencies from each fragment.
+        # Will raise an error if no fragments have been provided.
+        def function_dependencies
+          raise NoFragmentsError if fragments.empty?
+          @fragments.map(&:function_dependency).compact
+        end
+
+        # Return an array of enum dependencies for this migration, this array comes from
+        # combining any enum dependencies from each fragment.
+        # Will raise an error if no fragments have been provided.
+        def enum_dependencies
+          raise NoFragmentsError if fragments.empty?
+          @fragments.map(&:enum_dependency).compact
         end
 
         # removes and returns any fragments which have a dependency on the table with the
         # provided schema_name and table_name, this is used for extracting fragments which
         # cause circular dependencies so they can be placed into their own migrations
         def extract_fragments_with_dependency schema_name, table_name
-          results = @fragments.filter { |f| f.is_dependent_on? schema_name, table_name }
+          results = @fragments.filter { |f| f.is_dependent_on_table? schema_name, table_name }
           # remove any of these from the internal array of fragments
-          @fragments.filter! { |f| !f.is_dependent_on?(schema_name, table_name) }
+          @fragments.filter! { |f| !f.is_dependent_on_table?(schema_name, table_name) }
           # return the results
           results
         end

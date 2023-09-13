@@ -14,7 +14,7 @@ module DynamicMigrations
               attr_reader event_manipulation: Symbol
               attr_reader action_timing: Symbol
               attr_reader action_condition: String?
-              attr_reader parameters: String?
+              attr_reader parameters: Array[String]
               attr_reader action_orientation: Symbol
               attr_reader function: Function
               attr_reader action_reference_old_table: Symbol?
@@ -22,7 +22,7 @@ module DynamicMigrations
               attr_reader description: String?
               attr_reader template: Symbol?
 
-              def initialize: (database_or_configuration source, Table table, Symbol name, action_timing: Symbol, event_manipulation: Symbol, parameters: String?, action_orientation: Symbol, function: Function, ?action_order: Integer?, ?action_condition: String?, ?action_reference_old_table: Symbol?, ?action_reference_new_table: Symbol?, ?description: String?, ?template: Symbol?) -> void
+              def initialize: (database_or_configuration source, Table table, Symbol name, action_timing: Symbol, event_manipulation: Symbol, parameters: Array[String], action_orientation: Symbol, function: Function, ?action_order: Integer?, ?action_condition: String?, ?action_reference_old_table: Symbol?, ?action_reference_new_table: Symbol?, ?description: String?, ?template: Symbol?) -> void
               def action_order: -> Integer
               def has_description?: -> false
               def differences_descriptions: (Trigger other_trigger) -> Array[String]

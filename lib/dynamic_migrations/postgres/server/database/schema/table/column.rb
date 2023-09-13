@@ -11,6 +11,9 @@ module DynamicMigrations
               class ExpectedTableError < StandardError
               end
 
+              class UnexpectedEnumError < StandardError
+              end
+
               attr_reader :table
               attr_reader :name
               attr_reader :data_type
@@ -18,9 +21,10 @@ module DynamicMigrations
               attr_reader :null
               attr_reader :default
               attr_reader :interval_type
+              attr_reader :enum
 
               # initialize a new object to represent a column in a postgres table
-              def initialize source, table, name, data_type, null: true, default: nil, description: nil, interval_type: nil
+              def initialize source, table, name, data_type, null: true, default: nil, description: nil, interval_type: nil, enum: nil
                 super source
                 raise ExpectedTableError, table unless table.is_a? Table
                 @table = table
@@ -28,7 +32,6 @@ module DynamicMigrations
                 raise ExpectedSymbolError, name unless name.is_a? Symbol
                 @name = name
 
-                @data_type = data_type
                 raise ExpectedSymbolError, data_type unless data_type.is_a? Symbol
                 @data_type = data_type
 
@@ -42,6 +45,16 @@ module DynamicMigrations
                 end
 
                 @interval_type = interval_type
+
+                if enum
+                  unless enum.is_a? Enum
+                    raise UnexpectedEnumError, "#{enum} is not a valid enum"
+                  end
+                  unless @data_type == enum.name || @data_type == "#{enum.name}[]"
+                    raise UnexpectedEnumError, "enum `#{enum.name}` does not match this column's data type `#{@data_type}`"
+                  end
+                  @enum = enum
+                end
               end
 
               # return true if this column has a description, otherwise false

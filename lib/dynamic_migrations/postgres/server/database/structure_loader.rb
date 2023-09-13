@@ -33,6 +33,13 @@ module DynamicMigrations
                       AND attnum = columns.ordinal_position
                   )
                   END AS data_type,
+                  -- is this an emum
+                  EXISTS (
+                    SELECT 1
+                    FROM pg_type typ
+                      INNER JOIN pg_enum enu ON typ.oid = enu.enumtypid
+                    WHERE typ.typname = columns.udt_name
+                  ) AS is_enum,
                   -- If data_type identifies an interval type, this column contains
                   -- the specification which fields the intervals include for this
                   -- column, e.g., YEAR TO MONTH, DAY TO SECOND, etc. If no field
@@ -93,6 +100,7 @@ module DynamicMigrations
 
                   column[:data_type] = row["data_type"].to_sym
                   column[:null] = row["is_nullable"] == "YES"
+                  column[:is_enum] = row["is_enum"] == "TRUE"
                   column[:default] = row["column_default"]
                   column[:description] = row["column_description"]
                   column[:interval_type] = row["interval_type"].nil? ? nil : row["interval_type"].to_sym
@@ -100,26 +108,6 @@ module DynamicMigrations
               end
             end
             schemas
-          end
-
-          # recursively process the database and build all the schemas,
-          # tables and columns
-          def recursively_load_database_structure
-            fetch_structure.each do |schema_name, schema_definition|
-              schema = add_loaded_schema schema_name
-
-              schema_definition[:tables].each do |table_name, table_definition|
-                table = schema.add_table table_name, table_definition[:description]
-
-                table_definition[:columns].each do |column_name, column_definition|
-                  table.add_column column_name, column_definition[:data_type],
-                    null: column_definition[:null],
-                    default: column_definition[:default],
-                    description: column_definition[:description],
-                    interval_type: column_definition[:interval_type]
-                end
-              end
-            end
           end
 
           # returns a list of the schema names in this database

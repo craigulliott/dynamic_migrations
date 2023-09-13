@@ -16,7 +16,7 @@ module DynamicMigrations
         end
 
         # create a postgres trigger
-        def add_trigger table_name, name:, action_timing:, event_manipulation:, action_orientation:, function_schema_name:, function_name:, parameters: nil, action_condition: nil, action_reference_old_table: nil, action_reference_new_table: nil, comment: nil
+        def add_trigger table_name, name:, action_timing:, event_manipulation:, action_orientation:, function_schema_name:, function_name:, parameters: [], action_condition: nil, action_reference_old_table: nil, action_reference_new_table: nil, comment: nil
           unless [:insert, :delete, :update].include? event_manipulation
             raise UnexpectedEventManipulationError, event_manipulation
           end
@@ -47,13 +47,15 @@ module DynamicMigrations
           end
           temp_tables_sql = temp_tables.any? ? "REFERENCING #{temp_tables.join(" ")}" : ""
 
+          parameters_str = parameters.map { |p| quote(p) }.join(", ")
+
           # schema_name was not provided to this method, it comes from the migration class
           execute <<~SQL
             CREATE TRIGGER #{name}
               #{timing_sql} ON #{schema_name}.#{table_name} #{temp_tables_sql}
                 FOR EACH #{action_orientation}
                   #{condition_sql}
-                  EXECUTE FUNCTION #{function_schema_name}.#{function_name}(#{parameters});
+                  EXECUTE FUNCTION #{function_schema_name}.#{function_name}(#{parameters_str});
           SQL
 
           if comment.is_a? String
@@ -62,27 +64,27 @@ module DynamicMigrations
         end
 
         # wrappers for add_trigger which provide more friendly syntax
-        def before_insert table_name, name:, function_schema_name:, function_name:, parameters: nil, action_condition: nil, action_reference_old_table: nil, action_reference_new_table: nil, comment: nil
+        def before_insert table_name, name:, function_schema_name:, function_name:, parameters: [], action_condition: nil, action_reference_old_table: nil, action_reference_new_table: nil, comment: nil
           add_trigger table_name, name: name, action_timing: :before, event_manipulation: :insert, action_orientation: :row, function_schema_name: function_schema_name, function_name: function_name, parameters: parameters, action_condition: action_condition, action_reference_old_table: action_reference_old_table, action_reference_new_table: action_reference_new_table, comment: comment
         end
 
-        def before_update table_name, name:, function_schema_name:, function_name:, parameters: nil, action_condition: nil, action_reference_old_table: nil, action_reference_new_table: nil, comment: nil
+        def before_update table_name, name:, function_schema_name:, function_name:, parameters: [], action_condition: nil, action_reference_old_table: nil, action_reference_new_table: nil, comment: nil
           add_trigger table_name, name: name, action_timing: :before, event_manipulation: :update, action_orientation: :row, function_schema_name: function_schema_name, function_name: function_name, parameters: parameters, action_condition: action_condition, action_reference_old_table: action_reference_old_table, action_reference_new_table: action_reference_new_table, comment: comment
         end
 
-        def before_delete table_name, name:, function_schema_name:, function_name:, parameters: nil, action_condition: nil, action_reference_old_table: nil, action_reference_new_table: nil, comment: nil
+        def before_delete table_name, name:, function_schema_name:, function_name:, parameters: [], action_condition: nil, action_reference_old_table: nil, action_reference_new_table: nil, comment: nil
           add_trigger table_name, name: name, action_timing: :before, event_manipulation: :delete, action_orientation: :row, function_schema_name: function_schema_name, function_name: function_name, parameters: parameters, action_condition: action_condition, action_reference_old_table: action_reference_old_table, action_reference_new_table: action_reference_new_table, comment: comment
         end
 
-        def after_insert table_name, name:, function_schema_name:, function_name:, parameters: nil, action_condition: nil, action_reference_old_table: nil, action_reference_new_table: nil, comment: nil
+        def after_insert table_name, name:, function_schema_name:, function_name:, parameters: [], action_condition: nil, action_reference_old_table: nil, action_reference_new_table: nil, comment: nil
           add_trigger table_name, name: name, action_timing: :after, event_manipulation: :insert, action_orientation: :row, function_schema_name: function_schema_name, function_name: function_name, parameters: parameters, action_condition: action_condition, action_reference_old_table: action_reference_old_table, action_reference_new_table: action_reference_new_table, comment: comment
         end
 
-        def after_update table_name, name:, function_schema_name:, function_name:, parameters: nil, action_condition: nil, action_reference_old_table: nil, action_reference_new_table: nil, comment: nil
+        def after_update table_name, name:, function_schema_name:, function_name:, parameters: [], action_condition: nil, action_reference_old_table: nil, action_reference_new_table: nil, comment: nil
           add_trigger table_name, name: name, action_timing: :after, event_manipulation: :update, action_orientation: :row, function_schema_name: function_schema_name, function_name: function_name, parameters: parameters, action_condition: action_condition, action_reference_old_table: action_reference_old_table, action_reference_new_table: action_reference_new_table, comment: comment
         end
 
-        def after_delete table_name, name:, function_schema_name:, function_name:, parameters: nil, action_condition: nil, action_reference_old_table: nil, action_reference_new_table: nil, comment: nil
+        def after_delete table_name, name:, function_schema_name:, function_name:, parameters: [], action_condition: nil, action_reference_old_table: nil, action_reference_new_table: nil, comment: nil
           add_trigger table_name, name: name, action_timing: :after, event_manipulation: :delete, action_orientation: :row, function_schema_name: function_schema_name, function_name: function_name, parameters: parameters, action_condition: action_condition, action_reference_old_table: action_reference_old_table, action_reference_new_table: action_reference_new_table, comment: comment
         end
 

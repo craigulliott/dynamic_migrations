@@ -19,13 +19,24 @@ module DynamicMigrations
         # dependecy on a table is optional
         attr_reader dependency_schema_name: Symbol?
         attr_reader dependency_table_name: Symbol?
+        attr_reader dependency_function_name: Symbol?
+        attr_reader dependency_enum_name: Symbol?
 
         def initialize: (Symbol? schema_name, Symbol? table_name, Symbol migration_method, Symbol object_name, String? code_comment, String content) -> void
         def to_s: -> String
         def has_code_comment?: -> bool
-        def dependency: -> ({schema_name: Symbol, table_name: Symbol} | nil)
-        def is_dependent_on?: (Symbol schema_name, Symbol table_name) -> bool
+
+        def table_dependency: -> ({schema_name: Symbol, table_name: Symbol} | nil)
+        def function_dependency: -> ({schema_name: Symbol, function_name: Symbol} | nil)
+        def enum_dependency: -> ({schema_name: Symbol, enum_name: Symbol} | nil)
+
+        def is_dependent_on_table?: (Symbol schema_name, Symbol table_name) -> bool
+
         def set_dependent_table: (Symbol schema_name, Symbol table_name) -> void
+        def set_dependent_function: (Symbol schema_name, Symbol function_name) -> void
+        def set_dependent_enum: (Symbol schema_name, Symbol enum_name) -> void
+
+        def dependency_type: -> (nil | :function | :table | :enum)
       end
     end
   end

@@ -29,7 +29,7 @@ module DynamicMigrations
       private
       def circular_dependency?: (Symbol schema_name, Symbol table_name, {schema_name: Symbol, table_name: Symbol} dependency, Array[TableMigration] all_table_migrations) -> bool
       def supported_migration_method?: (Symbol migration_method) -> bool
-      def add_fragment: (migration_method: Symbol, object: untyped, migration: String, ?schema: Server::Database::Schema?, ?table: Server::Database::Schema::Table?, ?code_comment: String?, ?dependent_table: nil | Server::Database::Schema::Table) -> Fragment
+      def add_fragment: (migration_method: Symbol, object: untyped, migration: String, ?schema: Server::Database::Schema?, ?table: Server::Database::Schema::Table?, ?code_comment: String?, ?dependent_table: Server::Database::Schema::Table?, ?dependent_function: Server::Database::Schema::Function?, ?dependent_enum: Server::Database::Schema::Enum?) -> Fragment
       def indent: (String migration, ?Integer levels) -> String
       def strip_empty_lines: (String migration) -> String
       def tsort_each_node: -> Enumerator[untyped, untyped]

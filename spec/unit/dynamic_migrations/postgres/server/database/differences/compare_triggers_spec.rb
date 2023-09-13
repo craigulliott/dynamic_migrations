@@ -44,7 +44,7 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database::Differences do
         let(:comparison) { loaded_table }
 
         before(:each) do
-          comparison.add_trigger :trigger_name, event_manipulation: :insert, action_order: 1, action_condition: nil, parameters: nil, action_orientation: :row, action_timing: :before, function: loaded_function
+          comparison.add_trigger :trigger_name, event_manipulation: :insert, action_order: 1, action_condition: nil, parameters: [], action_orientation: :row, action_timing: :before, function: loaded_function
         end
 
         it "returns the expected object" do
@@ -61,7 +61,7 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database::Differences do
       let(:base) { configured_table }
 
       before(:each) do
-        base.add_trigger :trigger_name, event_manipulation: :insert, action_order: nil, action_condition: nil, parameters: nil, action_orientation: :row, action_timing: :before, function: configured_function
+        base.add_trigger :trigger_name, event_manipulation: :insert, action_order: nil, action_condition: nil, parameters: [], action_orientation: :row, action_timing: :before, function: configured_function
       end
 
       describe "when comparison table has no triggers" do
@@ -88,7 +88,7 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database::Differences do
                 matches: false
               },
               parameters: {
-                value: nil,
+                value: [],
                 matches: false
               },
               action_orientation: {
@@ -116,7 +116,7 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database::Differences do
         let(:comparison) { loaded_table }
 
         before(:each) do
-          comparison.add_trigger :trigger_name, event_manipulation: :insert, action_order: 1, action_condition: nil, parameters: nil, action_orientation: :row, action_timing: :before, function: loaded_function
+          comparison.add_trigger :trigger_name, event_manipulation: :insert, action_order: 1, action_condition: nil, parameters: [], action_orientation: :row, action_timing: :before, function: loaded_function
         end
 
         it "returns the expected object" do
@@ -140,7 +140,7 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database::Differences do
                 matches: true
               },
               parameters: {
-                value: nil,
+                value: [],
                 matches: true
               },
               action_orientation: {
@@ -168,7 +168,7 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database::Differences do
         let(:comparison) { loaded_table }
 
         before(:each) do
-          comparison.add_trigger :trigger_name, event_manipulation: :insert, action_order: 1, action_condition: nil, parameters: nil, action_orientation: :row, action_timing: :after, function: loaded_function
+          comparison.add_trigger :trigger_name, event_manipulation: :insert, action_order: 1, action_condition: nil, parameters: [], action_orientation: :row, action_timing: :after, function: loaded_function
         end
 
         it "returns the expected object" do
@@ -192,7 +192,7 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database::Differences do
                 matches: true
               },
               parameters: {
-                value: nil,
+                value: [],
                 matches: true
               },
               action_orientation: {

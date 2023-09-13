@@ -14,7 +14,7 @@ module DynamicMigrations
               def has_trigger?: (untyped name) -> bool
               def triggers: -> Array[Trigger]
               def triggers_hash: -> Hash[Symbol, Trigger]
-              def add_trigger: (Symbol name, action_timing: Symbol, event_manipulation: Symbol, parameters: String, action_orientation: Symbol, function: Function, ?action_order: Integer?, ?action_condition: String?, ?action_reference_old_table: Symbol?, ?action_reference_new_table: Symbol?, ?description: String?, ?template: Symbol?) -> Trigger
+              def add_trigger: (Symbol name, action_timing: Symbol, event_manipulation: Symbol, parameters: Array[String], action_orientation: Symbol, function: Function, ?action_order: Integer?, ?action_condition: String?, ?action_reference_old_table: Symbol?, ?action_reference_new_table: Symbol?, ?description: String?, ?template: Symbol?) -> Trigger
 
               # these come from the table object (which this module is included into)
               def source: -> database_or_configuration

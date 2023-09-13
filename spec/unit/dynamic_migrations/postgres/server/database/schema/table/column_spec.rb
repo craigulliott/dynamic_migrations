@@ -5,8 +5,10 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database::Schema::Table::Col
   let(:server) { DynamicMigrations::Postgres::Server.new pg_helper.host, pg_helper.port, pg_helper.username, pg_helper.password }
   let(:database) { DynamicMigrations::Postgres::Server::Database.new server, :my_database }
   let(:schema) { DynamicMigrations::Postgres::Server::Database::Schema.new :configuration, database, :my_schema }
+  let(:enum) { DynamicMigrations::Postgres::Server::Database::Schema::Enum.new :configuration, schema, :my_enum, enum_values }
   let(:table) { DynamicMigrations::Postgres::Server::Database::Schema::Table.new :configuration, schema, :my_table }
   let(:column) { DynamicMigrations::Postgres::Server::Database::Schema::Table::Column.new :configuration, table, :my_column, :boolean }
+  let(:enum_values) { [:foo, :bar] }
 
   describe :initialize do
     it "instantiates a new column without raising an error" do
@@ -31,6 +33,12 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database::Schema::Table::Col
       expect {
         DynamicMigrations::Postgres::Server::Database::Schema::Table::Column.new :configuration, table, :my_column, "integer"
       }.to raise_error DynamicMigrations::ExpectedSymbolError
+    end
+
+    it "raises an error if providing a data type which does not match the provided enum" do
+      expect {
+        DynamicMigrations::Postgres::Server::Database::Schema::Table::Column.new :configuration, table, :my_column, :integer, enum: enum
+      }.to raise_error DynamicMigrations::Postgres::Server::Database::Schema::Table::Column::UnexpectedEnumError
     end
 
     describe "when providing an optional description" do
@@ -61,14 +69,27 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database::Schema::Table::Col
   end
 
   describe :array do
-    it "returns false because this datatype is not an array" do
+    it "returns false because this data type is not an array" do
       expect(column.array?).to be false
     end
 
-    describe "when an array data type was is provided at initialization" do
+    describe "when an array data type was provided at initialization" do
       let(:array_column) { DynamicMigrations::Postgres::Server::Database::Schema::Table::Column.new :configuration, table, :my_column, :"integer[]", description: "a valid description of my column" }
-      it "returns the expected description" do
+      it "returns true because this is an array" do
         expect(array_column.array?).to be true
+      end
+    end
+  end
+
+  describe :enum do
+    it "returns nil because this data type is not an enum" do
+      expect(column.enum).to be nil
+    end
+
+    describe "when an enum data type was provided at initialization" do
+      let(:enum_column) { DynamicMigrations::Postgres::Server::Database::Schema::Table::Column.new :configuration, table, :my_column, :my_enum, enum: enum, description: "a valid description of my column" }
+      it "returns the expected enum" do
+        expect(enum_column.enum).to be enum
       end
     end
   end

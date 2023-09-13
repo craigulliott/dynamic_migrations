@@ -3,17 +3,17 @@ module DynamicMigrations
   module ActiveRecord
     module Migrators
       module Trigger
-        def add_trigger: (Symbol table_name, name: Symbol, action_timing: Symbol, event_manipulation: Symbol, action_orientation: Symbol, function_schema_name: Symbol, function_name: Symbol, ?parameters: String?, ?action_condition: String?, ?action_reference_old_table: Symbol?, ?action_reference_new_table: Symbol?, ?comment: String?) -> void
+        def add_trigger: (Symbol table_name, name: Symbol, action_timing: Symbol, event_manipulation: Symbol, action_orientation: Symbol, function_schema_name: Symbol, function_name: Symbol, ?parameters: Array[String], ?action_condition: String?, ?action_reference_old_table: Symbol?, ?action_reference_new_table: Symbol?, ?comment: String?) -> void
         def remove_trigger: (Symbol table_name, Symbol trigger_name) -> void
         def set_trigger_comment: (Symbol table_name, Symbol trigger_name, String comment) -> void
         def remove_trigger_comment: (Symbol table_name, Symbol trigger_name) -> void
 
-        def before_insert: (Symbol table_name, name: Symbol, function_schema_name: Symbol, function_name: Symbol, ?parameters: String?, ?action_condition: String?, ?action_reference_old_table: Symbol?, ?action_reference_new_table: Symbol?, ?comment: String?) -> void
-        def before_update: (Symbol table_name, name: Symbol, function_schema_name: Symbol, function_name: Symbol, ?parameters: String?, ?action_condition: String?, ?action_reference_old_table: Symbol?, ?action_reference_new_table: Symbol?, ?comment: String?) -> void
-        def before_delete: (Symbol table_name, name: Symbol, function_schema_name: Symbol, function_name: Symbol, ?parameters: String?, ?action_condition: String?, ?action_reference_old_table: Symbol?, ?action_reference_new_table: Symbol?, ?comment: String?) -> void
-        def after_insert: (Symbol table_name, name: Symbol, function_schema_name: Symbol, function_name: Symbol, ?parameters: String?, ?action_condition: String?, ?action_reference_old_table: Symbol?, ?action_reference_new_table: Symbol?, ?comment: String?) -> void
-        def after_update: (Symbol table_name, name: Symbol, function_schema_name: Symbol, function_name: Symbol, ?parameters: String?, ?action_condition: String?, ?action_reference_old_table: Symbol?, ?action_reference_new_table: Symbol?, ?comment: String?) -> void
-        def after_delete: (Symbol table_name, name: Symbol, function_schema_name: Symbol, function_name: Symbol, ?parameters: String?, ?action_condition: String?, ?action_reference_old_table: Symbol?, ?action_reference_new_table: Symbol?, ?comment: String?) -> void
+        def before_insert: (Symbol table_name, name: Symbol, function_schema_name: Symbol, function_name: Symbol, ?parameters: Array[String], ?action_condition: String?, ?action_reference_old_table: Symbol?, ?action_reference_new_table: Symbol?, ?comment: String?) -> void
+        def before_update: (Symbol table_name, name: Symbol, function_schema_name: Symbol, function_name: Symbol, ?parameters: Array[String], ?action_condition: String?, ?action_reference_old_table: Symbol?, ?action_reference_new_table: Symbol?, ?comment: String?) -> void
+        def before_delete: (Symbol table_name, name: Symbol, function_schema_name: Symbol, function_name: Symbol, ?parameters: Array[String], ?action_condition: String?, ?action_reference_old_table: Symbol?, ?action_reference_new_table: Symbol?, ?comment: String?) -> void
+        def after_insert: (Symbol table_name, name: Symbol, function_schema_name: Symbol, function_name: Symbol, ?parameters: Array[String], ?action_condition: String?, ?action_reference_old_table: Symbol?, ?action_reference_new_table: Symbol?, ?comment: String?) -> void
+        def after_update: (Symbol table_name, name: Symbol, function_schema_name: Symbol, function_name: Symbol, ?parameters: Array[String], ?action_condition: String?, ?action_reference_old_table: Symbol?, ?action_reference_new_table: Symbol?, ?comment: String?) -> void
+        def after_delete: (Symbol table_name, name: Symbol, function_schema_name: Symbol, function_name: Symbol, ?parameters: Array[String], ?action_condition: String?, ?action_reference_old_table: Symbol?, ?action_reference_new_table: Symbol?, ?comment: String?) -> void
 
         # stubbing these out, as they are available on the module which includes this module
         def execute: (String sql) -> void

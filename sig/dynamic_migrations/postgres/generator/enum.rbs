@@ -11,7 +11,7 @@ module DynamicMigrations
         def set_enum_comment: (Server::Database::Schema::Enum enum, ?String? code_comment) -> Fragment
         def remove_enum_comment: (Server::Database::Schema::Enum enum, ?String? code_comment) -> Fragment
         # these come from the generator object (which this module is included into)
-        def add_fragment: (schema: Server::Database::Schema, migration_method: Symbol, object: Server::Database::Schema::Enum enum, migration: String, ?table: nil | Server::Database::Schema::Table, ?code_comment: String?, ?dependent_table: nil | Server::Database::Schema::Table) -> Fragment
+        def add_fragment: (migration_method: Symbol, object: untyped, migration: String, ?schema: Server::Database::Schema?, ?table: Server::Database::Schema::Table?, ?code_comment: String?, ?dependent_table: Server::Database::Schema::Table?, ?dependent_function: Server::Database::Schema::Function?, ?dependent_enum: Server::Database::Schema::Enum?) -> Fragment
         def indent: (String migration, ?Integer levels) -> String
 
         class UnremovableEnumValuesError < StandardError

@@ -38,7 +38,7 @@ module DynamicMigrations
                 SUBSTRING(
                   pg_get_triggerdef(t.oid)
                   FROM
-                  '\\(([\d\w_''-]+)\\)$'
+                  '\\(([^(]+)\\)$'
                 ) AS parameters,
                 p_n.nspname AS function_schema,
                 p.proname AS function_name,
@@ -96,6 +96,10 @@ module DynamicMigrations
                 raise EventTriggerProcedureSchemaMismatchError, "Expected trigger, procedure and event_object to be in the same schema for trigger '#{trigger_name}'"
               end
 
+              # turn the parameters into an array of strings
+              # the format looks a little like this: "'hi', 'there', 'hmmm'"
+              parameters = row["parameters"]&.delete("'")&.split(",")&.map(&:strip) || []
+
               table[trigger_name] = {
                 trigger_schema: row["trigger_schema"].to_sym,
                 event_manipulation: row["event_manipulation"].to_sym,
@@ -104,7 +108,7 @@ module DynamicMigrations
                 function_schema: row["function_schema"].to_sym,
                 function_name: row["function_name"].to_sym,
                 function_definition: row["function_definition"],
-                parameters: row["parameters"],
+                parameters: parameters,
                 action_orientation: row["action_orientation"].to_sym,
                 action_timing: row["action_timing"].to_sym,
                 # `action_reference_old_table` and `action_reference_new_table` can be null

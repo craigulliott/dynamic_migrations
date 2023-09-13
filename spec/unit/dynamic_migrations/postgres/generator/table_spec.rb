@@ -9,17 +9,21 @@ RSpec.describe DynamicMigrations::Postgres::Generator do
     let(:database) { DynamicMigrations::Postgres::Server::Database.new server, :my_database }
     let(:schema) { DynamicMigrations::Postgres::Server::Database::Schema.new :configuration, database, :my_schema }
     let(:table) { DynamicMigrations::Postgres::Server::Database::Schema::Table.new :configuration, schema, :my_table, description: "Comment for this table" }
+    let(:enum) { DynamicMigrations::Postgres::Server::Database::Schema::Enum.new :configuration, schema, :my_enum, enum_values }
+    let(:enum_values) { [:foo, :bar] }
 
     describe :create_table do
       describe "for a table with no columns" do
         it "should return the expected ruby syntax to create a table" do
-          expect(generator.create_table(table).to_s).to eq <<~RUBY.strip
-            table_comment = <<~COMMENT
-              Comment for this table
-            COMMENT
-            create_table :my_table, id: false, comment: table_comment do |t|
-            end
-          RUBY
+          expect(generator.create_table(table).map(&:to_s)).to eql [
+            <<~RUBY.strip
+              table_comment = <<~COMMENT
+                Comment for this table
+              COMMENT
+              create_table :my_table, id: false, comment: table_comment do |t|
+              end
+            RUBY
+          ]
         end
       end
 
@@ -30,13 +34,15 @@ RSpec.describe DynamicMigrations::Postgres::Generator do
         end
 
         it "should return the expected ruby syntax to create a table" do
-          expect(generator.create_table(table).to_s).to eq <<~RUBY.strip
-            table_comment = <<~COMMENT
-              Comment for this table
-            COMMENT
-            create_table :my_table, id: :uuid, comment: table_comment do |t|
-            end
-          RUBY
+          expect(generator.create_table(table).map(&:to_s)).to eql [
+            <<~RUBY.strip
+              table_comment = <<~COMMENT
+                Comment for this table
+              COMMENT
+              create_table :my_table, id: :uuid, comment: table_comment do |t|
+              end
+            RUBY
+          ]
         end
       end
 
@@ -46,14 +52,16 @@ RSpec.describe DynamicMigrations::Postgres::Generator do
         end
 
         it "should return the expected ruby syntax to create a table" do
-          expect(generator.create_table(table).to_s).to eq <<~RUBY.strip
-            table_comment = <<~COMMENT
-              Comment for this table
-            COMMENT
-            create_table :my_table, id: false, comment: table_comment do |t|
-              t.timestamps :created_at
-            end
-          RUBY
+          expect(generator.create_table(table).map(&:to_s)).to eql [
+            <<~RUBY.strip
+              table_comment = <<~COMMENT
+                Comment for this table
+              COMMENT
+              create_table :my_table, id: false, comment: table_comment do |t|
+                t.timestamps :created_at
+              end
+            RUBY
+          ]
         end
       end
 
@@ -64,14 +72,16 @@ RSpec.describe DynamicMigrations::Postgres::Generator do
         end
 
         it "should return the expected ruby syntax to create a table" do
-          expect(generator.create_table(table).to_s).to eq <<~RUBY.strip
-            table_comment = <<~COMMENT
-              Comment for this table
-            COMMENT
-            create_table :my_table, id: false, comment: table_comment do |t|
-              t.timestamps :created_at, :updated_at
-            end
-          RUBY
+          expect(generator.create_table(table).map(&:to_s)).to eql [
+            <<~RUBY.strip
+              table_comment = <<~COMMENT
+                Comment for this table
+              COMMENT
+              create_table :my_table, id: false, comment: table_comment do |t|
+                t.timestamps :created_at, :updated_at
+              end
+            RUBY
+          ]
         end
       end
 
@@ -82,19 +92,48 @@ RSpec.describe DynamicMigrations::Postgres::Generator do
         end
 
         it "should return the expected ruby syntax to create a table" do
-          expect(generator.create_table(table).to_s).to eq <<~RUBY.strip
+          expect(generator.create_table(table).map(&:to_s)).to eql [
+            <<~RUBY.strip
+              table_comment = <<~COMMENT
+                Comment for this table
+              COMMENT
+              create_table :my_table, id: false, comment: table_comment do |t|
+                t.column :bar, :varchar, null: false, default: "foo", comment: <<~COMMENT
+                  Comment for this column
+                COMMENT
+                t.column :foo, :varchar, null: false, default: "foo", comment: <<~COMMENT
+                  Comment for this column
+                COMMENT
+              end
+            RUBY
+          ]
+        end
+      end
+
+      describe "for a table with one varchar and one enum column" do
+        before(:each) do
+          table.add_column :foo, :my_enum, enum: enum, null: false, description: "Comment for this column"
+          table.add_column :bar, :varchar, null: false, description: "Comment for this column"
+        end
+
+        it "should return the expected ruby syntax to create a table" do
+          create_table = <<~RUBY.strip
             table_comment = <<~COMMENT
               Comment for this table
             COMMENT
             create_table :my_table, id: false, comment: table_comment do |t|
-              t.column :bar, :varchar, null: false, default: "foo", comment: <<~COMMENT
-                Comment for this column
-              COMMENT
-              t.column :foo, :varchar, null: false, default: "foo", comment: <<~COMMENT
+              t.column :bar, :varchar, null: false, comment: <<~COMMENT
                 Comment for this column
               COMMENT
             end
           RUBY
+          add_column = <<~RUBY.strip
+            add_column :my_table, :foo, :my_enum, null: false, comment: <<~COMMENT
+              Comment for this column
+            COMMENT
+          RUBY
+
+          expect(generator.create_table(table).map(&:to_s)).to eql [create_table, add_column]
         end
       end
 
@@ -106,19 +145,21 @@ RSpec.describe DynamicMigrations::Postgres::Generator do
         end
 
         it "should return the expected ruby syntax to create a table" do
-          expect(generator.create_table(table).to_s).to eq <<~RUBY.strip
-            table_comment = <<~COMMENT
-              Comment for this table
-            COMMENT
-            create_table :my_table, id: false, primary_key: [:a, :b], comment: table_comment do |t|
-              t.column :a, :uuid, null: false, comment: <<~COMMENT
-                Part one of the composite primary key
+          expect(generator.create_table(table).map(&:to_s)).to eql [
+            <<~RUBY.strip
+              table_comment = <<~COMMENT
+                Comment for this table
               COMMENT
-              t.column :b, :uuid, null: false, comment: <<~COMMENT
-                Part two of the composite primary key
-              COMMENT
-            end
-          RUBY
+              create_table :my_table, id: false, primary_key: [:a, :b], comment: table_comment do |t|
+                t.column :a, :uuid, null: false, comment: <<~COMMENT
+                  Part one of the composite primary key
+                COMMENT
+                t.column :b, :uuid, null: false, comment: <<~COMMENT
+                  Part two of the composite primary key
+                COMMENT
+              end
+            RUBY
+          ]
         end
       end
     end

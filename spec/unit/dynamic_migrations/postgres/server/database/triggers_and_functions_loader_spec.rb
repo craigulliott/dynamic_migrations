@@ -76,7 +76,7 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database do
                           function_schema: :my_schema,
                           function_name: :my_function,
                           function_definition: "BEGIN\n  NEW.my_column = 0;\n  RETURN NEW;\nEND;",
-                          parameters: nil,
+                          parameters: [],
                           action_orientation: :row,
                           action_timing: :before,
                           action_reference_old_table: nil,

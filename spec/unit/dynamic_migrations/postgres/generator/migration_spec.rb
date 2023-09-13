@@ -105,10 +105,10 @@ RSpec.describe DynamicMigrations::Postgres::Generator::Migration do
       end
     end
 
-    describe :dependencies do
+    describe :table_dependencies do
       it "raises an error because no fragments have been added" do
         expect {
-          migration.dependencies
+          migration.table_dependencies
         }.to raise_error DynamicMigrations::Postgres::Generator::Migration::NoFragmentsError
       end
 
@@ -120,7 +120,7 @@ RSpec.describe DynamicMigrations::Postgres::Generator::Migration do
         end
 
         it "returns an empty array because no added fragments have a dependency" do
-          expect(migration.dependencies).to eql []
+          expect(migration.table_dependencies).to eql []
         end
 
         describe "after a fragment which is dependent on a table has been added" do
@@ -135,7 +135,7 @@ RSpec.describe DynamicMigrations::Postgres::Generator::Migration do
           end
 
           it "returns the expected array of dependencies" do
-            expect(migration.dependencies).to eql [{
+            expect(migration.table_dependencies).to eql [{
               schema_name: :my_schema,
               table_name: :my_table
             }]
@@ -207,7 +207,7 @@ RSpec.describe DynamicMigrations::Postgres::Generator::Migration do
     describe :name do
       it "raises an error because no fragments have been added" do
         expect {
-          migration.dependencies
+          migration.table_dependencies
         }.to raise_error DynamicMigrations::Postgres::Generator::Migration::NoFragmentsError
       end
 

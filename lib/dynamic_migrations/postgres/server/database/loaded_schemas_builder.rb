@@ -15,8 +15,24 @@ module DynamicMigrations
           # tables and columns
           def recursively_load_database_structure
             validations = fetch_validations
-            fetch_structure.each do |schema_name, schema_definition|
-              schema = add_loaded_schema schema_name
+
+            structure = fetch_structure
+
+            # add any schemas
+            structure.each do |schema_name, schema_definition|
+              add_loaded_schema schema_name
+            end
+
+            # add any enums (required for adding columns below)
+            fetch_enums.each do |schema_name, schema_definition|
+              schema_definition.each do |enum_name, enum_definition|
+                loaded_schema(schema_name).add_enum enum_name, enum_definition[:values], description: enum_definition[:description]
+              end
+            end
+
+            structure.each do |schema_name, schema_definition|
+              # the schema was already added above
+              schema = loaded_schema schema_name
               schema_validations = validations[schema_name]
 
               schema_definition[:tables].each do |table_name, table_definition|
@@ -25,11 +41,19 @@ module DynamicMigrations
 
                 # add each table column
                 table_definition[:columns].each do |column_name, column_definition|
+                  if column_definition[:is_enum]
+                    enum_schema, enum_name = column_definition[:data_type].to_s.split(".")
+                    enum = table.schema.database.loaded_schema(enum_schema.to_sym).enum(enum_name.to_sym)
+                  else
+                    enum = nil
+                  end
+
                   table.add_column column_name, column_definition[:data_type],
                     null: column_definition[:null],
                     default: column_definition[:default],
                     description: column_definition[:description],
-                    interval_type: column_definition[:interval_type]
+                    interval_type: column_definition[:interval_type],
+                    enum: enum
                 end
 
                 # add any validations
@@ -42,13 +66,6 @@ module DynamicMigrations
             # add any active extensions to the database
             fetch_extensions.each do |extension_name|
               add_loaded_extension extension_name
-            end
-
-            # add any enums
-            fetch_enums.each do |schema_name, schema_definition|
-              schema_definition.each do |enum_name, enum_definition|
-                loaded_schema(schema_name).add_enum enum_name, enum_definition[:values], description: enum_definition[:description]
-              end
             end
 
             # now that the structure has been loaded, we can add keys (foreign

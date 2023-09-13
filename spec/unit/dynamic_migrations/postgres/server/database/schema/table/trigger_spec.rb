@@ -24,72 +24,72 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database::Schema::Table::Tri
 
   let(:table) { DynamicMigrations::Postgres::Server::Database::Schema::Table.new :configuration, schema, :my_table }
   let(:column) { table.add_column :my_column, :boolean }
-  let(:trigger) { table.add_trigger :trigger_name, event_manipulation: :insert, action_order: nil, action_condition: nil, parameters: nil, action_orientation: :row, action_timing: :before, function: function }
+  let(:trigger) { table.add_trigger :trigger_name, event_manipulation: :insert, action_order: nil, action_condition: nil, parameters: [], action_orientation: :row, action_timing: :before, function: function }
 
   describe :initialize do
     it "instantiates a new trigger without raising an error" do
       expect {
-        table.add_trigger :trigger_name, event_manipulation: :insert, action_order: nil, action_condition: nil, parameters: nil, action_orientation: :row, action_timing: :before, function: function
+        table.add_trigger :trigger_name, event_manipulation: :insert, action_order: nil, action_condition: nil, parameters: [], action_orientation: :row, action_timing: :before, function: function
       }.to_not raise_error
     end
 
     it "causes a reference back to this trigger from the triggers function" do
-      trigger = table.add_trigger :trigger_name, event_manipulation: :insert, action_order: nil, action_condition: nil, parameters: nil, action_orientation: :row, action_timing: :before, function: function
+      trigger = table.add_trigger :trigger_name, event_manipulation: :insert, action_order: nil, action_condition: nil, parameters: [], action_orientation: :row, action_timing: :before, function: function
       expect(function.triggers).to eql [trigger]
     end
 
     describe "providing an optional description" do
       it "does not raise an error" do
         expect {
-          table.add_trigger :trigger_name, event_manipulation: :insert, action_order: nil, action_condition: nil, parameters: nil, action_orientation: :row, action_timing: :before, function: function, description: "foo bar"
+          table.add_trigger :trigger_name, event_manipulation: :insert, action_order: nil, action_condition: nil, parameters: [], action_orientation: :row, action_timing: :before, function: function, description: "foo bar"
         }.to_not raise_error
       end
 
       it "returns the expected value via a getter of the same name" do
-        trigger = table.add_trigger :trigger_name, event_manipulation: :insert, action_order: nil, action_condition: nil, parameters: nil, action_orientation: :row, action_timing: :before, function: function, description: "foo bar"
+        trigger = table.add_trigger :trigger_name, event_manipulation: :insert, action_order: nil, action_condition: nil, parameters: [], action_orientation: :row, action_timing: :before, function: function, description: "foo bar"
         expect(trigger.description).to eq "foo bar"
       end
     end
 
     it "raises an error if providing an invalid table" do
       expect {
-        DynamicMigrations::Postgres::Server::Database::Schema::Table::Trigger.new :configuration, :not_a_table, :trigger_name, event_manipulation: :insert, action_order: nil, action_condition: nil, parameters: nil, action_orientation: :row, action_timing: :before, function: function
+        DynamicMigrations::Postgres::Server::Database::Schema::Table::Trigger.new :configuration, :not_a_table, :trigger_name, event_manipulation: :insert, action_order: nil, action_condition: nil, parameters: [], action_orientation: :row, action_timing: :before, function: function
       }.to raise_error DynamicMigrations::Postgres::Server::Database::Schema::Table::Trigger::ExpectedTableError
     end
 
     it "raises an error if providing something other than a symbol for the trigger name" do
       expect {
-        table.add_trigger "invalid trigger name", event_manipulation: :insert, action_order: nil, action_condition: nil, parameters: nil, action_orientation: :row, action_timing: :before, function: function
+        table.add_trigger "invalid trigger name", event_manipulation: :insert, action_order: nil, action_condition: nil, parameters: [], action_orientation: :row, action_timing: :before, function: function
       }.to raise_error DynamicMigrations::ExpectedSymbolError
     end
 
     it "raises an error if providing an unexpected value for the event_manipulation" do
       expect {
-        table.add_trigger :trigger_name, event_manipulation: :unexpected_value, action_order: nil, action_condition: nil, parameters: nil, action_orientation: :row, action_timing: :before, function: function
+        table.add_trigger :trigger_name, event_manipulation: :unexpected_value, action_order: nil, action_condition: nil, parameters: [], action_orientation: :row, action_timing: :before, function: function
       }.to raise_error DynamicMigrations::Postgres::Server::Database::Schema::Table::Trigger::UnexpectedEventManipulationError
     end
 
     it "raises an error if providing an unexpected value for the action_order when the source of the trigger is the database" do
       expect {
-        DynamicMigrations::Postgres::Server::Database::Schema::Table::Trigger.new :database, table, :trigger_name, event_manipulation: :insert, action_order: :foo, action_condition: nil, parameters: nil, action_orientation: :row, action_timing: :before, function: function
+        DynamicMigrations::Postgres::Server::Database::Schema::Table::Trigger.new :database, table, :trigger_name, event_manipulation: :insert, action_order: :foo, action_condition: nil, parameters: [], action_orientation: :row, action_timing: :before, function: function
       }.to raise_error DynamicMigrations::Postgres::Server::Database::Schema::Table::Trigger::UnexpectedActionOrderError
     end
 
     it "raises an error if providing no value for the action_order when the source of the trigger is the database" do
       expect {
-        DynamicMigrations::Postgres::Server::Database::Schema::Table::Trigger.new :database, table, :trigger_name, event_manipulation: :insert, action_order: nil, action_condition: nil, parameters: nil, action_orientation: :row, action_timing: :before, function: function
+        DynamicMigrations::Postgres::Server::Database::Schema::Table::Trigger.new :database, table, :trigger_name, event_manipulation: :insert, action_order: nil, action_condition: nil, parameters: [], action_orientation: :row, action_timing: :before, function: function
       }.to raise_error DynamicMigrations::Postgres::Server::Database::Schema::Table::Trigger::UnexpectedActionOrderError
     end
 
     it "raises an error if providing a value for the action_order when the source of the trigger is the configuration" do
       expect {
-        table.add_trigger :trigger_name, event_manipulation: :insert, action_order: 1, action_condition: nil, parameters: nil, action_orientation: :row, action_timing: :before, function: function
+        table.add_trigger :trigger_name, event_manipulation: :insert, action_order: 1, action_condition: nil, parameters: [], action_orientation: :row, action_timing: :before, function: function
       }.to raise_error DynamicMigrations::Postgres::Server::Database::Schema::Table::Trigger::UnexpectedActionOrderError
     end
 
     it "raises an error if providing an unexpected value for the action_condition" do
       expect {
-        table.add_trigger :trigger_name, event_manipulation: :insert, action_order: nil, action_condition: 123, parameters: nil, action_orientation: :row, action_timing: :before, function: function
+        table.add_trigger :trigger_name, event_manipulation: :insert, action_order: nil, action_condition: 123, parameters: [], action_orientation: :row, action_timing: :before, function: function
       }.to raise_error DynamicMigrations::ExpectedStringError
     end
 
@@ -101,31 +101,31 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database::Schema::Table::Tri
 
     it "raises an error if providing an unexpected value for the action_orientation" do
       expect {
-        table.add_trigger :trigger_name, event_manipulation: :insert, action_order: nil, action_condition: nil, parameters: nil, action_orientation: :unexpected_value, action_timing: :before, function: function
+        table.add_trigger :trigger_name, event_manipulation: :insert, action_order: nil, action_condition: nil, parameters: [], action_orientation: :unexpected_value, action_timing: :before, function: function
       }.to raise_error DynamicMigrations::Postgres::Server::Database::Schema::Table::Trigger::UnexpectedActionOrientationError
     end
 
     it "raises an error if providing an unexpected value for the action_timing" do
       expect {
-        table.add_trigger :trigger_name, event_manipulation: :insert, action_order: nil, action_condition: nil, parameters: nil, action_orientation: :row, action_timing: :unexpected_value, function: function
+        table.add_trigger :trigger_name, event_manipulation: :insert, action_order: nil, action_condition: nil, parameters: [], action_orientation: :row, action_timing: :unexpected_value, function: function
       }.to raise_error DynamicMigrations::Postgres::Server::Database::Schema::Table::Trigger::UnexpectedActionTimingError
     end
 
     it "raises an error if providing an unexpected value for the function" do
       expect {
-        table.add_trigger :trigger_name, event_manipulation: :insert, action_order: nil, action_condition: nil, parameters: nil, action_orientation: :row, action_timing: :before, function: nil
+        table.add_trigger :trigger_name, event_manipulation: :insert, action_order: nil, action_condition: nil, parameters: [], action_orientation: :row, action_timing: :before, function: nil
       }.to raise_error DynamicMigrations::Postgres::Server::Database::Schema::Table::Trigger::ExpectedFunctionError
     end
 
     it "raises an error if providing an unexpected value for the action_reference_old_table" do
       expect {
-        table.add_trigger :trigger_name, event_manipulation: :insert, action_order: nil, action_condition: nil, parameters: nil, action_orientation: :row, action_timing: :before, function: function, action_reference_old_table: 123
+        table.add_trigger :trigger_name, event_manipulation: :insert, action_order: nil, action_condition: nil, parameters: [], action_orientation: :row, action_timing: :before, function: function, action_reference_old_table: 123
       }.to raise_error DynamicMigrations::Postgres::Server::Database::Schema::Table::Trigger::ExpectedOldRecordsTableError
     end
 
     it "raises an error if providing an unexpected value for the action_reference_new_table" do
       expect {
-        table.add_trigger :trigger_name, event_manipulation: :insert, action_order: nil, action_condition: nil, parameters: nil, action_orientation: :row, action_timing: :before, function: function, action_reference_new_table: 123
+        table.add_trigger :trigger_name, event_manipulation: :insert, action_order: nil, action_condition: nil, parameters: [], action_orientation: :row, action_timing: :before, function: function, action_reference_new_table: 123
       }.to raise_error DynamicMigrations::Postgres::Server::Database::Schema::Table::Trigger::ExpectedNewRecordsTableError
     end
   end
@@ -173,28 +173,28 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database::Schema::Table::Tri
     end
   end
 
-  describe :parameters= do
-    it "allows updating the parameters" do
-      trigger.parameters = "'updated', 'parameters'"
-      expect(trigger.parameters).to eq("'updated', 'parameters'")
+  describe :add_parameter do
+    it "allows adding to the list of parameters" do
+      trigger.add_parameter "new_param"
+      expect(trigger.parameters).to eql(["new_param"])
     end
 
     it "raises an error if providing an invalid parameters" do
       expect {
-        trigger.parameters = 123
-      }.to raise_error DynamicMigrations::ExpectedStringError
+        trigger.add_parameter 123
+      }.to raise_error DynamicMigrations::Postgres::Server::Database::Schema::Table::Trigger::UnexpectedParametersError
     end
   end
 
   describe :parameters do
-    it "returns nil because no parameters were provided at initialization" do
-      expect(trigger.parameters).to eq(nil)
+    it "returns an empy array because no parameters were provided at initialization" do
+      expect(trigger.parameters).to eq([])
     end
 
     describe "when parameters were provided at initialization" do
-      let(:trigger_with_parameters) { table.add_trigger :trigger_name, event_manipulation: :insert, action_order: nil, action_condition: nil, parameters: "'param', 'param2'", action_orientation: :row, action_timing: :before, function: function }
+      let(:trigger_with_parameters) { table.add_trigger :trigger_name, event_manipulation: :insert, action_order: nil, action_condition: nil, parameters: ["param", "param2"], action_orientation: :row, action_timing: :before, function: function }
       it "returns the expected parameters" do
-        expect(trigger_with_parameters.parameters).to eq("'param', 'param2'")
+        expect(trigger_with_parameters.parameters).to eql(["param", "param2"])
       end
     end
   end
@@ -225,7 +225,7 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database::Schema::Table::Tri
     end
 
     describe "when a action_reference_old_table was provided at initialization" do
-      let(:trigger_with_action_reference_old_table) { table.add_trigger :trigger_name, event_manipulation: :insert, action_order: nil, action_condition: nil, parameters: nil, action_orientation: :row, action_timing: :before, function: function, action_reference_old_table: :old_records }
+      let(:trigger_with_action_reference_old_table) { table.add_trigger :trigger_name, event_manipulation: :insert, action_order: nil, action_condition: nil, parameters: [], action_orientation: :row, action_timing: :before, function: function, action_reference_old_table: :old_records }
       it "returns the expected action_reference_old_table" do
         expect(trigger_with_action_reference_old_table.action_reference_old_table).to eq(:old_records)
       end
@@ -240,7 +240,7 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database::Schema::Table::Tri
     end
 
     describe "when a action_reference_new_table was provided at initialization" do
-      let(:trigger_with_action_reference_new_table) { table.add_trigger :trigger_name, event_manipulation: :insert, action_order: nil, action_condition: nil, parameters: nil, action_orientation: :row, action_timing: :before, function: function, action_reference_new_table: :new_records }
+      let(:trigger_with_action_reference_new_table) { table.add_trigger :trigger_name, event_manipulation: :insert, action_order: nil, action_condition: nil, parameters: [], action_orientation: :row, action_timing: :before, function: function, action_reference_new_table: :new_records }
       it "returns the expected action_reference_new_table" do
         expect(trigger_with_action_reference_new_table.action_reference_new_table).to eq(:new_records)
       end
@@ -255,7 +255,7 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database::Schema::Table::Tri
     end
 
     describe "when a description was provided at initialization" do
-      let(:trigger_with_description) { table.add_trigger :trigger_name, event_manipulation: :insert, action_order: nil, action_condition: nil, parameters: nil, action_orientation: :row, action_timing: :before, function: function, description: "foo bar" }
+      let(:trigger_with_description) { table.add_trigger :trigger_name, event_manipulation: :insert, action_order: nil, action_condition: nil, parameters: [], action_orientation: :row, action_timing: :before, function: function, description: "foo bar" }
       it "returns the expected description" do
         expect(trigger_with_description.description).to eq("foo bar")
       end
@@ -270,7 +270,7 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database::Schema::Table::Tri
     end
 
     describe "when a description was provided at initialization" do
-      let(:trigger_with_description) { table.add_trigger :trigger_name, event_manipulation: :insert, action_order: nil, action_condition: nil, parameters: nil, action_orientation: :row, action_timing: :before, function: function, description: "foo bar" }
+      let(:trigger_with_description) { table.add_trigger :trigger_name, event_manipulation: :insert, action_order: nil, action_condition: nil, parameters: [], action_orientation: :row, action_timing: :before, function: function, description: "foo bar" }
       it "returns true" do
         expect(trigger_with_description.has_description?).to be(true)
       end
@@ -280,7 +280,7 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database::Schema::Table::Tri
   describe :differences_descriptions do
     describe "when compared to a trigger which has a different event_manipulation" do
       let(:table2) { DynamicMigrations::Postgres::Server::Database::Schema::Table.new :configuration, schema, :my_table }
-      let(:different_trigger) { table2.add_trigger :trigger_name, event_manipulation: :update, action_order: nil, action_condition: nil, parameters: nil, action_orientation: :row, action_timing: :before, function: function }
+      let(:different_trigger) { table2.add_trigger :trigger_name, event_manipulation: :update, action_order: nil, action_condition: nil, parameters: [], action_orientation: :row, action_timing: :before, function: function }
 
       it "returns the expected array which describes the differences" do
         expect(trigger.differences_descriptions(different_trigger)).to eql([
@@ -291,7 +291,7 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database::Schema::Table::Tri
 
     describe "when compared to a trigger which has a different function" do
       let(:table2) { DynamicMigrations::Postgres::Server::Database::Schema::Table.new :configuration, schema, :my_table }
-      let(:different_trigger) { table2.add_trigger :trigger_name, event_manipulation: :insert, action_order: nil, action_condition: nil, parameters: nil, action_orientation: :row, action_timing: :before, function: function2 }
+      let(:different_trigger) { table2.add_trigger :trigger_name, event_manipulation: :insert, action_order: nil, action_condition: nil, parameters: [], action_orientation: :row, action_timing: :before, function: function2 }
 
       it "returns the expected array which describes the differences" do
         expect(trigger.differences_descriptions(different_trigger)).to eql([

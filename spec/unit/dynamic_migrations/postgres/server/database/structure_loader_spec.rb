@@ -90,14 +90,16 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database do
                               null: true,
                               description: nil,
                               data_type: :integer,
-                              interval_type: nil
+                              interval_type: nil,
+                              is_enum: false
                             },
                             my_second_column: {
                               default: nil,
                               null: true,
                               description: nil,
                               data_type: :integer,
-                              interval_type: nil
+                              interval_type: nil,
+                              is_enum: false
                             }
                           }
                         }
