@@ -87,7 +87,6 @@ require "dynamic_migrations/postgres/generator/schema_migration"
 require "dynamic_migrations/postgres/generator/table_migration"
 require "dynamic_migrations/postgres/generator/migration_dependency_sorter"
 
-require "dynamic_migrations/active_record/migrators/schema"
 require "dynamic_migrations/active_record/migrators/validation"
 require "dynamic_migrations/active_record/migrators/foreign_key_constraint"
 require "dynamic_migrations/active_record/migrators/unique_constraint"

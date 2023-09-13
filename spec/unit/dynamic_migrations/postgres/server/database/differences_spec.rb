@@ -35,7 +35,7 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database::Differences do
       it "returns the expected migrations" do
         expect(differences.to_migrations).to eql([
           {
-            schema_name: :my_schema,
+            schema_name: nil,
             name: :create_my_schema_schema,
             content: <<~RUBY.strip
               #

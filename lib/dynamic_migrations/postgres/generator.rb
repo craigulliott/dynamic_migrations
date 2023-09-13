@@ -72,10 +72,11 @@ module DynamicMigrations
             schema_migration = schema_migrations[:schema_migration] ||= SchemaMigration.new(schema_name)
             schema_migration.add_fragment fragment
 
-            # migrations with no schema or table, are added to a database
-            # migration (these re really just creating/dropping extensions)
+          # migrations with no schema or table, are added to a database
+          # migration (these are really just creating/dropping schemas and extensions)
           elsif schema_name.nil? && table_name.nil?
             database_specific_migration.add_fragment fragment
+
           else
             raise UnprocessableFragmentError
           end

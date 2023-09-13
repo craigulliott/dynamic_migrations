@@ -6,7 +6,6 @@ module DynamicMigrations
     module Migrators
       self.@current_schema: nil
 
-      include Schema
       include Validation
       include ForeignKeyConstraint
       include Column

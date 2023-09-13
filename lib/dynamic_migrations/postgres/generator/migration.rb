@@ -144,10 +144,10 @@ module DynamicMigrations
           raise NoFragmentsError if fragments.empty?
 
           if fragments_for_method? :create_schema
-            :"create_#{first_fragment_using_migration_method(:create_schema).schema_name}_schema"
+            :"create_#{fragments.first&.object_name}_schema"
 
           elsif fragments_for_method? :drop_schema
-            :"drop_#{first_fragment_using_migration_method(:drop_schema).schema_name}_schema"
+            :"drop_#{fragments.first&.object_name}_schema"
 
           elsif fragments_for_method? :create_table
             :"create_#{first_fragment_using_migration_method(:create_table).table_name}"
@@ -164,11 +164,11 @@ module DynamicMigrations
           elsif all_fragments_for_method? [:create_enum, :add_enum_values, :drop_enum, :set_enum_comment, :remove_enum_comment]
             :enums
 
-          elsif all_fragments_for_method? [:create_extension]
-            (@fragments.count > 1) ? :create_extensions : :"create_#{fragments.first&.object_name}_extension"
+          elsif all_fragments_for_method? [:enable_extension]
+            (@fragments.count > 1) ? :enable_extensions : :"create_#{fragments.first&.object_name}_extension"
 
-          elsif all_fragments_for_method? [:drop_extension]
-            (@fragments.count > 1) ? :drop_extensions : :"drop_#{fragments.first&.object_name}_extension"
+          elsif all_fragments_for_method? [:disable_extension]
+            (@fragments.count > 1) ? :disable_extensions : :"drop_#{fragments.first&.object_name}_extension"
 
           elsif @fragments.first&.table_name
             :"changes_for_#{@fragments.first&.table_name}"

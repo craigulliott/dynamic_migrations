@@ -21,7 +21,6 @@ module DynamicMigrations
       class MissingFunctionBlockError < StandardError
       end
 
-      include Schema
       include Validation
       include ForeignKeyConstraint
       include Table

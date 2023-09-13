@@ -16,7 +16,7 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database::Differences::ToMig
 
         it "returns the migration to create it" do
           expect(to_migrations.migrations).to eql([{
-            schema_name: :my_schema,
+            schema_name: nil,
             name: :create_my_schema_schema,
             content: <<~RUBY.strip
               #
@@ -45,7 +45,7 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database::Differences::ToMig
 
         it "returns the migration to delete it, because the configured does not have it" do
           expect(to_migrations.migrations).to eql([{
-            schema_name: :my_schema,
+            schema_name: nil,
             name: :drop_my_schema_schema,
             content: <<~RUBY.strip
               #

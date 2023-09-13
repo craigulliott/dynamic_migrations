@@ -3,8 +3,8 @@ module DynamicMigrations
     class Generator
       module Schema
         def create_schema schema, code_comment = nil
-          add_fragment schema: schema,
-            migration_method: :create_schema,
+          # no table or schema name for this fragment (it is executed at the database level)
+          add_fragment migration_method: :create_schema,
             object: schema,
             code_comment: code_comment,
             migration: <<~RUBY
@@ -13,8 +13,8 @@ module DynamicMigrations
         end
 
         def drop_schema schema, code_comment = nil
-          add_fragment schema: schema,
-            migration_method: :drop_schema,
+          # no table or schema name for this fragment (it is executed at the database level)
+          add_fragment migration_method: :drop_schema,
             object: schema,
             code_comment: code_comment,
             migration: <<~RUBY

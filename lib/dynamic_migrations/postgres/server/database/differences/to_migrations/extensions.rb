@@ -12,13 +12,13 @@ module DynamicMigrations
                 # then we have to create it
                 if configuration_extension[:exists] == true && !database_extension[:exists]
                   # a migration to create the extension
-                  @generator.create_extension extension_name
+                  @generator.enable_extension extension_name
 
                 # if the extension exists in the database but not in the configuration
                 # then we need to delete it
                 elsif database_extension[:exists] == true && !configuration_extension[:exists]
                   # a migration to drop the extension
-                  @generator.drop_extension extension_name
+                  @generator.disable_extension extension_name
                 end
               end
             end

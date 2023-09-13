@@ -213,7 +213,7 @@ RSpec.describe DynamicMigrations::Postgres::Generator::Migration do
 
       describe "if a fragment which creates a schema has been added" do
         let(:migration) { DynamicMigrations::Postgres::Generator::Migration.new :my_schema, nil }
-        let(:fragment) { DynamicMigrations::Postgres::Generator::Fragment.new :my_schema, nil, :create_schema, :my_object, "my comment", "my content" }
+        let(:fragment) { DynamicMigrations::Postgres::Generator::Fragment.new :my_schema, nil, :create_schema, :my_schema, "my comment", "my content" }
 
         before(:each) do
           migration_class.add_structure_template [:create_schema], "my header"
