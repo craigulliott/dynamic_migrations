@@ -1,5 +1,13 @@
 # Changelog
 
+## [3.6.11](https://github.com/craigulliott/dynamic_migrations/compare/v3.6.10...v3.6.11) (2023-09-13)
+
+
+### Bug Fixes
+
+* injecting dependent_function into templated triggers ([9e770a3](https://github.com/craigulliott/dynamic_migrations/commit/9e770a352b176c7b10471e9185ac01feca538c0c))
+* writing enums to the migration files as arrays of strings for more compatibility with special characters ([1910e0f](https://github.com/craigulliott/dynamic_migrations/commit/1910e0f709e5bd560696c2e2b3bd729c7a61e319))
+
 ## [3.6.10](https://github.com/craigulliott/dynamic_migrations/compare/v3.6.9...v3.6.10) (2023-09-13)
 
 
