@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.6.3](https://github.com/craigulliott/dynamic_migrations/compare/v3.6.2...v3.6.3) (2023-09-13)
+
+
+### Bug Fixes
+
+* passing correct type when generating column migrations ([e345d56](https://github.com/craigulliott/dynamic_migrations/commit/e345d56cdb11bb965c71c251d82ce2087b416f47))
+
 ## [3.6.2](https://github.com/craigulliott/dynamic_migrations/compare/v3.6.1...v3.6.2) (2023-09-13)
 
 
