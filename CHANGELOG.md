@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.6.6](https://github.com/craigulliott/dynamic_migrations/compare/v3.6.5...v3.6.6) (2023-09-13)
+
+
+### Bug Fixes
+
+* column_name and data_type were presented in the wrong order ([e58f8df](https://github.com/craigulliott/dynamic_migrations/commit/e58f8df7d2acabc8a64f760d6ababe218a23928d))
+
 ## [3.6.5](https://github.com/craigulliott/dynamic_migrations/compare/v3.6.4...v3.6.5) (2023-09-13)
 
 
