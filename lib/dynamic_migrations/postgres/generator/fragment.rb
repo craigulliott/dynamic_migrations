@@ -2,6 +2,9 @@ module DynamicMigrations
   module Postgres
     class Generator
       class Fragment
+        class InvalidNameError < StandardError
+        end
+
         attr_reader :schema_name
         attr_reader :table_name
         attr_reader :migration_method
@@ -12,10 +15,24 @@ module DynamicMigrations
         attr_reader :dependency_enum_name
 
         def initialize schema_name, table_name, migration_method, object_name, code_comment, content
+          valid_name_regex = /\A[a-z][a-z0-9]+(_[a-z0-9]+)*\z/
+
+          unless schema_name.nil? || (schema_name.to_s.match valid_name_regex)
+            raise InvalidNameError, "Invalid schema name `#{schema_name}`, must only be lowercase letters, numbers and underscores"
+          end
           @schema_name = schema_name
+
+          unless table_name.nil? || (table_name.to_s.match valid_name_regex)
+            raise InvalidNameError, "Invalid table name `#{table_name}`, must only be lowercase letters, numbers and underscores"
+          end
           @table_name = table_name
-          @migration_method = migration_method
+
+          unless object_name.to_s.match valid_name_regex
+            raise InvalidNameError, "Invalid object name `#{object_name}`, must only be lowercase letters, numbers and underscores"
+          end
           @object_name = object_name
+
+          @migration_method = migration_method
           @code_comment = code_comment
           @content = content
         end

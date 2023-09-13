@@ -37,6 +37,9 @@ module DynamicMigrations
         def set_dependent_enum: (Symbol schema_name, Symbol enum_name) -> void
 
         def dependency_type: -> (nil | :function | :table | :enum)
+
+        class InvalidNameError < StandardError
+        end
       end
     end
   end

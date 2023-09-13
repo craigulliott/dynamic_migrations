@@ -14,10 +14,10 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database::Differences::ToMig
           database.add_configured_extension :my_extension
         end
 
-        it "returns the migration to create it" do
+        it "returns the migration to enable it" do
           expect(to_migrations.migrations).to eql([{
             schema_name: nil,
-            name: :create_my_extension_extension,
+            name: :enable_my_extension_extension,
             content: <<~RUBY.strip
               #
               # Create Extension
@@ -46,7 +46,7 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database::Differences::ToMig
         it "returns the migration to delete it, because the configured does not have it" do
           expect(to_migrations.migrations).to eql([{
             schema_name: nil,
-            name: :drop_my_extension_extension,
+            name: :disable_my_extension_extension,
             content: <<~RUBY.strip
               #
               # Drop Extension

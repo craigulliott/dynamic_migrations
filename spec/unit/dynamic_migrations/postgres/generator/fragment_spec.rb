@@ -9,6 +9,12 @@ RSpec.describe DynamicMigrations::Postgres::Generator::Fragment do
         DynamicMigrations::Postgres::Generator::Fragment.new :my_schema, :my_table, :add_index, :my_object, "my comment", "my content"
       }.not_to raise_error
     end
+
+    it "raises an error for an invalid object name" do
+      expect {
+        DynamicMigrations::Postgres::Generator::Fragment.new :my_schema, :my_table, :add_index, :"my-object", "my comment", "my content"
+      }.to raise_error DynamicMigrations::Postgres::Generator::Fragment::InvalidNameError
+    end
   end
 
   describe :schema_name do

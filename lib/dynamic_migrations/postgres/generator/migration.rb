@@ -181,10 +181,10 @@ module DynamicMigrations
             :enums
 
           elsif all_fragments_for_method? [:enable_extension]
-            (@fragments.count > 1) ? :enable_extensions : :"create_#{fragments.first&.object_name}_extension"
+            (@fragments.count > 1) ? :enable_extensions : :"enable_#{fragments.first&.object_name}_extension"
 
           elsif all_fragments_for_method? [:disable_extension]
-            (@fragments.count > 1) ? :disable_extensions : :"drop_#{fragments.first&.object_name}_extension"
+            (@fragments.count > 1) ? :disable_extensions : :"disable_#{fragments.first&.object_name}_extension"
 
           elsif @fragments.first&.table_name
             :"changes_for_#{@fragments.first&.table_name}"
