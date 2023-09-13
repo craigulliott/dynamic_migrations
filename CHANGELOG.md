@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.6.4](https://github.com/craigulliott/dynamic_migrations/compare/v3.6.3...v3.6.4) (2023-09-13)
+
+
+### Bug Fixes
+
+* using active records standard disable/enable_extension, and create/drop schema methods ([4a73e5c](https://github.com/craigulliott/dynamic_migrations/commit/4a73e5c2d6642bdd9c5f61164a044bbed9032da9))
+
 ## [3.6.3](https://github.com/craigulliott/dynamic_migrations/compare/v3.6.2...v3.6.3) (2023-09-13)
 
 
