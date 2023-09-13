@@ -12,7 +12,7 @@ module DynamicMigrations
         def initialize: (untyped validation, untyped code_comment) -> void
 
         # abstract method (should actually be added to child classes)
-        def fragment_arguments: -> {schema: Postgres::Server::Database::Schema, table: Postgres::Server::Database::Schema::Table, migration_method: :add_validation, object: Postgres::Server::Database::Schema::Table::Validation, code_comment: String?, migration: String}
+        def fragment_arguments: -> {schema: Postgres::Server::Database::Schema, table: Postgres::Server::Database::Schema::Table, migration_method: Symbol, object: untyped, code_comment: String?, migration: String, dependent_function: Postgres::Server::Database::Schema::Function?}
 
         private
         def assert_not_deferred!: -> nil

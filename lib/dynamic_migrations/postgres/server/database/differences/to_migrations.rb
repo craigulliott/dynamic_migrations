@@ -50,7 +50,7 @@ module DynamicMigrations
                 process_schema schema_name, differences[:configuration][:schemas][schema_name], differences[:database][:schemas][schema_name]
               end
 
-              # return the migrations organized by schema
+              # return the migrations (they are sorted via a dependency algorithm)
               @generator.migrations
             end
 

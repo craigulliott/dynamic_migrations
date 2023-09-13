@@ -32,7 +32,15 @@ module DynamicMigrations
             end
 
             arguments = template_class.new(trigger, code_comment).fragment_arguments
-            add_fragment(**arguments)
+
+            # we only provide a dependent function if the function has more than one trigger
+            # or is in a different schema, otherwise it is added to the same migration as this
+            # trigger and we don't need to worry about dependencies
+            if trigger.function && (trigger.function.triggers.count > 1 || trigger.table.schema != trigger.function.schema)
+              add_fragment(dependent_function: trigger.function, **arguments)
+            else
+              add_fragment(**arguments)
+            end
 
           # no template, process this as a default trigger (takes all options)
           else
