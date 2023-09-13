@@ -1,5 +1,14 @@
 # Changelog
 
+## [3.6.8](https://github.com/craigulliott/dynamic_migrations/compare/v3.6.7...v3.6.8) (2023-09-13)
+
+
+### Bug Fixes
+
+* dependency resolution is now aware of functions, enums and works across schemas. ([460de82](https://github.com/craigulliott/dynamic_migrations/commit/460de828be1826930bc1b185cf2a4c4e354d7dad))
+* enum columns now accept an enum object ([460de82](https://github.com/craigulliott/dynamic_migrations/commit/460de828be1826930bc1b185cf2a4c4e354d7dad))
+* trigger parameters is now an array of strings ([460de82](https://github.com/craigulliott/dynamic_migrations/commit/460de828be1826930bc1b185cf2a4c4e354d7dad))
+
 ## [3.6.7](https://github.com/craigulliott/dynamic_migrations/compare/v3.6.6...v3.6.7) (2023-09-13)
 
 
