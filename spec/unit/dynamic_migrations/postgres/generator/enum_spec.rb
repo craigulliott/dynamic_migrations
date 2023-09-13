@@ -17,8 +17,8 @@ RSpec.describe DynamicMigrations::Postgres::Generator do
         it "should return the expected ruby syntax to add a enum" do
           expect(generator.create_enum(enum).to_s).to eq <<~RUBY.strip
             create_enum :my_enum, [
-              :foo,
-              :bar
+              "foo",
+              "bar"
             ]
           RUBY
         end
@@ -35,7 +35,7 @@ RSpec.describe DynamicMigrations::Postgres::Generator do
         it "should return the expected ruby syntax to update a enum" do
           expect(generator.update_enum(original_enum, updated_enum).to_s).to eq <<~RUBY.strip
             add_enum_values :my_enum, [
-              :baz
+              "baz"
             ]
           RUBY
         end

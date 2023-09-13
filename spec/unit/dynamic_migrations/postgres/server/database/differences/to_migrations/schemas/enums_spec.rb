@@ -34,8 +34,8 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database::Differences::ToMig
                   # Enums
                   #
                   create_enum :my_enum, [
-                    :foo,
-                    :bar
+                    "foo",
+                    "bar"
                   ]
                 RUBY
               }
@@ -56,7 +56,7 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database::Differences::ToMig
                   # Enums
                   #
                   add_enum_values :my_enum, [
-                    :foo
+                    "foo"
                   ]
                 RUBY
               }])
@@ -89,8 +89,8 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database::Differences::ToMig
                   # Enums
                   #
                   create_enum :my_enum, [
-                    :foo,
-                    :bar
+                    "foo",
+                    "bar"
                   ]
 
                   set_enum_comment :my_enum, <<~COMMENT
@@ -136,7 +136,7 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database::Differences::ToMig
                   # Enums
                   #
                   add_enum_values :my_enum, [
-                    :bar
+                    "bar"
                   ]
 
                   set_enum_comment :my_enum, <<~COMMENT

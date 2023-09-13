@@ -21,7 +21,7 @@ module DynamicMigrations
             code_comment: code_comment,
             migration: <<~RUBY
               create_enum :#{enum.name}, [
-                :#{enum.values.join(",\n  :")}
+                "#{enum.values.join("\",\n  \"")}"
               ]
             RUBY
         end
@@ -40,7 +40,7 @@ module DynamicMigrations
             code_comment: code_comment,
             migration: <<~RUBY
               add_enum_values :#{updated_enum.name}, [
-                :#{added_values.join(",\n  :")}
+                "#{added_values.join("\",\n  \"")}"
               ]
             RUBY
         end

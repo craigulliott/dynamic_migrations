@@ -253,8 +253,8 @@ RSpec.describe DynamicMigrations::Postgres::Generator do
             # Enums
             #
             create_enum :my_enum, [
-              :foo,
-              :bar
+              "foo",
+              "bar"
             ]
 
             #
