@@ -31,19 +31,24 @@ module DynamicMigrations
       include Trigger
       include Enum
 
-      # The schema name should be set before the migrations for
-      # each schema's migrations are run. This is done by:
-      # DynamicMigrations::ActiveRecord::Migrators.set_schema_name :schema_name
-      def self.schema_name
-        @current_schema
+      def self.included(base)
+        base.extend(ClassMethods)
       end
 
-      def self.set_schema_name schema_name
-        @current_schema = schema_name.to_sym
-      end
+      module ClassMethods
+        # The schema name should be set on the migration class before the migration
+        # is run
+        def schema_name
+          @current_schema
+        end
 
-      def self.clear_schema_name
-        @current_schema = nil
+        def set_schema_name schema_name
+          @current_schema = schema_name.to_sym
+        end
+
+        def clear_schema_name
+          @current_schema = nil
+        end
       end
 
       def quote string
@@ -52,7 +57,7 @@ module DynamicMigrations
 
       # this method is made available on the final migration class
       def schema_name
-        sn = Migrators.schema_name
+        sn = self.class.schema_name
         if sn.nil?
           raise SchemaNameNotSetError
         end

@@ -1,11 +1,6 @@
-# TypeProf 0.21.7
-
-# Classes
 module DynamicMigrations
   module ActiveRecord
     module Migrators
-      self.@current_schema: nil
-
       include Validation
       include ForeignKeyConstraint
       include Column
@@ -14,11 +9,10 @@ module DynamicMigrations
       include Function
       include Trigger
 
-      def self.schema_name: -> nil
-      def self.set_schema_name: (untyped schema_name) -> untyped
-      def self.clear_schema_name: -> nil
-      def self.included: (untyped klass) -> untyped
-      def schema_name: -> nil
+      def self.included: (untyped base) -> void
+      def quote: (untyped string) -> String
+      def schema_name: -> Symbol
+      def self.schema_name: -> Symbol
 
       # this methods comes from active record once the module has been included
       def connection: -> untyped
@@ -30,6 +24,14 @@ module DynamicMigrations
       end
 
       class MissingFunctionBlockError < StandardError
+      end
+
+      module ClassMethods
+        @current_schema: Symbol?
+
+        def schema_name: -> Symbol?
+        def set_schema_name: (untyped schema_name) -> void
+        def clear_schema_name: -> void
       end
     end
   end

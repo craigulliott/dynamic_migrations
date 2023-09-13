@@ -23,13 +23,9 @@ RSpec.describe DynamicMigrations::ActiveRecord::Migrators do
         }.to raise_error DynamicMigrations::ActiveRecord::Migrators::SchemaNameNotSetError
       end
 
-      describe "once the schema_name has been set on the module" do
+      describe "once the schema_name has been set on the migration class" do
         before(:each) do
-          DynamicMigrations::ActiveRecord::Migrators.set_schema_name :public
-        end
-
-        after(:each) do
-          DynamicMigrations::ActiveRecord::Migrators.clear_schema_name
+          migration_class.set_schema_name :public
         end
 
         it "returns the schema name" do

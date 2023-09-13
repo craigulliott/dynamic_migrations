@@ -25,13 +25,9 @@ RSpec.describe DynamicMigrations::ActiveRecord::Migrators do
     let(:migration) { migration_class.new }
 
     describe :Enum do
-      describe "once the schema_name has been set on the module" do
+      describe "once the schema_name has been set on the migration class" do
         before(:each) do
-          DynamicMigrations::ActiveRecord::Migrators.set_schema_name :my_schema
-        end
-
-        after(:each) do
-          DynamicMigrations::ActiveRecord::Migrators.clear_schema_name
+          migration_class.set_schema_name :my_schema
         end
 
         describe :create_enum do
