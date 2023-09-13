@@ -26,7 +26,7 @@ module DynamicMigrations
 
                     # we process everything else after we create the table, because the other
                     # database objects are dependent on the table
-                    process_dependents schema_name, table_name, configuration_table, {}
+                    process_dependents schema_name, table_name, configuration_table, {}, skip_columns: true
 
                   # If the schema exists in the database but not in the configuration
                   # then we need to delete it.
@@ -60,8 +60,11 @@ module DynamicMigrations
                   end
                 end
 
-                def process_dependents schema_name, table_name, configuration_table, database_table
-                  process_columns schema_name, table_name, configuration_table[:columns] || {}, database_table[:columns] || {}
+                def process_dependents schema_name, table_name, configuration_table, database_table, skip_columns: false
+                  # we skip columns if we are processing the table for the first time, as they are processed within the table creation
+                  unless skip_columns
+                    process_columns schema_name, table_name, configuration_table[:columns] || {}, database_table[:columns] || {}
+                  end
                   process_foreign_key_constraints schema_name, table_name, configuration_table[:foreign_key_constraints] || {}, database_table[:foreign_key_constraints] || {}
                   process_indexes schema_name, table_name, configuration_table[:indexes] || {}, database_table[:indexes] || {}
                   process_triggers schema_name, table_name, configuration_table[:triggers] || {}, database_table[:triggers] || {}
