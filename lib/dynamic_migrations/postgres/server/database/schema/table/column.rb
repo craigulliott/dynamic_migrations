@@ -50,8 +50,8 @@ module DynamicMigrations
                   unless enum.is_a? Enum
                     raise UnexpectedEnumError, "#{enum} is not a valid enum"
                   end
-                  unless @data_type == enum.name || @data_type == "#{enum.name}[]"
-                    raise UnexpectedEnumError, "enum `#{enum.name}` does not match this column's data type `#{@data_type}`"
+                  unless @data_type == enum.full_name || @data_type == "#{enum.full_name}[]"
+                    raise UnexpectedEnumError, "enum `#{enum.full_name}` does not match this column's data type `#{@data_type}`"
                   end
                   @enum = enum
                 end

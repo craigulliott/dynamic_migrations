@@ -112,7 +112,7 @@ RSpec.describe DynamicMigrations::Postgres::Generator do
 
       describe "for a table with one varchar and one enum column" do
         before(:each) do
-          table.add_column :foo, :my_enum, enum: enum, null: false, description: "Comment for this column"
+          table.add_column :foo, :"my_schema.my_enum", enum: enum, null: false, description: "Comment for this column"
           table.add_column :bar, :varchar, null: false, description: "Comment for this column"
         end
 
@@ -128,7 +128,7 @@ RSpec.describe DynamicMigrations::Postgres::Generator do
             end
           RUBY
           add_column = <<~RUBY.strip
-            add_column :my_table, :foo, :my_enum, null: false, comment: <<~COMMENT
+            add_column :my_table, :foo, "my_schema.my_enum", null: false, comment: <<~COMMENT
               Comment for this column
             COMMENT
           RUBY

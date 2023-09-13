@@ -87,7 +87,7 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database::Schema::Table::Col
     end
 
     describe "when an enum data type was provided at initialization" do
-      let(:enum_column) { DynamicMigrations::Postgres::Server::Database::Schema::Table::Column.new :configuration, table, :my_column, :my_enum, enum: enum, description: "a valid description of my column" }
+      let(:enum_column) { DynamicMigrations::Postgres::Server::Database::Schema::Table::Column.new :configuration, table, :my_column, :"my_schema.my_enum", enum: enum, description: "a valid description of my column" }
       it "returns the expected enum" do
         expect(enum_column.enum).to be enum
       end

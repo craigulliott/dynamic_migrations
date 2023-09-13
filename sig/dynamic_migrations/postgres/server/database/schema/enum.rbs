@@ -12,6 +12,7 @@ module DynamicMigrations
             attr_reader values: Array[Symbol]
             attr_reader description: String?
             def initialize: (database_or_configuration source, Schema schema, Symbol name, Array[Symbol] values, ?description: String?) -> void
+            def full_name: -> Symbol
             def has_description?: -> bool
             def differences_descriptions: (Enum other_enum) -> Array[String]
 

@@ -67,6 +67,12 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database::Schema::Enum do
     end
   end
 
+  describe :full_name do
+    it "returns the expected full_name" do
+      expect(enum.full_name).to eq(:"my_schema.my_enum")
+    end
+  end
+
   describe :values do
     it "returns the expected values" do
       expect(enum.values).to eql [:foo, :bar]

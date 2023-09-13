@@ -52,6 +52,10 @@ module DynamicMigrations
                 :values
               ]
             end
+
+            def full_name
+              :"#{schema.name}.#{name}"
+            end
           end
         end
       end
