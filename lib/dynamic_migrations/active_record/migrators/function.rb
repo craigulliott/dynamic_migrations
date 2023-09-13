@@ -9,7 +9,7 @@ module DynamicMigrations
         end
 
         # create a postgres function
-        def create_function table_name, function_name, comment: nil, &block
+        def create_function function_name, comment: nil, &block
           unless block
             raise MissingFunctionBlockError, "create_function requires a block"
           end
@@ -30,7 +30,7 @@ module DynamicMigrations
         end
 
         # update a postgres function
-        def update_function table_name, function_name, comment: nil, &block
+        def update_function function_name, comment: nil, &block
           unless block
             raise MissingFunctionBlockError, "create_function requires a block"
           end

@@ -32,7 +32,7 @@ RSpec.describe DynamicMigrations::ActiveRecord::Migrators do
 
         describe :create_function do
           it "generates the expected sql" do
-            migration.create_function :my_table, :my_function do
+            migration.create_function :my_function do
               <<~SQL
                 BEGIN
                   NEW.column = 0;
@@ -52,14 +52,14 @@ RSpec.describe DynamicMigrations::ActiveRecord::Migrators do
 
           it "raises an error if the block is ommited" do
             expect {
-              migration.create_function :my_table, :my_function
+              migration.create_function :my_function
             }.to raise_error DynamicMigrations::ActiveRecord::Migrators::Function::MissingFunctionBlockError
           end
         end
 
         describe :update_function do
           it "generates the expected sql" do
-            migration.update_function :my_table, :my_function do
+            migration.update_function :my_function do
               <<~SQL
                 BEGIN
                   NEW.column = 0;
