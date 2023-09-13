@@ -5,6 +5,12 @@ module DynamicMigrations
   module Postgres
     class Generator
       module Validation
+        self.@templates: Hash[Symbol, singleton(ValidationTemplateBase)]
+
+        def self.template: (Symbol template_name) -> singleton(ValidationTemplateBase)
+        def self.has_template?: (Symbol template_name) -> bool
+        def self.add_template: (Symbol template_name, singleton(ValidationTemplateBase) template_class) -> void
+
         def add_validation: (Postgres::Server::Database::Schema::Table::Validation validation, ?String? code_comment) -> Fragment
         def remove_validation: (Postgres::Server::Database::Schema::Table::Validation validation, ?String? code_comment) -> Fragment
         def recreate_validation: (Postgres::Server::Database::Schema::Table::Validation original_validation, Postgres::Server::Database::Schema::Table::Validation updated_validation) -> Array[Fragment]
@@ -15,7 +21,13 @@ module DynamicMigrations
         def add_fragment: (migration_method: Symbol, object: untyped, migration: String, ?schema: Server::Database::Schema?, ?table: Server::Database::Schema::Table?, ?code_comment: String?, ?dependent_table: Server::Database::Schema::Table?) -> untyped
 
         def indent: (String migration, ?Integer levels) -> String
+
+        class UnexpectedTemplateError < StandardError
         end
+
+        class TemplateAlreadyExistsError < StandardError
+        end
+      end
     end
   end
 end

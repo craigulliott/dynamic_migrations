@@ -2,62 +2,96 @@ module DynamicMigrations
   module Postgres
     class Generator
       module Trigger
+        class UnexpectedTemplateError < StandardError
+        end
+
+        class TemplateAlreadyExistsError < StandardError
+        end
+
+        def self.template template_name
+          @templates && @templates[template_name]
+        end
+
+        def self.has_template? template_name
+          @templates&.key?(template_name) || false
+        end
+
+        # install a template into the migration generator, this can be used from outside this
+        # library to clean up common migrations (replace common migrations with syntatic sugar)
+        def self.add_template name, template_class
+          @templates ||= {}
+          raise TemplateAlreadyExistsError, name if @templates.key?(name)
+          @templates[name] = template_class
+        end
+
         def add_trigger trigger, code_comment = nil
-          options = {
-            name: ":#{trigger.name}"
-          }
+          # if we have a corresponding template, then use it
+          if trigger.template
+            unless (template_class = Trigger.template(trigger.template))
+              raise UnexpectedTemplateError, "Unrecognised template #{trigger.template}"
+            end
 
-          # if the trigger is a row trigger and the action timing is before or after
-          # then we can use some syntactic sugar to make the migration look nicer
-          # we use method names like before_insert, after_update, etc. and drop the
-          # unnessessary options
-          if trigger.action_orientation == :row && [:before, :after].include?(trigger.action_timing)
-            method_name = "#{trigger.action_timing}_#{trigger.event_manipulation}"
+            arguments = template_class.new(trigger, code_comment).fragment_arguments
+            add_fragment(**arguments)
+
+          # no template, process this as a default trigger (takes all options)
           else
-            method_name = "add_trigger"
-            options[:action_timing] = ":#{trigger.action_timing}"
-            options[:event_manipulation] = ":#{trigger.event_manipulation}"
-            options[:action_orientation] = ":#{trigger.action_orientation}"
+            options = {
+              name: ":#{trigger.name}"
+            }
+
+            # if the trigger is a row trigger and the action timing is before or after
+            # then we can use some syntactic sugar to make the migration look nicer
+            # we use method names like before_insert, after_update, etc. and drop the
+            # unnessessary options
+            if trigger.action_orientation == :row && [:before, :after].include?(trigger.action_timing)
+              method_name = "#{trigger.action_timing}_#{trigger.event_manipulation}"
+            else
+              method_name = "add_trigger"
+              options[:action_timing] = ":#{trigger.action_timing}"
+              options[:event_manipulation] = ":#{trigger.event_manipulation}"
+              options[:action_orientation] = ":#{trigger.action_orientation}"
+            end
+
+            # added here because we want the timing and manipulation to visually appear first
+            options[:function_schema_name] = ":#{trigger.function.schema.name}"
+            options[:function_name] = ":#{trigger.function.name}"
+
+            unless trigger.action_condition.nil?
+              options[:action_condition] = "\"#{trigger.action_condition}\""
+            end
+
+            unless trigger.parameters.nil?
+              options[:parameters] = "\"#{trigger.parameters}\""
+            end
+
+            unless trigger.action_reference_old_table.nil?
+              options[:action_reference_old_table] = ":#{trigger.action_reference_old_table}"
+            end
+
+            unless trigger.action_reference_new_table.nil?
+              options[:action_reference_new_table] = ":#{trigger.action_reference_new_table}"
+            end
+
+            unless trigger.description.nil?
+              options[:comment] = <<~RUBY
+                <<~COMMENT
+                  #{indent trigger.description}
+                COMMENT
+              RUBY
+            end
+
+            options_syntax = options.map { |k, v| "#{k}: #{v}" }.join(", ")
+
+            add_fragment schema: trigger.table.schema,
+              table: trigger.table,
+              migration_method: :add_trigger,
+              object: trigger,
+              code_comment: code_comment,
+              migration: <<~RUBY
+                #{method_name} :#{trigger.table.name}, #{options_syntax}
+              RUBY
           end
-
-          # added here because we want the timing and manipulation to visually appear first
-          options[:function_schema_name] = ":#{trigger.function.schema.name}"
-          options[:function_name] = ":#{trigger.function.name}"
-
-          unless trigger.action_condition.nil?
-            options[:action_condition] = ":#{trigger.action_condition}"
-          end
-
-          unless trigger.parameters.nil?
-            options[:parameters] = "\"#{trigger.parameters}\""
-          end
-
-          unless trigger.action_reference_old_table.nil?
-            options[:action_reference_old_table] = ":#{trigger.action_reference_old_table}"
-          end
-
-          unless trigger.action_reference_new_table.nil?
-            options[:action_reference_new_table] = ":#{trigger.action_reference_new_table}"
-          end
-
-          unless trigger.description.nil?
-            options[:comment] = <<~RUBY
-              <<~COMMENT
-                #{indent trigger.description}
-              COMMENT
-            RUBY
-          end
-
-          options_syntax = options.map { |k, v| "#{k}: #{v}" }.join(", ")
-
-          add_fragment schema: trigger.table.schema,
-            table: trigger.table,
-            migration_method: :add_trigger,
-            object: trigger,
-            code_comment: code_comment,
-            migration: <<~RUBY
-              #{method_name} :#{trigger.table.name}, #{options_syntax}
-            RUBY
         end
 
         def remove_trigger trigger, code_comment = nil

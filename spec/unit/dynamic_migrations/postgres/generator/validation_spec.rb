@@ -42,6 +42,47 @@ RSpec.describe DynamicMigrations::Postgres::Generator do
           RUBY
         end
       end
+
+      describe "after a less than template has been installed into the migration generator" do
+        let(:less_than_template_class) {
+          Class.new(DynamicMigrations::Postgres::Generator::ValidationTemplateBase) do
+            warn "not tested"
+            def fragment_arguments
+              assert_not_deferred!
+              assert_column_count! 1
+
+              column_name = first_column.name
+              value = value_from_check_clause(/\A\w+ < (?<value>-?\d+(?:\.\d+)?);\z/)
+              options_string = name_and_description_options_string :"#{column_name}_lt"
+              {
+                schema: validation.table.schema,
+                table: validation.table,
+                migration_method: :add_validation,
+                object: validation,
+                code_comment: @code_comment,
+                migration: <<~RUBY
+                  validate_less_than :#{validation.table.name}, :#{column_name}, #{value}#{options_string}
+                RUBY
+              }
+            end
+          end
+        }
+        before(:each) do
+          DynamicMigrations::Postgres::Generator::Validation.add_template :less_than, less_than_template_class
+        end
+
+        describe "for simple validation which uses the template" do
+          let(:validation) { DynamicMigrations::Postgres::Server::Database::Schema::Table::Validation.new :configuration, table, [column], :my_column_lt, "my_column < 0;", description: "My validation", template: :less_than }
+
+          it "should return the expected ruby syntax to add a validation" do
+            expect(generator.add_validation(validation).to_s).to eq <<~RUBY.strip
+              validate_less_than :my_table, :my_column, 0, comment: <<~COMMENT
+                My validation
+              COMMENT
+            RUBY
+          end
+        end
+      end
     end
 
     describe :remove_validation do

@@ -35,6 +35,9 @@ module DynamicMigrations
               class UnexpectedActionOrderError < StandardError
               end
 
+              class UnexpectedTemplateError < StandardError
+              end
+
               attr_reader :table
               attr_reader :name
               attr_reader :event_manipulation
@@ -46,9 +49,10 @@ module DynamicMigrations
               attr_reader :action_reference_old_table
               attr_reader :action_reference_new_table
               attr_reader :description
+              attr_reader :template
 
               # initialize a new object to represent a validation in a postgres table
-              def initialize source, table, name, action_timing:, event_manipulation:, parameters:, action_orientation:, function:, action_order: nil, action_condition: nil, action_reference_old_table: nil, action_reference_new_table: nil, description: nil
+              def initialize source, table, name, action_timing:, event_manipulation:, parameters:, action_orientation:, function:, action_order: nil, action_condition: nil, action_reference_old_table: nil, action_reference_new_table: nil, description: nil, template: nil
                 super source
 
                 unless table.is_a? Table
@@ -124,6 +128,13 @@ module DynamicMigrations
                   raise ExpectedStringError, description unless description.is_a? String
                   @description = description.strip
                   @description = nil if description == ""
+                end
+
+                unless template.nil?
+                  unless Generator::Trigger.has_template? template
+                    raise UnexpectedTemplateError, template
+                  end
+                  @template = template
                 end
               end
 

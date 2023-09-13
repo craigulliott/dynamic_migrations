@@ -1,0 +1,30 @@
+# TypeProf 0.21.8
+
+# Classes
+module DynamicMigrations
+  module Postgres
+    class Generator
+      class ValidationTemplateBase
+        @code_comment: untyped
+
+        attr_reader validation: untyped
+
+        def initialize: (untyped validation, untyped code_comment) -> void
+
+        # abstract method (should actually be added to child classes)
+        def fragment_arguments: -> {schema: Postgres::Server::Database::Schema, table: Postgres::Server::Database::Schema::Table, migration_method: :add_validation, object: Postgres::Server::Database::Schema::Table::Validation, code_comment: String?, migration: String}
+
+        private
+        def assert_not_deferred!: -> nil
+        def assert_column_count!: (?Integer count) -> nil
+        def first_column: -> untyped
+        def value_from_check_clause: (untyped regex) -> untyped
+        def name_and_description_options_string: (untyped default_name) -> String?
+        def indent: (String multi_line_string, ?Integer levels) -> String
+
+        class TemplateError < StandardError
+        end
+      end
+    end
+  end
+end

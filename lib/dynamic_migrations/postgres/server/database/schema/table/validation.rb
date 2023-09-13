@@ -17,15 +17,19 @@ module DynamicMigrations
               class DuplicateColumnError < StandardError
               end
 
+              class UnexpectedTemplateError < StandardError
+              end
+
               attr_reader :table
               attr_reader :name
               attr_reader :check_clause
               attr_reader :deferrable
               attr_reader :initially_deferred
               attr_reader :description
+              attr_reader :template
 
               # initialize a new object to represent a validation in a postgres table
-              def initialize source, table, columns, name, check_clause, description: nil, deferrable: false, initially_deferred: false
+              def initialize source, table, columns, name, check_clause, description: nil, deferrable: false, initially_deferred: false, template: nil
                 super source
                 raise ExpectedTableError, table unless table.is_a? Table
                 @table = table
@@ -57,6 +61,13 @@ module DynamicMigrations
 
                 raise ExpectedBooleanError, initially_deferred unless [true, false].include?(initially_deferred)
                 @initially_deferred = initially_deferred
+
+                unless template.nil?
+                  unless Generator::Validation.has_template? template
+                    raise UnexpectedTemplateError, "Unrecognised template #{template}"
+                  end
+                  @template = template
+                end
               end
 
               # return true if this has a description, otherwise false

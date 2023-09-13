@@ -1,0 +1,25 @@
+# Classes
+module DynamicMigrations
+  module Postgres
+    class Generator
+      class TriggerTemplateBase
+        @code_comment: untyped
+
+        attr_reader trigger: untyped
+
+        def initialize: (untyped trigger, untyped code_comment) -> void
+
+        # abstract method (should actually be added to child classes)
+        def fragment_arguments: -> {schema: Postgres::Server::Database::Schema, table: Postgres::Server::Database::Schema::Table, migration_method: :add_validation, object: Postgres::Server::Database::Schema::Table::Validation, code_comment: String?, migration: String}
+
+        private
+        def assert_column_count!: (?Integer count) -> nil
+        def first_column: -> untyped
+        def indent: (untyped multi_line_string, ?Integer levels) -> untyped
+
+        class TemplateError < StandardError
+        end
+      end
+    end
+  end
+end

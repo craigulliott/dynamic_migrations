@@ -1,10 +1,14 @@
-# TypeProf 0.21.7
-
 # Classes
 module DynamicMigrations
   module Postgres
     class Generator
       module Trigger
+        self.@templates: Hash[Symbol, singleton(TriggerTemplateBase)]
+
+        def self.template: (Symbol template_name) -> singleton(TriggerTemplateBase)
+        def self.has_template?: (Symbol template_name) -> bool
+        def self.add_template: (Symbol template_name, singleton(TriggerTemplateBase) template_class) -> void
+
         def add_trigger: (Server::Database::Schema::Table::Trigger trigger, ?String? code_comment) -> Fragment
         def remove_trigger: (Server::Database::Schema::Table::Trigger trigger, ?String? code_comment) -> Fragment
         def recreate_trigger: (Server::Database::Schema::Table::Trigger original_trigger, Server::Database::Schema::Table::Trigger updated_trigger) -> Array[Fragment]
@@ -16,6 +20,11 @@ module DynamicMigrations
 
         def indent: (String migration, ?Integer levels) -> String
 
+        class UnexpectedTemplateError < StandardError
+        end
+
+        class TemplateAlreadyExistsError < StandardError
+        end
       end
     end
   end
