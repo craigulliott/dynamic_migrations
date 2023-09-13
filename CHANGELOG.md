@@ -1,5 +1,17 @@
 # Changelog
 
+## [3.6.0](https://github.com/craigulliott/dynamic_migrations/compare/v3.5.3...v3.6.0) (2023-09-13)
+
+
+### Features
+
+* plugin architecture for validation and trigger templates (allows for creating cleaner migrations with custom methods) ([f4e9d5e](https://github.com/craigulliott/dynamic_migrations/commit/f4e9d5eae803196e727a5b4d7314e773cd90ba00))
+
+
+### Bug Fixes
+
+* fixed badly generated trigger migration ([f4e9d5e](https://github.com/craigulliott/dynamic_migrations/commit/f4e9d5eae803196e727a5b4d7314e773cd90ba00))
+
 ## [3.5.3](https://github.com/craigulliott/dynamic_migrations/compare/v3.5.2...v3.5.3) (2023-09-11)
 
 
