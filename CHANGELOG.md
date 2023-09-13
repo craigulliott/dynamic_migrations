@@ -1,5 +1,13 @@
 # Changelog
 
+## [3.6.10](https://github.com/craigulliott/dynamic_migrations/compare/v3.6.9...v3.6.10) (2023-09-13)
+
+
+### Bug Fixes
+
+* only concerned about function and enum dependencies if they are in other schemas or have multiple objects which reference them ([ee42670](https://github.com/craigulliott/dynamic_migrations/commit/ee426704d56329cd4ae450d93308097a4419ee63))
+* some extensions have hyphens in their names, coercing them to underscores so that this does not break the migration class name ([0b2396b](https://github.com/craigulliott/dynamic_migrations/commit/0b2396b171f6d1eeb8dc4567658937576357ba2a))
+
 ## [3.6.9](https://github.com/craigulliott/dynamic_migrations/compare/v3.6.8...v3.6.9) (2023-09-13)
 
 
