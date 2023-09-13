@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.6.1](https://github.com/craigulliott/dynamic_migrations/compare/v3.6.0...v3.6.1) (2023-09-13)
+
+
+### Bug Fixes
+
+* adding attr_reader for :code_comment to provide easier access within migration templates ([b805e24](https://github.com/craigulliott/dynamic_migrations/commit/b805e247ef42ea4dd62973be07057d6e110876a3))
+
 ## [3.6.0](https://github.com/craigulliott/dynamic_migrations/compare/v3.5.3...v3.6.0) (2023-09-13)
 
 
