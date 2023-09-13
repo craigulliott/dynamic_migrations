@@ -120,7 +120,7 @@ module DynamicMigrations
               "\"#{data_type}\""
             end
 
-            lines << "t.column #{data_type}, :#{column.name}, #{options_syntax}"
+            lines << "t.column :#{column.name}, #{data_type}, #{options_syntax}"
           end
 
           if timestamps.any?

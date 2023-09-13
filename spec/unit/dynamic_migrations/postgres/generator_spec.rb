@@ -41,10 +41,10 @@ RSpec.describe DynamicMigrations::Postgres::Generator do
                 Comment for this table
               COMMENT
               create_table :my_table, id: :uuid, comment: table_comment do |t|
-                t.column :varchar, :bar, null: false, default: "foo", comment: <<~COMMENT
+                t.column :bar, :varchar, null: false, default: "foo", comment: <<~COMMENT
                   Comment for this column
                 COMMENT
-                t.column :varchar, :foo, null: false, default: "foo", comment: <<~COMMENT
+                t.column :foo, :varchar, null: false, default: "foo", comment: <<~COMMENT
                   Comment for this column
                 COMMENT
                 t.timestamps :created_at, :updated_at
@@ -79,7 +79,7 @@ RSpec.describe DynamicMigrations::Postgres::Generator do
                 Comment for this table
               COMMENT
               create_table :my_table, id: :integer, comment: table_comment do |t|
-                t.column :integer, :table_id, null: false, comment: <<~COMMENT
+                t.column :table_id, :integer, null: false, comment: <<~COMMENT
                   Comment for this column
                 COMMENT
               end
@@ -96,7 +96,7 @@ RSpec.describe DynamicMigrations::Postgres::Generator do
                 Comment for this table
               COMMENT
               create_table :my_other_table, id: :integer, comment: table_comment do |t|
-                t.column :integer, :table_id, null: false, comment: <<~COMMENT
+                t.column :table_id, :integer, null: false, comment: <<~COMMENT
                   Comment for this column
                 COMMENT
               end
@@ -124,7 +124,7 @@ RSpec.describe DynamicMigrations::Postgres::Generator do
                   Comment for this table
                 COMMENT
                 create_table :my_other_table, id: :integer, comment: table_comment do |t|
-                  t.column :integer, :table_id, null: false, comment: <<~COMMENT
+                  t.column :table_id, :integer, null: false, comment: <<~COMMENT
                     Comment for this column
                   COMMENT
                 end
@@ -141,7 +141,7 @@ RSpec.describe DynamicMigrations::Postgres::Generator do
                   Comment for this table
                 COMMENT
                 create_table :my_table, id: :integer, comment: table_comment do |t|
-                  t.column :integer, :table_id, null: false, comment: <<~COMMENT
+                  t.column :table_id, :integer, null: false, comment: <<~COMMENT
                     Comment for this column
                   COMMENT
                 end
@@ -174,7 +174,7 @@ RSpec.describe DynamicMigrations::Postgres::Generator do
                     Comment for this table
                   COMMENT
                   create_table :my_table, id: :integer, comment: table_comment do |t|
-                    t.column :integer, :table_id, null: false, comment: <<~COMMENT
+                    t.column :table_id, :integer, null: false, comment: <<~COMMENT
                       Comment for this column
                     COMMENT
                   end
@@ -191,7 +191,7 @@ RSpec.describe DynamicMigrations::Postgres::Generator do
                     Comment for this table
                   COMMENT
                   create_table :my_other_table, id: :integer, comment: table_comment do |t|
-                    t.column :integer, :table_id, null: false, comment: <<~COMMENT
+                    t.column :table_id, :integer, null: false, comment: <<~COMMENT
                       Comment for this column
                     COMMENT
                   end
