@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.6.5](https://github.com/craigulliott/dynamic_migrations/compare/v3.6.4...v3.6.5) (2023-09-13)
+
+
+### Bug Fixes
+
+* setting current schema on the migration class instead of the shared module ([28bc2ca](https://github.com/craigulliott/dynamic_migrations/commit/28bc2ca454883696665804c8596fc3b19ce31bb4))
+
 ## [3.6.4](https://github.com/craigulliott/dynamic_migrations/compare/v3.6.3...v3.6.4) (2023-09-13)
 
 
