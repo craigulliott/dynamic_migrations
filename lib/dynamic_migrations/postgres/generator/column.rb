@@ -32,9 +32,17 @@ module DynamicMigrations
 
           options_syntax = options.map { |k, v| "#{k}: #{v}" }.join(", ")
 
-          data_type = column.data_type
+          data_type = column.data_type.to_s
+          # if it's an array, then we need to remove the [] from the end
           if column.array?
-            data_type = "\"#{data_type}\""
+            data_type = data_type.sub(/\[\]\z/, "")
+          end
+          # if its a custom type (has special characters) then we need to quote it
+          # otherwise, present it as a symbol
+          data_type = if data_type.match?(/\A\w+\z/)
+            ":#{data_type}"
+          else
+            "\"#{data_type}\""
           end
 
           add_fragment schema: column.table.schema,
@@ -43,7 +51,7 @@ module DynamicMigrations
             object: column,
             code_comment: code_comment,
             migration: <<~RUBY
-              add_column :#{column.table.name}, :#{column.name}, :#{data_type}, #{options_syntax}
+              add_column :#{column.table.name}, :#{column.name}, #{data_type}, #{options_syntax}
             RUBY
         end
 

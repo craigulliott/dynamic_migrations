@@ -40,7 +40,7 @@ RSpec.describe DynamicMigrations::Postgres::Generator do
 
         it "should return the expected ruby syntax to add a column" do
           expect(generator.add_column(column).to_s).to eq <<~RUBY.strip
-            add_column :my_table, :my_column, :"char[]", null: true, array: true, comment: <<~COMMENT
+            add_column :my_table, :my_column, :char, null: true, array: true, comment: <<~COMMENT
               Comment for this column
             COMMENT
           RUBY

@@ -87,10 +87,10 @@ RSpec.describe DynamicMigrations::Postgres::Generator do
               Comment for this table
             COMMENT
             create_table :my_table, id: false, comment: table_comment do |t|
-              t.varchar :bar, null: false, default: "foo", comment: <<~COMMENT
+              t.column :varchar, :bar, null: false, default: "foo", comment: <<~COMMENT
                 Comment for this column
               COMMENT
-              t.varchar :foo, null: false, default: "foo", comment: <<~COMMENT
+              t.column :varchar, :foo, null: false, default: "foo", comment: <<~COMMENT
                 Comment for this column
               COMMENT
             end
@@ -111,10 +111,10 @@ RSpec.describe DynamicMigrations::Postgres::Generator do
               Comment for this table
             COMMENT
             create_table :my_table, id: false, primary_key: [:a, :b], comment: table_comment do |t|
-              t.uuid :a, null: false, comment: <<~COMMENT
+              t.column :uuid, :a, null: false, comment: <<~COMMENT
                 Part one of the composite primary key
               COMMENT
-              t.uuid :b, null: false, comment: <<~COMMENT
+              t.column :uuid, :b, null: false, comment: <<~COMMENT
                 Part two of the composite primary key
               COMMENT
             end

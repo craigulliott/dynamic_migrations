@@ -88,6 +88,10 @@ module DynamicMigrations
             options = {}
             options[:null] = column.null
 
+            if column.array?
+              options[:array] = true
+            end
+
             unless column.default.nil?
               options[:default] = "\"#{column.default}\""
             end
@@ -103,7 +107,20 @@ module DynamicMigrations
 
             options_syntax = options.map { |k, v| "#{k}: #{v}" }.join(", ")
 
-            lines << "t.#{column.data_type} :#{column.name}, #{options_syntax}"
+            data_type = column.data_type.to_s
+            # if it's an array, then we need to remove the [] from the end
+            if column.array?
+              data_type = data_type.sub(/\[\]\z/, "")
+            end
+            # if its a custom type (has special characters) then we need to quote it
+            # otherwise, present it as a symbol
+            data_type = if data_type.match?(/\A\w+\z/)
+              ":#{data_type}"
+            else
+              "\"#{data_type}\""
+            end
+
+            lines << "t.column #{data_type}, :#{column.name}, #{options_syntax}"
           end
 
           if timestamps.any?
