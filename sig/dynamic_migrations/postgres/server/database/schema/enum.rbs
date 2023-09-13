@@ -11,9 +11,11 @@ module DynamicMigrations
             attr_reader name: Symbol
             attr_reader values: Array[Symbol]
             attr_reader description: String?
+            attr_reader columns: Array[Table::Column]
             def initialize: (database_or_configuration source, Schema schema, Symbol name, Array[Symbol] values, ?description: String?) -> void
             def full_name: -> Symbol
             def has_description?: -> bool
+            def add_column: (Schema::Table::Column column) -> void
             def differences_descriptions: (Enum other_enum) -> Array[String]
 
             class ExpectedSchemaError < StandardError

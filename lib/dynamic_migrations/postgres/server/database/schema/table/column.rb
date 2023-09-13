@@ -54,6 +54,9 @@ module DynamicMigrations
                     raise UnexpectedEnumError, "enum `#{enum.full_name}` does not match this column's data type `#{@data_type}`"
                   end
                   @enum = enum
+                  # associate this column with the enum (so they are aware of each other)
+                  enum.add_column self
+
                 end
               end
 

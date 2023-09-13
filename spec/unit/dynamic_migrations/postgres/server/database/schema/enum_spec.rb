@@ -109,6 +109,11 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database::Schema::Enum do
     end
   end
 
+  describe :add_column do
+    # Can not directly test this method because it is called automatically when
+    # a column is instantiated. The column specs adequately cover this method.
+  end
+
   describe :differences_descriptions do
     describe "when compared to a enum which has different values" do
       let(:different_enum) {

@@ -48,7 +48,7 @@ module DynamicMigrations
               !@description.nil?
             end
 
-            # returns all the triggers which are associated with this function
+            # for tracking all the triggers which are associated with this function
             def add_trigger trigger
               # this should never happen, but adding it just in case
               unless trigger.source == source

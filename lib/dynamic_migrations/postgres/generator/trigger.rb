@@ -83,13 +83,21 @@ module DynamicMigrations
 
             options_syntax = options.map { |k, v| "#{k}: #{v}" }.join(", ")
 
+            # we only provide a dependent function if the function has more than one trigger
+            # or is in a different schema, otherwise it is added to the same migration as this
+            # trigger and we don't need to worry about dependencies
+            dependent_function = nil
+            # trigger.function will be nil if the trigger is not an function
+            if trigger.function && (trigger.function.triggers.count > 1 || trigger.table.schema != trigger.function.schema)
+              dependent_function = trigger.function
+            end
+
             add_fragment schema: trigger.table.schema,
               table: trigger.table,
               migration_method: :add_trigger,
               object: trigger,
               code_comment: code_comment,
-              dependent_function: trigger.function,
-              # also need dependent_enum
+              dependent_function: dependent_function,
               migration: <<~RUBY
                 #{method_name} :#{trigger.table.name}, #{options_syntax}
               RUBY

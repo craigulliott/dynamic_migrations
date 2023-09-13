@@ -45,11 +45,19 @@ module DynamicMigrations
             "\"#{data_type}\""
           end
 
+          # we only provide a dependent enum if the enum has more than one column
+          # or is in a different schema, otherwise it is added to the same migration as this
+          # column and we don't need to worry about dependencies
+          dependent_enum = nil
+          # column.enum will be nil if the column is not an enum
+          if column.enum && (column.enum.columns.count > 1 || column.table.schema != column.enum.schema)
+            dependent_enum = column.enum
+          end
+
           add_fragment schema: column.table.schema,
             table: column.table,
             migration_method: :add_column,
-            # this will be nil if the column is not an enum
-            dependent_enum: column.enum,
+            dependent_enum: dependent_enum,
             object: column,
             code_comment: code_comment,
             migration: <<~RUBY

@@ -6,7 +6,16 @@ module DynamicMigrations
         end
 
         def create_enum enum, code_comment = nil
+          # we only provide a table if the enum has a single column and they
+          # are in the same schema, otherwise we can't reliable handle dependencies
+          # so the enum will be created in the schema's migration
+          enum_table = nil
+          if enum.columns.count == 1 && enum.schema == enum.columns.first&.table&.schema
+            enum_table = enum.columns.first&.table
+          end
+
           add_fragment schema: enum.schema,
+            table: enum_table,
             migration_method: :create_enum,
             object: enum,
             code_comment: code_comment,

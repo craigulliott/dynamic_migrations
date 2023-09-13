@@ -11,10 +11,6 @@ RSpec.describe DynamicMigrations::Postgres::Generator do
   let(:table) { schema.add_table :my_table, description: "Comment for this table" }
   let(:table2) { schema.add_table :my_other_table, description: "Comment for this table" }
 
-  let(:schema2) { database.add_configured_schema :my_other_schema }
-  let(:schema2_table) { schema2.add_table :my_table, description: "Comment for this table" }
-  let(:schema2_table2) { schema2.add_table :my_other_table, description: "Comment for this table" }
-
   describe :migrations do
     describe "for a table with uuid primary key, timestamps, and two other colums" do
       before(:each) do
@@ -215,6 +211,99 @@ RSpec.describe DynamicMigrations::Postgres::Generator do
             ])
           end
         end
+      end
+    end
+
+    describe "for two schemas and tables with cross schema dependencies" do
+      let(:schema2) { database.add_configured_schema :my_other_schema }
+      let(:schema2_table) { schema2.add_table :my_table, description: "Comment for this table" }
+      let(:schema2_table2) { schema2.add_table :my_other_table, description: "Comment for this table" }
+
+      let(:enum) { schema2.add_enum :my_enum, enum_values, description: "Comment for this enum" }
+      let(:enum_values) { [:foo, :bar] }
+
+      let(:function) { schema2.add_function :my_function, function_definition, description: "Comment for this function" }
+      let(:function_definition) {
+        <<~SQL
+          BEGIN
+            NEW.column = 0;
+            RETURN NEW;
+          END;
+        SQL
+      }
+
+      let(:trigger) { table.add_trigger :trigger_for_function_in_another_schema, event_manipulation: :insert, action_order: nil, action_condition: nil, parameters: [], action_orientation: :row, action_timing: :before, function: function, description: "Comment for this trigger" }
+
+      before(:each) do
+        table.add_column :id, :integer, null: false, description: "Comment for this column"
+        table.add_column :enum_from_another_schmea, enum.full_name, enum: enum, null: false, description: "Comment for this column"
+        generator.create_table(table)
+
+        generator.create_enum(enum)
+        generator.add_trigger(trigger)
+        generator.create_function(function)
+      end
+
+      it "should return the expected ruby syntax to create everything in the correct order" do
+        create_enum_and_function = {
+          schema_name: :my_other_schema,
+          name: :changes,
+          content: <<~RUBY.strip
+            #
+            # Enums
+            #
+            create_enum :my_enum, [
+              :foo,
+              :bar
+            ]
+
+            #
+            # Functions
+            #
+            my_function_comment = <<~COMMENT
+              Comment for this function
+            COMMENT
+            create_function :my_function, comment: my_function_comment do
+              <<~SQL
+                BEGIN
+                  NEW.column = 0;
+                  RETURN NEW;
+                END;
+              SQL
+            end
+
+          RUBY
+        }
+        create_table = {
+          schema_name: :my_schema,
+          name: :create_my_table,
+          content: <<~RUBY.strip
+            #
+            # Create Table
+            #
+            table_comment = <<~COMMENT
+              Comment for this table
+            COMMENT
+            create_table :my_table, id: :integer, comment: table_comment do |t|
+            end
+
+            #
+            # Additional Columns
+            #
+            add_column :my_table, :enum_from_another_schmea, "my_other_schema.my_enum", null: false, comment: <<~COMMENT
+              Comment for this column
+            COMMENT
+
+            #
+            # Triggers
+            #
+            before_insert :my_table, name: :trigger_for_function_in_another_schema, function_schema_name: :my_other_schema, function_name: :my_function, comment: <<~COMMENT
+              Comment for this trigger
+            COMMENT
+          RUBY
+        }
+
+        expect(generator.migrations).to eql([create_enum_and_function, create_table])
       end
     end
   end

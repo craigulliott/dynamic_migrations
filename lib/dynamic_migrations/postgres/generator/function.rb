@@ -21,8 +21,16 @@ module DynamicMigrations
 
           fn_sql = function.definition.strip
 
+          # we only provide a table if the function has a single trigger and they
+          # are in the same schema, otherwise we can't reliable handle dependencies
+          # so the function will be created in the schema's migration
+          function_table = nil
+          if function.triggers.count == 1 && function.schema == function.triggers.first&.table&.schema
+            function_table = function.triggers.first&.table
+          end
+
           add_fragment schema: function.schema,
-            table: function.triggers.first&.table,
+            table: function_table,
             migration_method: :create_function,
             object: function,
             code_comment: code_comment,

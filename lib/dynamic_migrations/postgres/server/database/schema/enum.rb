@@ -17,10 +17,13 @@ module DynamicMigrations
             attr_reader :name
             attr_reader :values
             attr_reader :description
+            attr_reader :columns
 
             # initialize a new object to represent a postgres enum
             def initialize source, schema, name, values, description: nil
               super source
+
+              @columns = []
 
               @values = []
 
@@ -45,6 +48,15 @@ module DynamicMigrations
             # returns true if this enum has a description, otehrwise false
             def has_description?
               !@description.nil?
+            end
+
+            # for tracking all the columns which are associated with this enum
+            def add_column column
+              # this should never happen, but adding it just in case
+              unless column.source == source
+                raise "Internal error - column source `#{column.source}` does not match enum source `#{source}`"
+              end
+              @columns << column
             end
 
             def differences_descriptions other_enum
