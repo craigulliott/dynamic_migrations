@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.6.9](https://github.com/craigulliott/dynamic_migrations/compare/v3.6.8...v3.6.9) (2023-09-13)
+
+
+### Bug Fixes
+
+* enum name as a data type should include the schema name ([7658d14](https://github.com/craigulliott/dynamic_migrations/commit/7658d1482b7e50bcce11268d8121ee59ae194fa3))
+
 ## [3.6.8](https://github.com/craigulliott/dynamic_migrations/compare/v3.6.7...v3.6.8) (2023-09-13)
 
 
