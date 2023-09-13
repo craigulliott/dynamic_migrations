@@ -17,7 +17,7 @@ RSpec.describe DynamicMigrations::ActiveRecord::Migrators do
         # stub out the quote method so we can validate the SQL
         # this is usually handled by the connection adapter
         def quote s
-          s.gsub("/", "//").gsub("'", "''")
+          "'" + s.gsub("/", "//").gsub("'", "''") + "'"
         end
       end
     }
