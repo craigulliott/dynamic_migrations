@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.6.2](https://github.com/craigulliott/dynamic_migrations/compare/v3.6.1...v3.6.2) (2023-09-13)
+
+
+### Bug Fixes
+
+* don't generate columns separately for migrations if also generating the table (as they are already included in the table definition) ([b6f748c](https://github.com/craigulliott/dynamic_migrations/commit/b6f748c8e72aaab12d32243f6a007d03707041da))
+
 ## [3.6.1](https://github.com/craigulliott/dynamic_migrations/compare/v3.6.0...v3.6.1) (2023-09-13)
 
 
