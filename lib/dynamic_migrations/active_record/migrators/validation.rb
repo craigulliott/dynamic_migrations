@@ -51,7 +51,7 @@ module DynamicMigrations
         # add a comment to the validation
         def set_validation_comment table_name, validation_name, comment
           execute <<~SQL
-            COMMENT ON CONSTRAINT #{validation_name} ON #{schema_name}.#{table_name} IS '#{quote comment}';
+            COMMENT ON CONSTRAINT #{validation_name} ON #{schema_name}.#{table_name} IS #{quote comment};
           SQL
         end
 

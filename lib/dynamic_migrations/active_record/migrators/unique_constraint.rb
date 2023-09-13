@@ -47,7 +47,7 @@ module DynamicMigrations
         # add a comment to the unique_constraint
         def set_unique_constraint_comment table_name, unique_constraint_name, comment
           execute <<~SQL
-            COMMENT ON CONSTRAINT #{unique_constraint_name} ON #{schema_name}.#{table_name} IS '#{quote comment}';
+            COMMENT ON CONSTRAINT #{unique_constraint_name} ON #{schema_name}.#{table_name} IS #{quote comment};
           SQL
         end
 

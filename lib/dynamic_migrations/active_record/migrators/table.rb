@@ -5,7 +5,7 @@ module DynamicMigrations
         # add a comment to the table
         def set_table_comment table_name, comment
           execute <<~SQL
-            COMMENT ON TABLE #{schema_name}.#{table_name} IS '#{quote comment}';
+            COMMENT ON TABLE #{schema_name}.#{table_name} IS #{quote comment};
           SQL
         end
 

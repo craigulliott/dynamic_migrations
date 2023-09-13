@@ -78,7 +78,7 @@ module DynamicMigrations
         # add a comment to a function
         def set_function_comment function_name, comment
           execute <<~SQL
-            COMMENT ON FUNCTION #{schema_name}.#{function_name} IS '#{quote comment}';
+            COMMENT ON FUNCTION #{schema_name}.#{function_name} IS #{quote comment};
           SQL
         end
 

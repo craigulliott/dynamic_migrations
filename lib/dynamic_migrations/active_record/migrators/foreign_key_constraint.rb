@@ -58,7 +58,7 @@ module DynamicMigrations
         # add a comment to the foreign_key
         def set_foreign_key_comment table_name, foreign_key_name, comment
           execute <<~SQL
-            COMMENT ON CONSTRAINT #{foreign_key_name} ON #{schema_name}.#{table_name} IS '#{quote comment}';
+            COMMENT ON CONSTRAINT #{foreign_key_name} ON #{schema_name}.#{table_name} IS #{quote comment};
           SQL
         end
 

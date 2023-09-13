@@ -8,7 +8,7 @@ module DynamicMigrations
         # index is relate to
         def set_index_comment table_name, index_name, comment
           execute <<~SQL
-            COMMENT ON INDEX #{index_name} IS '#{quote comment}';
+            COMMENT ON INDEX #{index_name} IS #{quote comment};
           SQL
         end
 

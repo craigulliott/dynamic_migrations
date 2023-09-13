@@ -28,7 +28,7 @@ module DynamicMigrations
         # add a comment to a enum
         def set_enum_comment enum_name, comment
           execute <<~SQL
-            COMMENT ON TYPE #{schema_name}.#{enum_name} IS '#{quote comment}';
+            COMMENT ON TYPE #{schema_name}.#{enum_name} IS #{quote comment};
           SQL
         end
 

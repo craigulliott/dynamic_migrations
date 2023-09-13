@@ -94,7 +94,7 @@ module DynamicMigrations
 
         def set_trigger_comment table_name, trigger_name, comment
           execute <<~SQL
-            COMMENT ON TRIGGER #{trigger_name} ON #{schema_name}.#{table_name} IS '#{quote comment}';
+            COMMENT ON TRIGGER #{trigger_name} ON #{schema_name}.#{table_name} IS #{quote comment};
           SQL
         end
 
