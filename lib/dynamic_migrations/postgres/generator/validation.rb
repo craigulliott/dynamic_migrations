@@ -57,10 +57,6 @@ module DynamicMigrations
             options_syntax = options.map { |k, v| "#{k}: #{v}" }.join(", ")
 
             validation_sql = validation.check_clause.strip
-            # ensure that the validation ends with a semicolon
-            unless validation_sql.end_with? ";"
-              validation_sql << ";"
-            end
 
             add_fragment schema: validation.table.schema,
               table: validation.table,

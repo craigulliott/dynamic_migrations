@@ -39,7 +39,7 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database::Differences::ToMig
                   #
                   add_validation :my_table, name: :my_validation, deferrable: false, initially_deferred: false do
                     <<~SQL
-                      my_column > 0;
+                      my_column > 0
                     SQL
                   end
                 RUBY
@@ -72,7 +72,7 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database::Differences::ToMig
                     # Recreating this validation
                     add_validation :my_table, name: :my_validation, deferrable: false, initially_deferred: false do
                       <<~SQL
-                        my_column > 0;
+                        my_column > 0
                       SQL
                     end
                   RUBY
@@ -111,7 +111,7 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database::Differences::ToMig
                   COMMENT
                   add_validation :my_table, name: :my_validation, deferrable: false, initially_deferred: false, comment: my_validation_comment do
                     <<~SQL
-                      my_column > 0;
+                      my_column > 0
                     SQL
                   end
                 RUBY

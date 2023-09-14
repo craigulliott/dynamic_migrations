@@ -19,7 +19,7 @@ RSpec.describe DynamicMigrations::Postgres::Generator do
           expect(generator.add_validation(validation).to_s).to eq <<~RUBY.strip
             add_validation :my_table, name: :validation_name, deferrable: false, initially_deferred: false do
               <<~SQL
-                my_column > 0;
+                my_column > 0
               SQL
             end
           RUBY
@@ -36,7 +36,7 @@ RSpec.describe DynamicMigrations::Postgres::Generator do
             COMMENT
             add_validation :my_table, name: :validation_name, deferrable: false, initially_deferred: false, comment: validation_name_comment do
               <<~SQL
-                my_column > 0;
+                my_column > 0
               SQL
             end
           RUBY
@@ -113,7 +113,7 @@ RSpec.describe DynamicMigrations::Postgres::Generator do
             # Recreating this validation
             add_validation :my_table, name: :validation_name, deferrable: false, initially_deferred: false do
               <<~SQL
-                my_column > 100;
+                my_column > 100
               SQL
             end
           RUBY
