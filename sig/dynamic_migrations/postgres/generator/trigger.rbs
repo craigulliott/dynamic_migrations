@@ -9,7 +9,7 @@ module DynamicMigrations
         def self.has_template?: (Symbol template_name) -> bool
         def self.add_template: (Symbol template_name, singleton(TriggerTemplateBase) template_class) -> void
 
-        def add_trigger: (Server::Database::Schema::Table::Trigger trigger, ?String? code_comment) -> Fragment
+        def add_trigger: (Server::Database::Schema::Table::Trigger trigger, ?String? code_comment) -> Fragment?
         def remove_trigger: (Server::Database::Schema::Table::Trigger trigger, ?String? code_comment) -> Fragment
         def recreate_trigger: (Server::Database::Schema::Table::Trigger original_trigger, Server::Database::Schema::Table::Trigger updated_trigger) -> Array[Fragment]
         def set_trigger_comment: (Postgres::Server::Database::Schema::Table::Trigger trigger, ?String? code_comment) -> Fragment

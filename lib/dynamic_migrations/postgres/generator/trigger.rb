@@ -33,13 +33,18 @@ module DynamicMigrations
 
             arguments = template_class.new(trigger, code_comment).fragment_arguments
 
-            # we only provide a dependent function if the function has more than one trigger
-            # or is in a different schema, otherwise it is added to the same migration as this
-            # trigger and we don't need to worry about dependencies
-            if trigger.function && (trigger.function.triggers.count > 1 || trigger.table.schema != trigger.function.schema)
-              add_fragment(dependent_function: trigger.function, **arguments)
-            else
-              add_fragment(**arguments)
+            # if the template class returns nil, then we skip the creation of this migration
+            # this is common for triggers where the template is respinsible for setting up
+            # multiple triggers (a mix of on update/insert and before/after etc.)
+            unless arguments.nil?
+              # we only provide a dependent function if the function has more than one trigger
+              # or is in a different schema, otherwise it is added to the same migration as this
+              # trigger and we don't need to worry about dependencies
+              if trigger.function && (trigger.function.triggers.count > 1 || trigger.table.schema != trigger.function.schema)
+                add_fragment(dependent_function: trigger.function, **arguments)
+              else
+                add_fragment(**arguments)
+              end
             end
 
           # no template, process this as a default trigger (takes all options)
@@ -124,8 +129,9 @@ module DynamicMigrations
         end
 
         def recreate_trigger original_trigger, updated_trigger
+          fragments = []
           # remove the original trigger
-          removal_fragment = remove_trigger original_trigger, <<~CODE_COMMENT
+          fragments << remove_trigger(original_trigger, <<~CODE_COMMENT)
             Removing original trigger because it has changed (it is recreated below)
             Changes:
               #{indent original_trigger.differences_descriptions(updated_trigger).join("\n")}
@@ -135,9 +141,10 @@ module DynamicMigrations
           recreation_fragment = add_trigger updated_trigger, <<~CODE_COMMENT
             Recreating this trigger
           CODE_COMMENT
+          fragments << recreation_fragment unless recreation_fragment.nil?
 
           # return the new fragments (the main reason to return them here is for the specs)
-          [removal_fragment, recreation_fragment]
+          fragments
         end
 
         # add a comment to a trigger
