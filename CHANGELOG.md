@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.6.12](https://github.com/craigulliott/dynamic_migrations/compare/v3.6.11...v3.6.12) (2023-09-13)
+
+
+### Bug Fixes
+
+* removing unused argument for create_function migrator ([bdb2ad5](https://github.com/craigulliott/dynamic_migrations/commit/bdb2ad58ff0c5aa3520eb38ab0d16b823014ce6e))
+
 ## [3.6.11](https://github.com/craigulliott/dynamic_migrations/compare/v3.6.10...v3.6.11) (2023-09-13)
 
 
