@@ -40,10 +40,6 @@ module DynamicMigrations
             RUBY
           end
 
-          if foreign_key_constraint.table.schema != foreign_key_constraint.foreign_table.schema
-            options[:foreign_schema] = foreign_key_constraint.foreign_table.schema.name.to_s
-          end
-
           options_syntax = options.map { |k, v| "#{k}: #{v}" }.join(", ")
 
           add_fragment schema: foreign_key_constraint.table.schema,
