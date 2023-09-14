@@ -43,7 +43,7 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database::Differences::ToMig
                   #
                   # Foreign Keys
                   #
-                  add_foreign_key :my_table, :my_column, :my_foreign_table, :my_foreign_column, name: :my_foreign_key, initially_deferred: false, deferrable: false, on_delete: :no_action, on_update: :no_action
+                  add_foreign_key :my_table, :my_column, :my_foreign_table, :my_foreign_column, name: :my_foreign_key
                 RUBY
               }
             ])
@@ -72,7 +72,7 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database::Differences::ToMig
                     # Foreign Keys
                     #
                     # Recreating this foreign key constraint
-                    add_foreign_key :my_table, :my_column, :my_foreign_table, :my_foreign_column, name: :my_foreign_key, initially_deferred: false, deferrable: false, on_delete: :no_action, on_update: :no_action
+                    add_foreign_key :my_table, :my_column, :my_foreign_table, :my_foreign_column, name: :my_foreign_key
                   RUBY
                 }
               ])
@@ -104,7 +104,7 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database::Differences::ToMig
                   #
                   # Foreign Keys
                   #
-                  add_foreign_key :my_table, :my_column, :my_foreign_table, :my_foreign_column, name: :my_foreign_key, initially_deferred: false, deferrable: false, on_delete: :no_action, on_update: :no_action, comment: <<~COMMENT
+                  add_foreign_key :my_table, :my_column, :my_foreign_table, :my_foreign_column, name: :my_foreign_key, comment: <<~COMMENT
                     Description of my foreign_key
                   COMMENT
                 RUBY

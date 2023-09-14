@@ -28,7 +28,7 @@ RSpec.describe DynamicMigrations::Postgres::Generator do
 
         it "should return the expected ruby syntax to add a foreign_key_constraint" do
           expect(generator.add_foreign_key_constraint(foreign_key_constraint).to_s).to eq <<~RUBY.strip
-            add_foreign_key :my_table, :my_column, :my_foreign_table, :my_foreign_column, name: :foreign_key_constraint_name, initially_deferred: false, deferrable: false, on_delete: :no_action, on_update: :no_action
+            add_foreign_key :my_table, :my_column, :my_foreign_table, :my_foreign_column, name: :foreign_key_constraint_name
           RUBY
         end
       end
@@ -73,7 +73,7 @@ RSpec.describe DynamicMigrations::Postgres::Generator do
           RUBY
           re_add = <<~RUBY.strip
             # Recreating this foreign key constraint
-            add_foreign_key :my_table, :my_column, :my_foreign_table, :my_foreign_column, name: :different_foreign_key_constraint_name, initially_deferred: false, deferrable: true, on_delete: :no_action, on_update: :no_action
+            add_foreign_key :my_table, :my_column, :my_foreign_table, :my_foreign_column, name: :different_foreign_key_constraint_name, deferrable: true
           RUBY
           expect(generator.recreate_foreign_key_constraint(original_foreign_key_constraint, updated_foreign_key_constraint).map(&:to_s)).to eq [remove, re_add]
         end

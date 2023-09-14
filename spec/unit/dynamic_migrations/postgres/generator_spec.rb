@@ -145,7 +145,7 @@ RSpec.describe DynamicMigrations::Postgres::Generator do
                 #
                 # Foreign Keys
                 #
-                add_foreign_key :my_table, :table_id, :my_other_table, :id, name: :foreign_key_constraint_name, initially_deferred: false, deferrable: false, on_delete: :no_action, on_update: :no_action
+                add_foreign_key :my_table, :table_id, :my_other_table, :id, name: :foreign_key_constraint_name
               RUBY
             }
           ])
@@ -195,7 +195,7 @@ RSpec.describe DynamicMigrations::Postgres::Generator do
                   #
                   # Foreign Keys
                   #
-                  add_foreign_key :my_other_table, :table_id, :my_table, :id, name: :foreign_key_constraint2_name, initially_deferred: false, deferrable: false, on_delete: :no_action, on_update: :no_action
+                  add_foreign_key :my_other_table, :table_id, :my_table, :id, name: :foreign_key_constraint2_name
                 RUBY
               },
               {
@@ -205,7 +205,7 @@ RSpec.describe DynamicMigrations::Postgres::Generator do
                   #
                   # Foreign Keys
                   #
-                  add_foreign_key :my_table, :table_id, :my_other_table, :id, name: :foreign_key_constraint_name, initially_deferred: false, deferrable: false, on_delete: :no_action, on_update: :no_action
+                  add_foreign_key :my_table, :table_id, :my_other_table, :id, name: :foreign_key_constraint_name
                 RUBY
               }
             ])

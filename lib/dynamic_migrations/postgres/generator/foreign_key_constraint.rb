@@ -23,13 +23,13 @@ module DynamicMigrations
             options[:deferrable] = foreign_key_constraint.deferrable
           end
           unless foreign_key_constraint.on_delete == :no_action
-            options[:on_delete] = foreign_key_constraint.on_delete
+            options[:on_delete] = ":#{foreign_key_constraint.on_delete}"
           end
           unless foreign_key_constraint.on_update == :no_action
-            options[:on_update] = foreign_key_constraint.on_update
+            options[:on_update] = ":#{foreign_key_constraint.on_update}"
           end
           unless foreign_key_constraint.table.schema.name == foreign_key_constraint.foreign_schema_name
-            options[:foreign_schema] = foreign_key_constraint.foreign_schema_name
+            options[:foreign_schema] = ":#{foreign_key_constraint.foreign_schema_name}"
           end
 
           unless foreign_key_constraint.description.nil?
