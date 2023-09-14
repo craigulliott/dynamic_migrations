@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.6.14](https://github.com/craigulliott/dynamic_migrations/compare/v3.6.13...v3.6.14) (2023-09-14)
+
+
+### Bug Fixes
+
+* allowing templates to return nil and skip adding to migrations ([3d90829](https://github.com/craigulliott/dynamic_migrations/commit/3d9082960403899b4243fde60629d9c83ce1e263))
+
 ## [3.6.13](https://github.com/craigulliott/dynamic_migrations/compare/v3.6.12...v3.6.13) (2023-09-14)
 
 
