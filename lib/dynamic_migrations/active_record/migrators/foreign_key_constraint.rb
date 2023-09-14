@@ -11,7 +11,7 @@ module DynamicMigrations
         # because rails migrations don't support composite (multiple column) foreign keys
         # column_names and foreign_column_names can be a single column name or
         # an array of column names
-        def add_foreign_key table_name, column_names, foreign_schema_name, foreign_table_name, foreign_column_names, name:, initially_deferred: false, deferrable: false, on_delete: :no_action, on_update: :no_action, comment: nil
+        def add_foreign_key table_name, column_names, foreign_table_name, foreign_column_names, name:, foreign_schema: nil, initially_deferred: false, deferrable: false, on_delete: :no_action, on_update: :no_action, comment: nil
           if initially_deferred == true && deferrable == false
             raise DeferrableOptionsError, "A constraint can only be initially deferred if it is also deferrable"
           end
@@ -19,6 +19,8 @@ module DynamicMigrations
           # convert single column names into arrays, this simplifies the logic below
           column_names = column_names.is_a?(Array) ? column_names : [column_names]
           foreign_column_names = foreign_column_names.is_a?(Array) ? foreign_column_names : [foreign_column_names]
+          # default to the current schema
+          foreign_schema_name = foreign_schema.nil? ? schema_name : foreign_schema
 
           # allow it to be deferred, and defer it by default
           deferrable_sql = if initially_deferred

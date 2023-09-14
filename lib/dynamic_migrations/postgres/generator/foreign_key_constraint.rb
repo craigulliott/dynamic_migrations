@@ -12,19 +12,36 @@ module DynamicMigrations
           f_c_names = foreign_key_constraint.foreign_column_names
           foreign_column_names = (f_c_names.count == 1) ? ":#{f_c_names.first}" : "[:#{f_c_names.join(", :")}]"
 
-          options = {
-            name: ":#{foreign_key_constraint.name}",
-            initially_deferred: foreign_key_constraint.initially_deferred,
-            deferrable: foreign_key_constraint.deferrable,
-            on_delete: ":#{foreign_key_constraint.on_delete}",
-            on_update: ":#{foreign_key_constraint.on_update}"
-          }
+          options = {}
+          options[:name] = ":#{foreign_key_constraint.name}"
+
+          # only provide values if they are different from the defaults
+          unless foreign_key_constraint.initially_deferred == false
+            options[:initially_deferred] = foreign_key_constraint.initially_deferred
+          end
+          unless foreign_key_constraint.deferrable == false
+            options[:deferrable] = foreign_key_constraint.deferrable
+          end
+          unless foreign_key_constraint.on_delete == :no_action
+            options[:on_delete] = foreign_key_constraint.on_delete
+          end
+          unless foreign_key_constraint.on_update == :no_action
+            options[:on_update] = foreign_key_constraint.on_update
+          end
+          unless foreign_key_constraint.table.schema.name == foreign_key_constraint.foreign_schema_name
+            options[:foreign_schema] = foreign_key_constraint.foreign_schema_name
+          end
+
           unless foreign_key_constraint.description.nil?
             options[:comment] = <<~RUBY
               <<~COMMENT
                 #{indent foreign_key_constraint.description}
               COMMENT
             RUBY
+          end
+
+          if foreign_key_constraint.table.schema != foreign_key_constraint.foreign_table.schema
+            options[:foreign_schema] = foreign_key_constraint.foreign_table.schema.name.to_s
           end
 
           options_syntax = options.map { |k, v| "#{k}: #{v}" }.join(", ")
