@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.6.13](https://github.com/craigulliott/dynamic_migrations/compare/v3.6.12...v3.6.13) (2023-09-14)
+
+
+### Bug Fixes
+
+* providing foreign_schema_name to create foreign key constraint, and only providing non default arguments ([e45d499](https://github.com/craigulliott/dynamic_migrations/commit/e45d4994a9b947f0d626bdd4b0e2a36136412370))
+
 ## [3.6.12](https://github.com/craigulliott/dynamic_migrations/compare/v3.6.11...v3.6.12) (2023-09-13)
 
 
