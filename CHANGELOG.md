@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.6.15](https://github.com/craigulliott/dynamic_migrations/compare/v3.6.14...v3.6.15) (2023-09-14)
+
+
+### Bug Fixes
+
+* missing colon before foreign schema name in migration generator ([b94ad92](https://github.com/craigulliott/dynamic_migrations/commit/b94ad924c7ead5ad697ea4fb48871ac827ad5c85))
+
 ## [3.6.14](https://github.com/craigulliott/dynamic_migrations/compare/v3.6.13...v3.6.14) (2023-09-14)
 
 
