@@ -55,6 +55,12 @@ module DynamicMigrations
         def differences
           Differences.new(self)
         end
+
+        def refresh_caches
+          refresh_database_structure_cache
+          refresh_database_keys_and_unique_constraints_cache
+          refresh_database_validations_cache
+        end
       end
     end
   end
