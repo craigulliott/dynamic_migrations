@@ -5,6 +5,7 @@ module DynamicMigrations
         module ValidationsLoader
           def create_database_validations_cache: -> void
           def fetch_validations: -> Hash[untyped, untyped]
+          def refresh_database_validations_cache: -> void
 
           # these come from the database object (which this module is included into)
           def connection: -> PG::Connection

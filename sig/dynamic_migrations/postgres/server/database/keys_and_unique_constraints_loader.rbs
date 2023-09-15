@@ -5,6 +5,7 @@ module DynamicMigrations
         module KeysAndUniqueConstraintsLoader
           def create_database_keys_and_unique_constraints_cache: -> void
           def fetch_keys_and_unique_constraints: -> Hash[untyped, untyped]
+          def refresh_database_keys_and_unique_constraints_cache: -> void
 
           # these come from the database object (which this module is included into)
           def connection: -> PG::Connection

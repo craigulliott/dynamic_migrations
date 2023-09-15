@@ -8,6 +8,7 @@ module DynamicMigrations
           def recursively_load_database_structure: -> void
           def fetch_schema_names: -> Array[String]
           def fetch_table_names: (Symbol schema_name) -> Array[String]
+          def refresh_database_structure_cache: -> void
 
           # these come from the database object (which this module is included into)
           def connection: -> PG::Connection
