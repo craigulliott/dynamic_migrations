@@ -9,7 +9,7 @@ module DynamicMigrations
           module Enums
             @enums: Hash[Symbol, Enum]
 
-            def add_enum: (Symbol enum_name, Array[Symbol] values, ?description: String?) -> nil
+            def add_enum: (Symbol enum_name, Array[String] values, ?description: String?) -> nil
             def enum: (Symbol enum_name) -> Enum
             def has_enum?: (Symbol enum_name) -> bool
             def enums: -> Array[Enum]
