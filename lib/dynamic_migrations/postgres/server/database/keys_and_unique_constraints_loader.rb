@@ -99,6 +99,12 @@ module DynamicMigrations
             SQL
           end
 
+          def refresh_database_keys_and_unique_constraints_cache
+            connection.exec(<<~SQL)
+              REFRESH MATERIALIZED VIEW public.dynamic_migrations_keys_and_unique_constraints_cache
+            SQL
+          end
+
           # fetch all required data from the database and build and return a
           # useful hash representing the keys and indexes of your database
           def fetch_keys_and_unique_constraints

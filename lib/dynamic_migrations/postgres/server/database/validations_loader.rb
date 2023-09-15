@@ -46,6 +46,12 @@ module DynamicMigrations
             SQL
           end
 
+          def refresh_database_validations_cache
+            connection.exec(<<~SQL)
+              REFRESH MATERIALIZED VIEW public.dynamic_migrations_validations_cache
+            SQL
+          end
+
           # fetch all columns from the database and build and return a
           # useful hash representing the validations of your database
           def fetch_validations

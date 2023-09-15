@@ -66,6 +66,12 @@ module DynamicMigrations
             SQL
           end
 
+          def refresh_database_structure_cache
+            connection.exec(<<~SQL)
+              REFRESH MATERIALIZED VIEW public.dynamic_migrations_structure_cache
+            SQL
+          end
+
           # fetch all columns from the database and build and return a
           # useful hash representing the structure of your database
           def fetch_structure
