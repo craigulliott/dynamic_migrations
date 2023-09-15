@@ -91,9 +91,10 @@ module DynamicMigrations
               schema = schemas[event_object_schema] ||= {}
               table = schema[event_object_table] ||= {}
 
-              # by convention (and to simplify things) we place these all in the same schema
-              unless row["trigger_schema"] == row["function_schema"] && row["function_schema"] == row["event_object_schema"]
-                raise EventTriggerProcedureSchemaMismatchError, "Expected trigger, procedure and event_object to be in the same schema for trigger '#{trigger_name}'"
+              # By convention (and to simplify things) we place the trigger and the triggers table in the same schema
+              # The function can be in a different schema (and often is, expecially for shared functions)
+              unless row["trigger_schema"] == row["event_object_schema"]
+                raise EventTriggerProcedureSchemaMismatchError, "Expected trigger and event_object to be in the same schema for trigger '#{trigger_name}'"
               end
 
               # turn the parameters into an array of strings
