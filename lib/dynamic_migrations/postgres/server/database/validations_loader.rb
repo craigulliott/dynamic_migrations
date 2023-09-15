@@ -7,36 +7,36 @@ module DynamicMigrations
         module ValidationsLoader
           def create_database_validations_cache
             connection.exec(<<~SQL)
-              CREATE MATERIALIZED VIEW public.dynamic_migrations_validations_cache as
-                SELECT table_constraints.table_schema as schema_name,
-                  table_constraints.table_name,
-                  array_agg(col.column_name ORDER BY col.column_name) AS columns,
-                  table_constraints.constraint_name as validation_name,
-                  pg_get_expr(conbin, conrelid, true) as check_clause,
-                  obj_description(pgc.oid, 'pg_constraint') as description,
+              CREATE MATERIALIZED VIEW public.dynamic_migrations_validations_cache AS
+                SELECT
+                  nspname AS schema_name,
+                  pg_constraint_class.relname AS table_name,
+                  array_agg(columns.column_name ORDER BY columns.column_name) AS columns,
+                  pg_get_constraintdef(pg_constraint.oid) AS check_clause,
+                  conname AS validation_name,
+                  obj_description(pg_constraint.oid, 'pg_constraint') AS description,
                   -- in case we need to update this query in a later version of DynamicMigrations
                   1 as table_version
-                FROM information_schema.table_constraints
-                JOIN information_schema.check_constraints
-                  ON table_constraints.constraint_schema = check_constraints.constraint_schema
-                  AND table_constraints.constraint_name = check_constraints.constraint_name
-                JOIN pg_namespace nsp ON nsp.nspname = check_constraints.constraint_schema
-                JOIN pg_constraint pgc ON pgc.conname = check_constraints.constraint_name
-                  AND pgc.connamespace = nsp.oid
-                  AND pgc.contype = 'c'
-                JOIN information_schema.columns col
-                  ON col.table_schema = table_constraints.table_schema
-                  AND col.table_name = table_constraints.table_name
-                  AND col.ordinal_position = ANY(pgc.conkey)
-                WHERE table_constraints.constraint_schema != 'information_schema'
-                  AND table_constraints.constraint_schema != 'postgis'
-                  AND left(table_constraints.constraint_schema, 3) != 'pg_'
-                GROUP BY
-                  pgc.oid,
-                  table_constraints.table_schema,
-                  table_constraints.table_name,
-                  table_constraints.constraint_name,
-                  check_constraints.check_clause;
+                FROM pg_catalog.pg_constraint
+                INNER JOIN pg_catalog.pg_class pg_constraint_class
+                  ON pg_constraint_class.oid = pg_constraint.conrelid
+                INNER JOIN pg_catalog.pg_namespace pg_constraint_namespace
+                  ON pg_constraint_namespace.oid = connamespace
+                JOIN information_schema.columns
+                  ON columns.table_schema = nspname
+                  AND columns.table_name = pg_constraint_class.relname
+                  AND columns.ordinal_position = ANY(pg_constraint.conkey)
+                  WHERE
+                    contype = 'c'
+                    AND nspname != 'information_schema'
+                    AND nspname != 'postgis'
+                    AND left(nspname, 3) != 'pg_'
+                    AND (nspname = 'organizations') AND (pg_constraint_class.relname = 'addresses')
+                  GROUP BY
+                    pg_constraint.oid,
+                    nspname,
+                    pg_constraint_class.relname,
+                    conname;
             SQL
             connection.exec(<<~SQL)
               CREATE UNIQUE INDEX dynamic_migrations_validations_cache_index ON public.dynamic_migrations_validations_cache (schema_name, table_name, validation_name);
@@ -50,6 +50,8 @@ module DynamicMigrations
             connection.exec(<<~SQL)
               REFRESH MATERIALIZED VIEW public.dynamic_migrations_validations_cache
             SQL
+          rescue PG::UndefinedTable
+            create_database_validations_cache
           end
 
           # fetch all columns from the database and build and return a

@@ -103,6 +103,8 @@ module DynamicMigrations
             connection.exec(<<~SQL)
               REFRESH MATERIALIZED VIEW public.dynamic_migrations_keys_and_unique_constraints_cache
             SQL
+          rescue PG::UndefinedTable
+            create_database_keys_and_unique_constraints_cache
           end
 
           # fetch all required data from the database and build and return a

@@ -70,6 +70,8 @@ module DynamicMigrations
             connection.exec(<<~SQL)
               REFRESH MATERIALIZED VIEW public.dynamic_migrations_structure_cache
             SQL
+          rescue PG::UndefinedTable
+            create_database_structure_cache
           end
 
           # fetch all columns from the database and build and return a
