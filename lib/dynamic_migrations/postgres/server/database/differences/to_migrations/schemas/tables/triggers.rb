@@ -44,9 +44,9 @@ module DynamicMigrations
                       if configuration_trigger[:description][:matches] == false
                         # if the description was removed
                         if configuration_trigger[:description].nil?
-                          @generator.remove_trigger_comment trigger
+                          @generator.remove_trigger_comment updated_trigger
                         else
-                          @generator.set_trigger_comment trigger
+                          @generator.set_trigger_comment updated_trigger
                         end
                       end
 
