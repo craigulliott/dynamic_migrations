@@ -22,7 +22,7 @@ module DynamicMigrations
             rows.each do |row|
               schema_name = row["schema_name"].to_sym
               enum_name = row["enum_name"].to_sym
-              enum_value = row["enum_value"].to_sym
+              enum_value = row["enum_value"]
 
               schema = schemas[schema_name] ||= {}
               enum = schema[enum_name] ||= {
