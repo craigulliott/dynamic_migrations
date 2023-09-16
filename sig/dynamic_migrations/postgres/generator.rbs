@@ -31,7 +31,6 @@ module DynamicMigrations
       def supported_migration_method?: (Symbol migration_method) -> bool
       def add_fragment: (migration_method: Symbol, object: untyped, migration: String, ?schema: Server::Database::Schema?, ?table: Server::Database::Schema::Table?, ?code_comment: String?, ?dependent_table: Server::Database::Schema::Table?, ?dependent_function: Server::Database::Schema::Function?, ?dependent_enum: Server::Database::Schema::Enum?) -> Fragment
       def indent: (String migration, ?Integer levels) -> String
-      def strip_empty_lines: (String migration) -> String
       def tsort_each_node: -> Enumerator[untyped, untyped]
       def tsort_each_child: (untyped node) -> untyped
 

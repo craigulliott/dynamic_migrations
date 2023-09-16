@@ -243,9 +243,8 @@ module DynamicMigrations
       # This method is called from within the various modules which are included to this class.
       # It locally stores all the fragments which will later be organized into different migrations.
       def add_fragment migration_method:, object:, migration:, schema: nil, table: nil, code_comment: nil, dependent_table: nil, dependent_function: nil, dependent_enum: nil
-        # Remove any empty lines and whitespace from the beginning or the end of the migration and then
-        # strip any empty lines witin the migration (remove the whitespace from them, not delete them).
-        final_migration = strip_empty_lines(migration).strip
+        # Remove any empty lines and whitespace from the beginning or the end of the migration
+        final_migration = migration.strip
         fragment = Fragment.new(schema&.name, table&.name, migration_method, object.name, code_comment, final_migration)
 
         if dependent_table
@@ -270,10 +269,6 @@ module DynamicMigrations
       def indent multi_line_string, levels = 1
         spaces = "  " * levels
         multi_line_string.gsub("\n", "\n#{spaces}")
-      end
-
-      def strip_empty_lines multi_line_string
-        multi_line_string.gsub(/^\s*\n/, "")
       end
     end
   end

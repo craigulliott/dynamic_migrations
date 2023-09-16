@@ -36,7 +36,11 @@ module DynamicMigrations
                 @data_type = data_type
 
                 @null = null
-                @default = default
+
+                unless default.nil?
+                  raise ExpectedStringError, default unless default.is_a? String
+                  @default = default
+                end
 
                 unless description.nil?
                   raise ExpectedStringError, description unless description.is_a? String
@@ -50,7 +54,7 @@ module DynamicMigrations
                   unless enum.is_a? Enum
                     raise UnexpectedEnumError, "#{enum} is not a valid enum"
                   end
-                  unless @data_type == enum.full_name || @data_type == "#{enum.full_name}[]"
+                  if (array? && @data_type != :"#{enum.full_name}[]") || (!array? && @data_type != enum.full_name)
                     raise UnexpectedEnumError, "enum `#{enum.full_name}` does not match this column's data type `#{@data_type}`"
                   end
                   @enum = enum

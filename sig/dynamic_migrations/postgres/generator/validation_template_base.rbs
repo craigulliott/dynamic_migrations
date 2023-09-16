@@ -6,20 +6,20 @@ module DynamicMigrations
     class Generator
       class ValidationTemplateBase
 
-        attr_reader validation: untyped
+        attr_reader validation: Postgres::Server::Database::Schema::Table::Validation
         attr_reader code_comment: String?
 
-        def initialize: (untyped validation, untyped code_comment) -> void
+        def initialize: (Postgres::Server::Database::Schema::Table::Validation validation, String? code_comment) -> void
 
         # abstract method (should actually be added to child classes)
         def fragment_arguments: -> {schema: Postgres::Server::Database::Schema, table: Postgres::Server::Database::Schema::Table, migration_method: Symbol, object: untyped, code_comment: String?, migration: String, dependent_function: Postgres::Server::Database::Schema::Function?}
 
         private
-        def assert_not_deferred!: -> nil
-        def assert_column_count!: (?Integer count) -> nil
-        def first_column: -> untyped
-        def value_from_check_clause: (untyped regex) -> untyped
-        def name_and_description_options_string: (untyped default_name) -> String?
+        def assert_not_deferred!: -> void
+        def assert_column_count!: (?Integer count) -> void
+        def first_column: -> Postgres::Server::Database::Schema::Table::Column
+        def value_from_check_clause: (Regexp regex) -> untyped
+        def name_and_description_options_string: (Symbol default_name, ?String? default_comment) -> String?
         def indent: (String multi_line_string, ?Integer levels) -> String
 
         class TemplateError < StandardError

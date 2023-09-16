@@ -46,14 +46,16 @@ module DynamicMigrations
           matches[:value]
         end
 
-        def name_and_description_options_string default_name
+        def name_and_description_options_string default_name, default_comment = nil
           options = {}
           # we only need to provide a name if it is different than the default
           unless @validation.name == default_name
             options[:name] = @validation.name
           end
-          # only provide a comment if it is not nil
-          unless @validation.description.nil?
+          # only provide a comment if it is not nil and not equal to the provided
+          # default_comment, if it is the same as the default then we wont want to show
+          # it in the migration files
+          unless @validation.description.nil? || @validation.description == default_comment
             options[:comment] = <<~RUBY
               <<~COMMENT
                 #{indent @validation.description || ""}

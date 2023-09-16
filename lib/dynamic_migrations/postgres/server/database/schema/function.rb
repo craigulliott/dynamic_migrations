@@ -87,7 +87,7 @@ module DynamicMigrations
 
                 # create a temporary function, from which we will fetch the normalized definition
                 connection.exec(<<~SQL)
-                  CREATE OR REPLACE FUNCTION trigger_normalized_action_condition_temp_fn() returns trigger language plpgsql AS
+                  CREATE OR REPLACE FUNCTION normalized_definition_temp_fn() returns trigger language plpgsql AS
                   $$#{definition}$$;
                 SQL
 
@@ -95,7 +95,7 @@ module DynamicMigrations
                 rows = connection.exec(<<~SQL)
                   SELECT prosrc AS function_definition
                   FROM pg_proc
-                  WHERE proname = 'trigger_normalized_action_condition_temp_fn';
+                  WHERE proname = 'normalized_definition_temp_fn';
                 SQL
 
                 # delete the temp table and close the transaction

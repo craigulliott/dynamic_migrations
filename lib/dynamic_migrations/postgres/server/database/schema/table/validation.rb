@@ -84,7 +84,7 @@ module DynamicMigrations
               end
 
               def column_names
-                @columns.keys
+                @columns.keys.sort
               end
 
               def differences_descriptions other_validation

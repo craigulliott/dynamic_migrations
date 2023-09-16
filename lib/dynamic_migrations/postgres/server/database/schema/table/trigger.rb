@@ -150,11 +150,11 @@ module DynamicMigrations
                   end
                   action_order
 
-                # otherwise return the dynamically calculated action order, this is calculated
-                # by returning this triggers index in the list of alphabetically sorted triggers
-                # for this triggers table
+                # otherwise is is computed by finding the index of the trigger within a list of
+                # triggers that are alphabetically sorted, all of which pertain to the same event
+                # manipulation (such as update, insert, etc.) for this triggers table
                 else
-                  pos = @table.triggers.sort_by(&:name).index(self)
+                  pos = @table.triggers.select { |t| t.event_manipulation == event_manipulation }.sort_by(&:name).index(self)
                   if pos.nil?
                     raise "Trigger not found in table triggers list. This should be impossible."
                   end
