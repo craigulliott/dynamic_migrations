@@ -18,6 +18,8 @@ module DynamicMigrations
               def initialize: (database_or_configuration source, Table table, Symbol name, Symbol data_type, ?null: bool, ?default: untyped, ?description: String?, ?interval_type: Symbol?, ?enum: Enum?) -> void
               def has_description?: -> bool
               def array?: -> bool
+              def enum?: -> bool
+              def temp_table_data_type: -> Symbol
 
               class ExpectedTableError < StandardError
               end

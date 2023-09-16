@@ -3,7 +3,7 @@
 RSpec.describe DynamicMigrations::Postgres::Server::Database::Schema::Enum do
   let(:pg_helper) { RSpec.configuration.pg_spec_helper }
   let(:server) { DynamicMigrations::Postgres::Server.new pg_helper.host, pg_helper.port, pg_helper.username, pg_helper.password }
-  let(:database) { DynamicMigrations::Postgres::Server::Database.new server, :my_database }
+  let(:database) { DynamicMigrations::Postgres::Server::Database.new server, pg_helper.database }
   let(:schema) { DynamicMigrations::Postgres::Server::Database::Schema.new :configuration, database, :my_schema }
   let(:enum) { DynamicMigrations::Postgres::Server::Database::Schema::Enum.new :configuration, schema, :my_enum, enum_values }
   let(:table) { DynamicMigrations::Postgres::Server::Database::Schema::Table.new :configuration, schema, :my_table }

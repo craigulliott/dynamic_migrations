@@ -44,9 +44,9 @@ module DynamicMigrations
                       if configuration_validation[:description][:matches] == false
                         # if the description was removed
                         if configuration_validation[:description].nil?
-                          @generator.remove_validation_comment validation
+                          @generator.remove_validation_comment updated_validation
                         else
-                          @generator.set_validation_comment validation
+                          @generator.set_validation_comment updated_validation
                         end
                       end
 

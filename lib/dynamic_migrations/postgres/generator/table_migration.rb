@@ -17,7 +17,7 @@ module DynamicMigrations
         add_structure_template [:remove_table_comment, :set_table_comment], "Tables"
         add_structure_template [:add_column], "Additional Columns"
         add_structure_template [:change_column, :remove_column_comment, :set_column_comment], "Update Columns"
-        add_structure_template [:add_primary_key], "Primary Key"
+        add_structure_template [:add_primary_key, :set_primary_key_comment, :remove_primary_key_comment], "Primary Key"
         add_structure_template [:add_index, :set_index_comment], "Indexes"
         add_structure_template [:add_foreign_key, :set_foreign_key_constraint_comment, :remove_foreign_key_constraint_comment], "Foreign Keys"
         add_structure_template [:add_validation, :add_unique_constraint, :set_validation_comment, :remove_validation_comment, :set_unique_constraint_comment, :remove_unique_constraint_comment], "Validations"

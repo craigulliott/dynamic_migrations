@@ -61,7 +61,7 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database do
                       my_table: {
                         my_validation: {
                           columns: [:my_column, :my_second_column],
-                          check_clause: "my_column > 0 AND my_second_column < 100",
+                          check_clause: "((my_column > 0) AND (my_second_column < 100))",
                           description: nil,
                           initially_deferred: false,
                           deferrable: false

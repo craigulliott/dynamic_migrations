@@ -33,7 +33,7 @@ module DynamicMigrations
 
                   # If the function exists in both the configuration and database representations
                   # but the definition is different then we need to update the definition.
-                  elsif configuration_function[:definition][:matches] == false
+                  elsif configuration_function[:normalized_definition][:matches] == false
                     function = @database.configured_schema(schema_name).function(function_name)
                     @generator.update_function function
                     # does the description also need to be updated

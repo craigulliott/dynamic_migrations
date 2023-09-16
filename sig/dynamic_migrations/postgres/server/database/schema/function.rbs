@@ -7,6 +7,8 @@ module DynamicMigrations
       class Database
         class Schema
           class Function < Source
+            @normalized_definition: String?
+
             attr_reader schema: Schema
             attr_reader name: Symbol
             attr_reader definition: String
@@ -16,11 +18,18 @@ module DynamicMigrations
             def has_description?: -> bool
             def add_trigger: (Schema::Table::Trigger trigger) -> void
             def differences_descriptions: (Function other_function) -> Array[String]
+            def normalized_definition: -> String
+
+            private
+            def fetch_normalized_definition: -> String
 
             class ExpectedSchemaError < StandardError
             end
 
             class ExpectedDefinitionError < StandardError
+            end
+
+            class UnnormalizableDefinitionError < StandardError
             end
           end
         end

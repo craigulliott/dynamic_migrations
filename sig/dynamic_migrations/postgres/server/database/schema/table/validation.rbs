@@ -6,6 +6,7 @@ module DynamicMigrations
           class Table
             class Validation < Source
               @columns: Hash[Symbol, Column]
+              @normalized_check_clause: String?
 
               attr_reader table: Table
               attr_reader name: Symbol
@@ -20,8 +21,11 @@ module DynamicMigrations
               def column_names: -> Array[Symbol]
               def has_description?: -> bool
               def differences_descriptions: (Validation other_validation) -> Array[String]
+              def normalized_check_clause: -> String
 
               private
+              def fetch_normalized_check_clause: -> String
+
               def add_column: (Column column) -> void
 
               class ExpectedTableError < StandardError
@@ -39,6 +43,8 @@ module DynamicMigrations
               class UnexpectedTemplateError < StandardError
               end
 
+              class UnnormalizableCheckClauseError < StandardError
+              end
             end
           end
         end

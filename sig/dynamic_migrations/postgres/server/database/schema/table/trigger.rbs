@@ -9,6 +9,8 @@ module DynamicMigrations
           class Table
             class Trigger < Source
               @action_order: Integer?
+              @normalized_action_condition: String?
+
               attr_reader table: Table
               attr_reader name: Symbol
               attr_reader event_manipulation: Symbol
@@ -26,6 +28,10 @@ module DynamicMigrations
               def action_order: -> Integer
               def has_description?: -> false
               def differences_descriptions: (Trigger other_trigger) -> Array[String]
+              def normalized_action_condition: -> String?
+
+              private
+              def fetch_normalized_action_condition: -> String
 
               class ExpectedTableError < StandardError
               end
@@ -55,6 +61,9 @@ module DynamicMigrations
               end
 
               class UnexpectedTemplateError < StandardError
+              end
+
+              class UnnormalizableActionConditionError < StandardError
               end
             end
           end

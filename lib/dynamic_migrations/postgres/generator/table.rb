@@ -93,10 +93,20 @@ module DynamicMigrations
           lines = []
           timestamps = []
           columns.each do |column|
-            # skip the :id, as it is handled by the table_options method
-            next if column.name == :id
-            # skip the :created_at and :updated_at as they are handled below
+            # skip creating the :id column as it is handled by the table_options
+            # method, but add the comment if there is one
+            if column.name == :id
+              unless column.description.nil?
+                set_column_comment column
+              end
+              next
+            end
+            # skip creating the :created_at and :updated_at column as it is handled
+            # by the table_options method, but add the comments
             if column.name == :created_at || column.name == :updated_at
+              unless column.description.nil?
+                set_column_comment column
+              end
               timestamps << column.name
               next
             end
@@ -163,6 +173,12 @@ module DynamicMigrations
             elsif pk_column_names.count > 1
               options << "primary_key: [:#{pk_column_names.join(", :")}]"
             end
+
+            # if the primary key has a description, then add it seperately
+            if table.primary_key.description
+              set_primary_key_comment table.primary_key
+            end
+
           end
 
           options << "comment: table_comment"

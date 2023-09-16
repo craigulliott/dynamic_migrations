@@ -44,9 +44,9 @@ module DynamicMigrations
                       if configuration_index[:description][:matches] == false
                         # if the description was removed
                         if configuration_index[:description].nil?
-                          @generator.remove_index_comment index
+                          @generator.remove_index_comment updated_index
                         else
-                          @generator.set_index_comment index
+                          @generator.set_index_comment updated_index
                         end
                       end
 

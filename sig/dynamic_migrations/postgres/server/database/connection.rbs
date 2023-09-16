@@ -8,7 +8,7 @@ module DynamicMigrations
           def connect: -> PG::Connection
           def connection: -> PG::Connection
           def disconnect: -> void
-          def with_connection: -> void
+          def with_connection: -> untyped
 
           # these come from the database object (which this module is included into)
           def name: -> Symbol

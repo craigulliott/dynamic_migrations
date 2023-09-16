@@ -44,9 +44,9 @@ module DynamicMigrations
                       if configuration_unique_constraint[:description][:matches] == false
                         # if the description was removed
                         if configuration_unique_constraint[:description].nil?
-                          @generator.remove_unique_constraint_comment unique_constraint
+                          @generator.remove_unique_constraint_comment updated_unique_constraint
                         else
-                          @generator.set_unique_constraint_comment unique_constraint
+                          @generator.set_unique_constraint_comment updated_unique_constraint
                         end
                       end
 

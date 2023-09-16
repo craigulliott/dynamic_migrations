@@ -31,7 +31,6 @@ module DynamicMigrations
                     AND nspname != 'information_schema'
                     AND nspname != 'postgis'
                     AND left(nspname, 3) != 'pg_'
-                    AND (nspname = 'organizations') AND (pg_constraint_class.relname = 'addresses')
                   GROUP BY
                     pg_constraint.oid,
                     nspname,
@@ -78,9 +77,15 @@ module DynamicMigrations
 
               validation_name = row["validation_name"].to_sym
 
+              matches = row["check_clause"].match(/\ACHECK \((?<inner_clause>.*)\)\z/)
+              if matches.nil?
+                raise StandardError, "Unparsable check_clause #{row["check_clause"]}"
+              end
+              check_clause = matches[:inner_clause]
+
               table[validation_name] = {
                 columns: row["columns"].gsub(/\A\{/, "").gsub(/\}\Z/, "").split(",").map { |column_name| column_name.to_sym },
-                check_clause: row["check_clause"],
+                check_clause: check_clause,
                 description: row["description"],
                 deferrable: row["deferrable"] == "TRUE",
                 initially_deferred: row["initially_deferred"] == "TRUE"

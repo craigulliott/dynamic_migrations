@@ -4,7 +4,7 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database::Differences do
   let(:differences_class) { DynamicMigrations::Postgres::Server::Database::Differences }
   let(:pg_helper) { RSpec.configuration.pg_spec_helper }
   let(:server) { DynamicMigrations::Postgres::Server.new pg_helper.host, pg_helper.port, pg_helper.username, pg_helper.password }
-  let(:database) { DynamicMigrations::Postgres::Server::Database.new server, :my_database }
+  let(:database) { DynamicMigrations::Postgres::Server::Database.new server, pg_helper.database }
 
   describe :compare_extensions do
     describe "when base has no extensions" do

@@ -20,6 +20,9 @@ module DynamicMigrations
               class UnexpectedTemplateError < StandardError
               end
 
+              class UnnormalizableCheckClauseError < StandardError
+              end
+
               attr_reader :table
               attr_reader :name
               attr_reader :check_clause
@@ -86,13 +89,65 @@ module DynamicMigrations
 
               def differences_descriptions other_validation
                 method_differences_descriptions other_validation, [
-                  :check_clause,
+                  :normalized_check_clause,
                   :deferrable,
                   :initially_deferred
                 ]
               end
 
+              # create a temporary table in postgres to represent this validation and fetch
+              # the actual normalized check constraint directly from the database
+              def normalized_check_clause
+                # no need to normalize check_clauses which originated from the database
+                if from_database?
+                  check_clause
+                else
+                  @normalized_check_clause ||= fetch_normalized_check_clause
+                end
+              end
+
               private
+
+              def fetch_normalized_check_clause
+                ncc = table.schema.database.with_connection do |connection|
+                  # wrapped in a transaction jsut in case something here fails, because
+                  # we don't want the temporary table to be persisted
+                  connection.exec("BEGIN")
+
+                  # create the temp table and add the expected columns and constraint
+                  connection.exec(<<~SQL)
+                    CREATE TEMP TABLE validation_normalized_check_clause_temp_table (
+                      #{columns.map { |column| '"' + column.name.to_s + '" ' + column.temp_table_data_type.to_s }.join(", ")},
+                      CONSTRAINT #{name} CHECK (#{check_clause})
+                    );
+                  SQL
+
+                  # get the normalzed version of the constraint
+                  rows = connection.exec(<<~SQL)
+                    SELECT pg_get_constraintdef(pg_constraint.oid) AS check_clause
+                    FROM pg_constraint
+                    WHERE conrelid = 'validation_normalized_check_clause_temp_table'::regclass;
+                  SQL
+
+                  # delete the temp table and close the transaction
+                  connection.exec("ROLLBACK")
+
+                  # return the normalized check clause
+                  rows.first["check_clause"]
+                end
+
+                if ncc.nil?
+                  raise UnnormalizableCheckClauseError, "Failed to nomalize check clause `#{check_clause}`"
+                end
+
+                # extract the check clause from the result "CHECK(%check_clause%)"
+                matches = ncc.match(/\ACHECK \((?<inner_clause>.*)\)\z/)
+                if matches.nil?
+                  raise UnnormalizableCheckClauseError, "Unparsable normalized check_clause #{ncc}"
+                end
+
+                matches[:inner_clause]
+              end
 
               # used internally to set the columns from this objects initialize method
               def add_column column

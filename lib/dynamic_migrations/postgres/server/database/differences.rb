@@ -172,7 +172,7 @@ module DynamicMigrations
             # the base functions
             functions.each do |function_name, function|
               result[function_name] = compare_record function, comparison_functions[function_name], [
-                :definition,
+                :normalized_definition,
                 :description
               ]
             end
@@ -249,7 +249,7 @@ module DynamicMigrations
                 :action_timing,
                 :event_manipulation,
                 :action_order,
-                :action_condition,
+                :normalized_action_condition,
                 :parameters,
                 :action_orientation,
                 :action_reference_old_table,
@@ -332,7 +332,7 @@ module DynamicMigrations
             validations.each do |name, validation|
               # compare this validation to the equivilent in the comparison list
               result[name] = compare_record validation, comparison_validations[name], [
-                :check_clause,
+                :normalized_check_clause,
                 :column_names,
                 :description,
                 :deferrable,

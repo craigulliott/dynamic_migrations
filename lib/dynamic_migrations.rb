@@ -95,6 +95,7 @@ require "dynamic_migrations/active_record/migrators/trigger"
 require "dynamic_migrations/active_record/migrators/table"
 require "dynamic_migrations/active_record/migrators/index"
 require "dynamic_migrations/active_record/migrators/enum"
+require "dynamic_migrations/active_record/migrators/primary_key"
 require "dynamic_migrations/active_record/migrators/column"
 require "dynamic_migrations/active_record/migrators"
 

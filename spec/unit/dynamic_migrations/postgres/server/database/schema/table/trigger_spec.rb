@@ -3,7 +3,7 @@
 RSpec.describe DynamicMigrations::Postgres::Server::Database::Schema::Table::Trigger do
   let(:pg_helper) { RSpec.configuration.pg_spec_helper }
   let(:server) { DynamicMigrations::Postgres::Server.new pg_helper.host, pg_helper.port, pg_helper.username, pg_helper.password }
-  let(:database) { DynamicMigrations::Postgres::Server::Database.new server, :my_database }
+  let(:database) { DynamicMigrations::Postgres::Server::Database.new server, pg_helper.database }
   let(:schema) { DynamicMigrations::Postgres::Server::Database::Schema.new :configuration, database, :my_schema }
   let(:function) {
     DynamicMigrations::Postgres::Server::Database::Schema::Function.new :configuration, schema, :function_name, <<~SQL
@@ -160,6 +160,19 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database::Schema::Table::Tri
     end
   end
 
+  describe :normalized_action_condition do
+    let(:trigger) { table.add_trigger :trigger_name, event_manipulation: :insert, action_order: nil, action_condition: "NEW.my_column IS TRUE", parameters: [], action_orientation: :row, action_timing: :before, function: function }
+
+    before(:each) do
+      # add the column to the table
+      column
+    end
+
+    it "returns the expected normalized_action_condition" do
+      expect(trigger.normalized_action_condition).to eq("((new.my_column IS TRUE))")
+    end
+  end
+
   describe :action_condition= do
     it "allows updating the action_condition" do
       trigger.action_condition = "updated action condition"
@@ -296,7 +309,7 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database::Schema::Table::Tri
       it "returns the expected array which describes the differences" do
         expect(trigger.differences_descriptions(different_trigger)).to eql([
           "function_name changed from `function_name` to `different_function_name`",
-          "function_definition changed from `BEGIN\n  NEW.column = 0;\n  RETURN NEW;\nEND;` to `BEGIN\n  NEW.column = 100;\n  RETURN NEW;\nEND;`"
+          "function_normalized_definition changed from `BEGIN\n  NEW.column = 0;\n  RETURN NEW;\nEND;` to `BEGIN\n  NEW.column = 100;\n  RETURN NEW;\nEND;`"
         ])
       end
     end

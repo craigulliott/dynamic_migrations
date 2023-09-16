@@ -44,9 +44,9 @@ module DynamicMigrations
                       if configuration_foreign_key_constraint[:description][:matches] == false
                         # if the description was removed
                         if configuration_foreign_key_constraint[:description].nil?
-                          @generator.remove_foreign_key_constraint_comment foreign_key_constraint
+                          @generator.remove_foreign_key_constraint_comment updated_foreign_key_constraint
                         else
-                          @generator.set_foreign_key_constraint_comment foreign_key_constraint
+                          @generator.set_foreign_key_constraint_comment updated_foreign_key_constraint
                         end
                       end
 

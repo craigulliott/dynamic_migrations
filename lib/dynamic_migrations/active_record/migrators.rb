@@ -30,6 +30,7 @@ module DynamicMigrations
       include UniqueConstraint
       include Trigger
       include Enum
+      include PrimaryKey
 
       def self.included(base)
         base.extend(ClassMethods)

@@ -68,6 +68,23 @@ module DynamicMigrations
               def array?
                 @data_type.end_with? "[]"
               end
+
+              def enum?
+                !@enum.nil?
+              end
+
+              # sometimes this system makes temporary tables in order to fetch the normalized
+              # version of constraint check clauses, function definitions or trigger action conditions
+              # because certain data types might not yet exist, we need to use alternative types
+              def temp_table_data_type
+                if enum
+                  :text
+                elsif @data_type == :citext || @data_type == :"citext[]"
+                  :text
+                else
+                  @data_type
+                end
+              end
             end
           end
         end

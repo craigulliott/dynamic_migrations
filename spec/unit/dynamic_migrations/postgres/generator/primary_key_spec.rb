@@ -6,7 +6,7 @@ RSpec.describe DynamicMigrations::Postgres::Generator do
   describe :PrimaryKey do
     let(:pg_helper) { RSpec.configuration.pg_spec_helper }
     let(:server) { DynamicMigrations::Postgres::Server.new pg_helper.host, pg_helper.port, pg_helper.username, pg_helper.password }
-    let(:database) { DynamicMigrations::Postgres::Server::Database.new server, :my_database }
+    let(:database) { DynamicMigrations::Postgres::Server::Database.new server, pg_helper.database }
     let(:schema) { DynamicMigrations::Postgres::Server::Database::Schema.new :configuration, database, :my_schema }
     let(:table) { DynamicMigrations::Postgres::Server::Database::Schema::Table.new :configuration, schema, :my_table, description: "Comment for this table" }
     let(:column) { table.add_column :my_column, :integer, null: true, description: "Comment for this column" }
@@ -65,6 +65,28 @@ RSpec.describe DynamicMigrations::Postgres::Generator do
           RUBY
           expect(generator.recreate_primary_key(original_primary_key, updated_primary_key).map(&:to_s)).to eq [remove, re_add]
         end
+      end
+    end
+
+    describe :set_primary_key_comment do
+      let(:primary_key) { table.add_primary_key :my_primary_key, [column.name], description: "Comment for this primary_key" }
+
+      it "should return the expected ruby syntax to set a primary_key comment" do
+        expect(generator.set_primary_key_comment(primary_key).to_s).to eq <<~RUBY.strip
+          set_primary_key_comment :my_table, :my_primary_key, <<~COMMENT
+            Comment for this primary_key
+          COMMENT
+        RUBY
+      end
+    end
+
+    describe :remove_primary_key_comment do
+      let(:primary_key) { table.add_primary_key :my_primary_key, [column.name], description: "Comment for this primary_key" }
+
+      it "should return the expected ruby syntax to remove a primary_key comment" do
+        expect(generator.remove_primary_key_comment(primary_key).to_s).to eq <<~RUBY.strip
+          remove_primary_key_comment :my_table, :my_primary_key
+        RUBY
       end
     end
   end

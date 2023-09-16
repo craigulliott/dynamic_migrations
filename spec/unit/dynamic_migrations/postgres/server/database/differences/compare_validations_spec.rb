@@ -4,7 +4,7 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database::Differences do
   let(:differences_class) { DynamicMigrations::Postgres::Server::Database::Differences }
   let(:pg_helper) { RSpec.configuration.pg_spec_helper }
   let(:server) { DynamicMigrations::Postgres::Server.new pg_helper.host, pg_helper.port, pg_helper.username, pg_helper.password }
-  let(:database) { DynamicMigrations::Postgres::Server::Database.new server, :my_database }
+  let(:database) { DynamicMigrations::Postgres::Server::Database.new server, pg_helper.database }
 
   let(:configured_schema) { database.add_configured_schema :my_schema }
   let(:configured_table) { configured_schema.add_table :my_table }
@@ -29,7 +29,7 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database::Differences do
 
         before(:each) do
           comparison.add_column :column_name, :boolean
-          comparison.add_validation :validation_name, [:column_name], "validation SQL"
+          comparison.add_validation :validation_name, [:column_name], "(column_name IS TRUE)"
         end
 
         it "returns the expected object" do
@@ -47,7 +47,7 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database::Differences do
 
       before(:each) do
         base.add_column :column_name, :boolean
-        base.add_validation :validation_name, [:column_name], "validation SQL"
+        base.add_validation :validation_name, [:column_name], "(column_name IS TRUE)"
       end
 
       describe "when comparison table has no validations" do
@@ -57,8 +57,8 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database::Differences do
           expect(differences_class.compare_validations(base.validations_hash, comparison.validations_hash)).to eql({
             validation_name: {
               exists: true,
-              check_clause: {
-                value: "validation SQL",
+              normalized_check_clause: {
+                value: "(column_name IS TRUE)",
                 matches: false
               },
               column_names: {
@@ -87,15 +87,15 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database::Differences do
 
         before(:each) do
           comparison.add_column :column_name, :boolean
-          comparison.add_validation :validation_name, [:column_name], "validation SQL"
+          comparison.add_validation :validation_name, [:column_name], "(column_name IS TRUE)"
         end
 
         it "returns the expected object" do
           expect(differences_class.compare_validations(base.validations_hash, comparison.validations_hash)).to eql({
             validation_name: {
               exists: true,
-              check_clause: {
-                value: "validation SQL",
+              normalized_check_clause: {
+                value: "(column_name IS TRUE)",
                 matches: true
               },
               column_names: {
@@ -124,15 +124,15 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database::Differences do
 
         before(:each) do
           comparison.add_column :column_name, :boolean
-          comparison.add_validation :validation_name, [:column_name], "different validation SQL"
+          comparison.add_validation :validation_name, [:column_name], "(column_name IS FALSE)"
         end
 
         it "returns the expected object" do
           expect(differences_class.compare_validations(base.validations_hash, comparison.validations_hash)).to eql({
             validation_name: {
               exists: true,
-              check_clause: {
-                value: "validation SQL",
+              normalized_check_clause: {
+                value: "(column_name IS TRUE)",
                 matches: false
               },
               description: {

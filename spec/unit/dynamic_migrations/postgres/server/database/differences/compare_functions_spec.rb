@@ -4,7 +4,7 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database::Differences do
   let(:differences_class) { DynamicMigrations::Postgres::Server::Database::Differences }
   let(:pg_helper) { RSpec.configuration.pg_spec_helper }
   let(:server) { DynamicMigrations::Postgres::Server.new pg_helper.host, pg_helper.port, pg_helper.username, pg_helper.password }
-  let(:database) { DynamicMigrations::Postgres::Server::Database.new server, :my_database }
+  let(:database) { DynamicMigrations::Postgres::Server::Database.new server, pg_helper.database }
 
   let(:function_definition) {
     <<~SQL
@@ -64,7 +64,7 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database::Differences do
           expect(differences_class.compare_functions(base.functions_hash, comparison.functions_hash)).to eql({
             function_name: {
               exists: true,
-              definition: {
+              normalized_definition: {
                 value: <<~SQL.strip,
                   BEGIN
                     NEW.column = 0;
@@ -93,7 +93,7 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database::Differences do
           expect(differences_class.compare_functions(base.functions_hash, comparison.functions_hash)).to eql({
             function_name: {
               exists: true,
-              definition: {
+              normalized_definition: {
                 value: <<~SQL.strip,
                   BEGIN
                     NEW.column = 0;
@@ -129,7 +129,7 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database::Differences do
           expect(differences_class.compare_functions(base.functions_hash, comparison.functions_hash)).to eql({
             function_name: {
               exists: true,
-              definition: {
+              normalized_definition: {
                 value: <<~SQL.strip,
                   BEGIN
                     NEW.column = 0;

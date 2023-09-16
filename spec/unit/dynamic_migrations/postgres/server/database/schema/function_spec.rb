@@ -3,7 +3,7 @@
 RSpec.describe DynamicMigrations::Postgres::Server::Database::Schema::Function do
   let(:pg_helper) { RSpec.configuration.pg_spec_helper }
   let(:server) { DynamicMigrations::Postgres::Server.new pg_helper.host, pg_helper.port, pg_helper.username, pg_helper.password }
-  let(:database) { DynamicMigrations::Postgres::Server::Database.new server, :my_database }
+  let(:database) { DynamicMigrations::Postgres::Server::Database.new server, pg_helper.database }
   let(:schema) { DynamicMigrations::Postgres::Server::Database::Schema.new :configuration, database, :my_schema }
   let(:function) { DynamicMigrations::Postgres::Server::Database::Schema::Function.new :configuration, schema, :my_function, function_definition }
   let(:table) { DynamicMigrations::Postgres::Server::Database::Schema::Table.new :configuration, schema, :my_table }
@@ -79,6 +79,17 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database::Schema::Function d
     end
   end
 
+  describe :normalized_definition do
+    it "returns the expected normalized_definition" do
+      expect(function.normalized_definition).to eq(<<~SQL.strip)
+        BEGIN
+          NEW.column = 0;
+          RETURN NEW;
+        END;
+      SQL
+    end
+  end
+
   describe :triggers do
     it "returns an empty array because no triggers have been added" do
       expect(function.triggers).to eql []
@@ -146,7 +157,7 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database::Schema::Function d
       it "returns the expected array which describes the differences" do
         expect(function.differences_descriptions(different_function)).to eql([
           <<~CHANGES.strip
-            definition changed from `BEGIN
+            normalized_definition changed from `BEGIN
               NEW.column = 0;
               RETURN NEW;
             END;` to `BEGIN

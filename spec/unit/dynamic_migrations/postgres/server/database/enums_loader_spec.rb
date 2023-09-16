@@ -41,11 +41,11 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database do
               expect(database.fetch_enums).to eql({
                 my_schema: {
                   my_enum: {
-                    values: [:foo, :bar],
+                    values: ["foo", "bar"],
                     description: nil
                   },
                   my_other_enum: {
-                    values: [:foo, :bar],
+                    values: ["foo", "bar"],
                     description: nil
                   }
                 }

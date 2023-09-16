@@ -42,10 +42,12 @@ module DynamicMigrations
             # perform work with the connection
             # todo: `yield connection` would have been preferred, but rbs/steep doesnt understand that syntax
             if block.is_a? Proc
-              block.call connection
+              result = block.call connection
             end
             # close the connection
             disconnect
+            # return whever was returned from within the block
+            result
           end
         end
       end

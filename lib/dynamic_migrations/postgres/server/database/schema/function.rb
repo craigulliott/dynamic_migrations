@@ -13,6 +13,9 @@ module DynamicMigrations
             class ExpectedDefinitionError < StandardError
             end
 
+            class UnnormalizableDefinitionError < StandardError
+            end
+
             attr_reader :schema
             attr_reader :name
             attr_reader :definition
@@ -59,8 +62,54 @@ module DynamicMigrations
 
             def differences_descriptions other_function
               method_differences_descriptions other_function, [
-                :definition
+                :normalized_definition
               ]
+            end
+
+            # temporarily create a function in postgres and fetch the actual
+            # normalized definition directly from the database
+            def normalized_definition
+              # no need to normalize definitions which originated from the database
+              if from_database?
+                definition
+              else
+                @normalized_definition ||= fetch_normalized_definition
+              end
+            end
+
+            private
+
+            def fetch_normalized_definition
+              fn_def = schema.database.with_connection do |connection|
+                # wrapped in a transaction just in case something here fails, because
+                # we don't want the function to be persisted
+                connection.exec("BEGIN")
+
+                # create a temporary function, from which we will fetch the normalized definition
+                connection.exec(<<~SQL)
+                  CREATE OR REPLACE FUNCTION trigger_normalized_action_condition_temp_fn() returns trigger language plpgsql AS
+                  $$#{definition}$$;
+                SQL
+
+                # get the normalzed version of the definition
+                rows = connection.exec(<<~SQL)
+                  SELECT prosrc AS function_definition
+                  FROM pg_proc
+                  WHERE proname = 'trigger_normalized_action_condition_temp_fn';
+                SQL
+
+                # delete the temp table and close the transaction
+                connection.exec("ROLLBACK")
+
+                # return the normalized function definition
+                rows.first["function_definition"]
+              end
+
+              if fn_def.nil?
+                raise UnnormalizableDefinitionError, "Failed to nomalize action condition `#{definition}`"
+              end
+
+              fn_def
             end
           end
         end

@@ -38,6 +38,9 @@ module DynamicMigrations
               class UnexpectedTemplateError < StandardError
               end
 
+              class UnnormalizableActionConditionError < StandardError
+              end
+
               attr_reader :table
               attr_reader :name
               attr_reader :event_manipulation
@@ -184,7 +187,7 @@ module DynamicMigrations
                   :event_manipulation,
                   :action_timing,
                   :action_order,
-                  :action_condition,
+                  :normalized_action_condition,
                   :parameters,
                   :action_orientation,
                   :action_reference_old_table,
@@ -196,6 +199,69 @@ module DynamicMigrations
                 end
                 # return the combined differences
                 descriptions
+              end
+
+              # create a temporary table in postgres to represent this validation and fetch
+              # the actual normalized check constraint directly from the database
+              def normalized_action_condition
+                if action_condition.nil?
+                  nil
+                # no need to normalize action_conditions which originated from the database
+                elsif from_database?
+                  action_condition
+                else
+                  ac = table.schema.database.with_connection do |connection|
+                    # wrapped in a transaction just in case something here fails, because
+                    # we don't want the function, temporary table or trigger to be persisted
+                    connection.exec("BEGIN")
+
+                    # create the temp table and add the expected columns and constraint
+                    connection.exec(<<~SQL)
+                      CREATE TEMP TABLE trigger_normalized_action_condition_temp_table (
+                        #{table.columns.map { |column| '"' + column.name.to_s + '" ' + column.temp_table_data_type.to_s }.join(", ")}
+                      );
+                    SQL
+
+                    # create a temporary function to trigger (triggers require a function)
+                    connection.exec(<<~SQL)
+                      CREATE OR REPLACE FUNCTION trigger_normalized_action_condition_temp_fn() returns trigger language plpgsql AS
+                      $$ BEGIN END $$;
+                    SQL
+
+                    # create a temporary trigger, from which we will fetch the normalized action condition
+                    connection.exec(<<~SQL)
+                      CREATE TRIGGER trigger_normalized_action_condition_temp_trigger
+                      BEFORE UPDATE ON trigger_normalized_action_condition_temp_table
+                        FOR EACH ROW
+                          WHEN (#{action_condition})
+                          EXECUTE FUNCTION trigger_normalized_action_condition_temp_fn();
+                    SQL
+
+                    # get the normalzed version of the action condition
+                    rows = connection.exec(<<~SQL)
+                      SELECT (
+                        regexp_match(
+                          pg_get_triggerdef(oid),
+                          '.{35,} WHEN ((.+)) EXECUTE FUNCTION')
+                        )[1] as action_condition
+                      FROM pg_trigger
+                      WHERE tgname = 'trigger_normalized_action_condition_temp_trigger'
+                      ;
+                    SQL
+
+                    # delete the temp table and close the transaction
+                    connection.exec("ROLLBACK")
+
+                    # return the normalized action condition
+                    rows.first["action_condition"]
+                  end
+
+                  if ac.nil?
+                    raise UnnormalizableActionConditionError, "Failed to nomalize action condition `#{action_condition}`"
+                  end
+
+                  ac
+                end
               end
             end
           end

@@ -3,7 +3,7 @@
 RSpec.describe DynamicMigrations::Postgres::Server::Database::Differences::ToMigrations::Schemas::Tables do
   let(:pg_helper) { RSpec.configuration.pg_spec_helper }
   let(:server) { DynamicMigrations::Postgres::Server.new pg_helper.host, pg_helper.port, pg_helper.username, pg_helper.password }
-  let(:database) { DynamicMigrations::Postgres::Server::Database.new server, :my_database }
+  let(:database) { DynamicMigrations::Postgres::Server::Database.new server, pg_helper.database }
   let(:differences) { DynamicMigrations::Postgres::Server::Database::Differences.new database }
   let(:to_migrations) { DynamicMigrations::Postgres::Server::Database::Differences::ToMigrations.new database, differences }
   let(:configured_schema) { database.add_configured_schema :my_schema }
@@ -25,7 +25,7 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database::Differences::ToMig
 
         describe "when the configured table has a validation" do
           before(:each) do
-            configured_table.add_validation :my_validation, [:my_column], "my_column > 0"
+            configured_table.add_validation :my_validation, [:my_column], "(my_column > 0)"
           end
 
           it "returns the migration to create the validation" do
@@ -39,7 +39,7 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database::Differences::ToMig
                   #
                   add_validation :my_table, name: :my_validation, deferrable: false, initially_deferred: false do
                     <<~SQL
-                      my_column > 0
+                      (my_column > 0)
                     SQL
                   end
                 RUBY
@@ -49,7 +49,7 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database::Differences::ToMig
 
           describe "when the loaded table has a validation with the same name but a different check clause" do
             before(:each) do
-              loaded_table.add_validation :my_validation, [:my_column], "my_column > 100"
+              loaded_table.add_validation :my_validation, [:my_column], "(my_column > 100)"
             end
 
             it "returns the migration to update the validation by replacing it" do
@@ -63,7 +63,7 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database::Differences::ToMig
                     #
                     # Removing original validation because it has changed (it is recreated below)
                     # Changes:
-                    #   check_clause changed from `my_column > 100` to `my_column > 0`
+                    #   normalized_check_clause changed from `(my_column > 100)` to `(my_column > 0)`
                     remove_validation :my_table, :my_validation
 
                     #
@@ -72,7 +72,7 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database::Differences::ToMig
                     # Recreating this validation
                     add_validation :my_table, name: :my_validation, deferrable: false, initially_deferred: false do
                       <<~SQL
-                        my_column > 0
+                        (my_column > 0)
                       SQL
                     end
                   RUBY
@@ -83,7 +83,7 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database::Differences::ToMig
 
           describe "when the loaded table has an equivalent validation" do
             before(:each) do
-              loaded_table.add_validation :my_validation, [:my_column], "my_column > 0"
+              loaded_table.add_validation :my_validation, [:my_column], "(my_column > 0)"
             end
 
             it "returns no migrations because there are no differences" do
@@ -94,7 +94,7 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database::Differences::ToMig
 
         describe "when the configured table has a validation with a description" do
           before(:each) do
-            configured_table.add_validation :my_validation, [:my_column], "my_column > 0", description: "Description of my validation"
+            configured_table.add_validation :my_validation, [:my_column], "(my_column > 0)", description: "Description of my validation"
           end
 
           it "returns the migration to create the validation and description" do
@@ -111,7 +111,7 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database::Differences::ToMig
                   COMMENT
                   add_validation :my_table, name: :my_validation, deferrable: false, initially_deferred: false, comment: my_validation_comment do
                     <<~SQL
-                      my_column > 0
+                      (my_column > 0)
                     SQL
                   end
                 RUBY
@@ -121,7 +121,7 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database::Differences::ToMig
 
           describe "when the loaded table has the same validation but a different description" do
             before(:each) do
-              loaded_table.add_validation :my_validation, [:my_column], "my_column > 0", description: "Different description of my table"
+              loaded_table.add_validation :my_validation, [:my_column], "(my_column > 0)", description: "Different description of my table"
             end
 
             it "returns the migration to update the description" do
@@ -142,7 +142,7 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database::Differences::ToMig
 
           describe "when the loaded table has an equivalent validation and description" do
             before(:each) do
-              loaded_table.add_validation :my_validation, [:my_column], "my_column > 0", description: "Description of my validation"
+              loaded_table.add_validation :my_validation, [:my_column], "(my_column > 0)", description: "Description of my validation"
             end
 
             it "returns no migrations because there are no differences" do

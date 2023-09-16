@@ -6,7 +6,7 @@ RSpec.describe DynamicMigrations::Postgres::Generator do
   describe :ForeignKeyConstraint do
     let(:pg_helper) { RSpec.configuration.pg_spec_helper }
     let(:server) { DynamicMigrations::Postgres::Server.new pg_helper.host, pg_helper.port, pg_helper.username, pg_helper.password }
-    let(:database) { DynamicMigrations::Postgres::Server::Database.new server, :my_database }
+    let(:database) { DynamicMigrations::Postgres::Server::Database.new server, pg_helper.database }
     let(:schema) { database.add_configured_schema :my_schema }
     let(:table) { schema.add_table :my_table, description: "Comment for this table" }
     let(:column) { table.add_column :my_column, :boolean }

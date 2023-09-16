@@ -59,6 +59,38 @@ module DynamicMigrations
           # return the new fragments (the main reason to return them here is for the specs)
           [removal_fragment, recreation_fragment]
         end
+
+        # add a comment to a primary_key
+        def set_primary_key_comment primary_key, code_comment = nil
+          description = primary_key.description
+
+          if description.nil?
+            raise MissingDescriptionError, "Missing required description for primary_key `#{primary_key.name}` in table `#{primary_key.table.schema.name}.#{primary_key.table.name}`"
+          end
+
+          add_fragment schema: primary_key.table.schema,
+            table: primary_key.table,
+            migration_method: :set_primary_key_comment,
+            object: primary_key,
+            code_comment: code_comment,
+            migration: <<~RUBY
+              set_primary_key_comment :#{primary_key.table.name}, :#{primary_key.name}, <<~COMMENT
+                #{indent description}
+              COMMENT
+            RUBY
+        end
+
+        # remove the comment from a primary_key
+        def remove_primary_key_comment primary_key, code_comment = nil
+          add_fragment schema: primary_key.table.schema,
+            table: primary_key.table,
+            migration_method: :remove_primary_key_comment,
+            object: primary_key,
+            code_comment: code_comment,
+            migration: <<~RUBY
+              remove_primary_key_comment :#{primary_key.table.name}, :#{primary_key.name}
+            RUBY
+        end
       end
     end
   end

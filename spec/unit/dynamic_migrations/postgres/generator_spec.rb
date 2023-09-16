@@ -5,7 +5,7 @@ RSpec.describe DynamicMigrations::Postgres::Generator do
 
   let(:pg_helper) { RSpec.configuration.pg_spec_helper }
   let(:server) { DynamicMigrations::Postgres::Server.new pg_helper.host, pg_helper.port, pg_helper.username, pg_helper.password }
-  let(:database) { DynamicMigrations::Postgres::Server::Database.new server, :my_database }
+  let(:database) { DynamicMigrations::Postgres::Server::Database.new server, pg_helper.database }
 
   let(:schema) { database.add_configured_schema :my_schema }
   let(:table) { schema.add_table :my_table, description: "Comment for this table" }
@@ -79,6 +79,13 @@ RSpec.describe DynamicMigrations::Postgres::Generator do
                   Comment for this column
                 COMMENT
               end
+
+              #
+              # Update Columns
+              #
+              set_column_comment :my_table, :id, <<~COMMENT
+                Comment for this column
+              COMMENT
             RUBY
           },
           {
@@ -96,6 +103,13 @@ RSpec.describe DynamicMigrations::Postgres::Generator do
                   Comment for this column
                 COMMENT
               end
+
+              #
+              # Update Columns
+              #
+              set_column_comment :my_other_table, :id, <<~COMMENT
+                Comment for this column
+              COMMENT
             RUBY
           }
         ])
@@ -124,6 +138,13 @@ RSpec.describe DynamicMigrations::Postgres::Generator do
                     Comment for this column
                   COMMENT
                 end
+
+                #
+                # Update Columns
+                #
+                set_column_comment :my_other_table, :id, <<~COMMENT
+                  Comment for this column
+                COMMENT
               RUBY
             },
             {
@@ -141,6 +162,13 @@ RSpec.describe DynamicMigrations::Postgres::Generator do
                     Comment for this column
                   COMMENT
                 end
+
+                #
+                # Update Columns
+                #
+                set_column_comment :my_table, :id, <<~COMMENT
+                  Comment for this column
+                COMMENT
 
                 #
                 # Foreign Keys
@@ -174,6 +202,13 @@ RSpec.describe DynamicMigrations::Postgres::Generator do
                       Comment for this column
                     COMMENT
                   end
+
+                  #
+                  # Update Columns
+                  #
+                  set_column_comment :my_table, :id, <<~COMMENT
+                    Comment for this column
+                  COMMENT
                 RUBY
               },
               {
@@ -191,6 +226,13 @@ RSpec.describe DynamicMigrations::Postgres::Generator do
                       Comment for this column
                     COMMENT
                   end
+
+                  #
+                  # Update Columns
+                  #
+                  set_column_comment :my_other_table, :id, <<~COMMENT
+                    Comment for this column
+                  COMMENT
 
                   #
                   # Foreign Keys
@@ -291,6 +333,13 @@ RSpec.describe DynamicMigrations::Postgres::Generator do
             # Additional Columns
             #
             add_column :my_table, :enum_from_another_schmea, "my_other_schema.my_enum", null: false, comment: <<~COMMENT
+              Comment for this column
+            COMMENT
+
+            #
+            # Update Columns
+            #
+            set_column_comment :my_table, :id, <<~COMMENT
               Comment for this column
             COMMENT
 
