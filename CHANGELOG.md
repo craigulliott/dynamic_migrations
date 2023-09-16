@@ -1,5 +1,26 @@
 # Changelog
 
+## [3.6.16](https://github.com/craigulliott/dynamic_migrations/compare/v3.6.15...v3.6.16) (2023-09-16)
+
+
+### Bug Fixes
+
+* adding convenience method to call all three cache rebuild methods at once ([287a73d](https://github.com/craigulliott/dynamic_migrations/commit/287a73d96c4bfa303150e3c1f65cb514569c03b6))
+* allowing functions and triggers to be in different schemas ([6df3377](https://github.com/craigulliott/dynamic_migrations/commit/6df337780a9a6b6815776a1f65afd3c8325a00fd))
+* always sorting column names on validations so that they match the structure loader ([3e7e646](https://github.com/craigulliott/dynamic_migrations/commit/3e7e646e834140bcce74e357e6e84c3996b9525e))
+* corrected bug where we passed nil as trigger for updating trigger comment ([c7a3677](https://github.com/craigulliott/dynamic_migrations/commit/c7a3677694130125d581f8f68e56865644d5c442))
+* enum values should be strings not symbols ([080e5da](https://github.com/craigulliott/dynamic_migrations/commit/080e5daaeefa1504912e2cd4f3482af82890ee08))
+* fixed bug where constraint was duplicated due to pg check_constraints table allowing duplicates ([471b6f8](https://github.com/craigulliott/dynamic_migrations/commit/471b6f82fc01770e63f657a12d01d18011c69f07))
+* fixing whitespace with create table migrator syntax ([5bf1a7f](https://github.com/craigulliott/dynamic_migrations/commit/5bf1a7f9f337883ca677b1a2015dd0c41a27442c))
+* generating materialized views automatically when refreshing them but they don't yet exist ([471b6f8](https://github.com/craigulliott/dynamic_migrations/commit/471b6f82fc01770e63f657a12d01d18011c69f07))
+* handling default comments via templates ([3e7e646](https://github.com/craigulliott/dynamic_migrations/commit/3e7e646e834140bcce74e357e6e84c3996b9525e))
+* methods to refresh caches because this needs to be performed before and after migrations are generated and run ([ab72670](https://github.com/craigulliott/dynamic_migrations/commit/ab72670e5fc7d379aed86cf72be956cdc39ed620))
+* more strictly validating column types data types which use enums ([3e7e646](https://github.com/craigulliott/dynamic_migrations/commit/3e7e646e834140bcce74e357e6e84c3996b9525e))
+* removed code which was stripping empty lines from migrations, but inadvertently removing empty lines from within SQL statements ([3e7e646](https://github.com/craigulliott/dynamic_migrations/commit/3e7e646e834140bcce74e357e6e84c3996b9525e))
+* updating action order so that its sequential based on the event manipulation type (update, insert etc.) ([3e7e646](https://github.com/craigulliott/dynamic_migrations/commit/3e7e646e834140bcce74e357e6e84c3996b9525e))
+* validations should not end with a semicolon ([9e2cc8e](https://github.com/craigulliott/dynamic_migrations/commit/9e2cc8ebf1c6da8c4741c5257c6567fc9f3668a7))
+* various fixes after running a variety of real migrations from platformer ([301db01](https://github.com/craigulliott/dynamic_migrations/commit/301db01397f1cb16c6c0e08e9e8c69e1f3ec799e))
+
 ## [3.6.15](https://github.com/craigulliott/dynamic_migrations/compare/v3.6.14...v3.6.15) (2023-09-14)
 
 
