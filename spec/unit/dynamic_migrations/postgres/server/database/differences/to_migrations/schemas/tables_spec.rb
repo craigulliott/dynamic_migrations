@@ -38,6 +38,7 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database::Differences::ToMig
                     Description of my table
                   COMMENT
                   create_table :my_table, id: false, comment: table_comment do |t|
+
                   end
                 RUBY
               }

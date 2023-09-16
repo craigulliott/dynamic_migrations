@@ -327,6 +327,7 @@ RSpec.describe DynamicMigrations::Postgres::Generator do
               Comment for this table
             COMMENT
             create_table :my_table, id: :integer, comment: table_comment do |t|
+
             end
 
             #

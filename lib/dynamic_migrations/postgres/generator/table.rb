@@ -125,7 +125,7 @@ module DynamicMigrations
             if column.description.nil?
               raise NoTableColumnCommentError, "Refusing to generate create_table migration, no description was provided for `#{column.table.schema.name}`.`#{column.table.name}` column `#{column.name}`"
             end
-            options[:comment] = <<~RUBY
+            options[:comment] = <<~RUBY.strip
               <<~COMMENT
                 #{indent column.description}
               COMMENT

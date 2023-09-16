@@ -33,6 +33,7 @@ module DynamicMigrations
       def indent: (String migration, ?Integer levels) -> String
       def tsort_each_node: -> Enumerator[untyped, untyped]
       def tsort_each_child: (untyped node) -> untyped
+      def trim_lines: (String migration) -> String
 
       class ExpectedSymbolError < StandardError
       end

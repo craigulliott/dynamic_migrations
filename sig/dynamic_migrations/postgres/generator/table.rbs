@@ -14,6 +14,7 @@ module DynamicMigrations
         def add_fragment: (migration_method: Symbol, object: untyped, migration: String, ?schema: Server::Database::Schema?, ?table: Server::Database::Schema::Table?, ?code_comment: String?, ?dependent_table: Server::Database::Schema::Table?, ?dependent_function: Server::Database::Schema::Function?, ?dependent_enum: Server::Database::Schema::Enum?) -> Fragment
         def add_column: (Postgres::Server::Database::Schema::Table::Column column, ?String? code_comment) -> Fragment
         def set_column_comment: (Postgres::Server::Database::Schema::Table::Column column, ?String? code_comment) -> Fragment
+        def set_primary_key_comment: (Postgres::Server::Database::Schema::Table::PrimaryKey primary_key, ?String? code_comment) -> Fragment
 
         def indent: (String migration, ?Integer levels) -> String
 
