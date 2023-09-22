@@ -108,7 +108,7 @@ module DynamicMigrations
 
                   column[:data_type] = row["data_type"].to_sym
                   column[:null] = row["is_nullable"] == "YES"
-                  column[:is_enum] = row["is_enum"] == "TRUE"
+                  column[:is_enum] = row["is_enum"] == "t"
                   column[:default] = row["column_default"]
                   column[:description] = row["column_description"]
                   column[:interval_type] = row["interval_type"].nil? ? nil : row["interval_type"].to_sym
