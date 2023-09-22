@@ -33,6 +33,31 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database::Schema::Table do
       end
     end
 
+    describe :add_remote_foreign_key_constraints do
+      # this is called automatically from the other side of the foreign_key_constraint
+      # so we don't need to (and can't independently) test it here
+    end
+
+    describe :remote_foreign_key_constraints do
+      it "returns an empty array" do
+        expect(table.remote_foreign_key_constraints).to eql []
+      end
+
+      describe "after the expected foreign_key_constraint has been added" do
+        let(:foreign_key_constraint) { table.add_foreign_key_constraint(:foreign_key_constraint_name, [:my_column], :my_foreign_schema, :my_foreign_table, [:my_foreign_column]) }
+
+        before(:each) do
+          table.add_column :my_column, :boolean
+          foreign_table.add_column :my_foreign_column, :boolean
+          foreign_key_constraint
+        end
+
+        it "returns the foreign key constraint from this method on the remote table" do
+          expect(foreign_table.remote_foreign_key_constraints).to eql [foreign_key_constraint]
+        end
+      end
+    end
+
     describe :foreign_key_constraint do
       it "raises an error" do
         expect {

@@ -50,6 +50,10 @@ module DynamicMigrations
                 @table = table
                 @foreign_table = foreign_table
 
+                # add this foreign_key_constraint to the remote table (so we can always find
+                # these from both sides of the association)
+                @foreign_table.add_remote_foreign_key_constraint self
+
                 @columns = {}
                 columns.each do |column|
                   add_column column

@@ -26,6 +26,7 @@ module DynamicMigrations
             attr_reader :schema
             attr_reader :name
             attr_reader :description
+            attr_reader :remote_foreign_key_constraints
 
             # initialize a new object to represent a postgres table
             def initialize source, schema, name, description: nil
@@ -47,6 +48,7 @@ module DynamicMigrations
               @validations = {}
               @indexes = {}
               @foreign_key_constraints = {}
+              @remote_foreign_key_constraints = []
               @triggers = {}
               @unique_constraints = {}
             end

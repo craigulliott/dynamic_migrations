@@ -61,6 +61,11 @@ module DynamicMigrations
                 # return the new foreign_key_constraint
                 new_foreign_key_constraint
               end
+
+              # called automatically from the other side of the foreign key constraint to keep track of the foreign key from both sides
+              def add_remote_foreign_key_constraint foreign_key_constraint
+                @remote_foreign_key_constraints << foreign_key_constraint
+              end
             end
           end
         end
