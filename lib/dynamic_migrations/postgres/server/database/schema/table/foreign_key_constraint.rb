@@ -14,9 +14,6 @@ module DynamicMigrations
               class ExpectedArrayOfColumnsError < StandardError
               end
 
-              class ExpectedDifferentTablesError < StandardError
-              end
-
               class DuplicateColumnError < StandardError
               end
 
@@ -47,10 +44,6 @@ module DynamicMigrations
                 # assert that the provided foreign columns is an array
                 unless foreign_columns.is_a?(Array) && foreign_columns.count > 0
                   raise ExpectedArrayOfColumnsError
-                end
-
-                if table.name == foreign_table.name && table.schema.name == foreign_table.schema.name
-                  raise ExpectedDifferentTablesError
                 end
 
                 # tables must be set before the columns are added

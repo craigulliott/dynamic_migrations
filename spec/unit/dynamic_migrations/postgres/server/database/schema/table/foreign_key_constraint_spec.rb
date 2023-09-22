@@ -57,10 +57,10 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database::Schema::Table::For
       end
     end
 
-    it "raises an error if the local and foreign table are the same" do
+    it "does not raise an error if the local and foreign table are the same" do
       expect {
         DynamicMigrations::Postgres::Server::Database::Schema::Table::ForeignKeyConstraint.new :configuration, table, [column], table, [column], :foreign_key_constraint_name
-      }.to raise_error DynamicMigrations::Postgres::Server::Database::Schema::Table::ForeignKeyConstraint::ExpectedDifferentTablesError
+      }.to_not raise_error
     end
 
     describe "validating the local table and columns" do

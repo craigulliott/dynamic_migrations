@@ -38,9 +38,6 @@ module DynamicMigrations
               class ExpectedArrayOfColumnsError < StandardError
               end
 
-              class ExpectedDifferentTablesError < StandardError
-              end
-
               class DuplicateColumnError < StandardError
               end
 
