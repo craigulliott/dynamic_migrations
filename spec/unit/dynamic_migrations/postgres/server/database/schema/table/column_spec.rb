@@ -97,6 +97,19 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database::Schema::Table::Col
     end
   end
 
+  describe :base_data_type do
+    it "returns the same column type as the internal column_type value because this data type is not an array" do
+      expect(column.base_data_type).to eq :boolean
+    end
+
+    describe "when an array data type was provided at initialization" do
+      let(:array_column) { DynamicMigrations::Postgres::Server::Database::Schema::Table::Column.new :configuration, table, :my_column, :"boolean[]", description: "a valid description of my column" }
+      it "returns the data type without the square brackets because this is an array" do
+        expect(column.base_data_type).to eq :boolean
+      end
+    end
+  end
+
   describe :enum do
     it "returns nil because this data type is not an enum" do
       expect(column.enum).to be nil

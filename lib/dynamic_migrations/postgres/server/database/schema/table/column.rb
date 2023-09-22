@@ -77,6 +77,12 @@ module DynamicMigrations
                 !@enum.nil?
               end
 
+              # for arrays returns the column type without the array brackets, for non arrays
+              # jsut returnms the column type
+              def base_data_type
+                array? ? @data_type[0..-3]&.to_sym : @data_type
+              end
+
               # sometimes this system makes temporary tables in order to fetch the normalized
               # version of constraint check clauses, function definitions or trigger action conditions
               # because certain data types might not yet exist, we need to use alternative types
