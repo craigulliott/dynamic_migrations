@@ -34,7 +34,7 @@ module DynamicMigrations
               raise ExpectedSymbolError, name unless name.is_a? Symbol
               @name = name
 
-              unless definition.is_a?(String) && definition.strip != "" && definition.strip.end_with?("END;")
+              unless definition.is_a?(String) && definition.strip != "" && definition.strip.end_with?("END;", "END")
                 raise ExpectedDefinitionError, "Definition must be a string, and end with `END;`. Definition provided:\n#{definition}"
               end
               @definition = definition.strip
