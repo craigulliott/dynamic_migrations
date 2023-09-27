@@ -54,7 +54,7 @@ module DynamicMigrations
               attr_reader :description
               attr_reader :template
 
-              # initialize a new object to represent a validation in a postgres table
+              # initialize a new object to represent a trigger in a postgres table
               def initialize source, table, name, action_timing:, event_manipulation:, parameters:, action_orientation:, function:, action_order: nil, action_condition: nil, action_reference_old_table: nil, action_reference_new_table: nil, description: nil, template: nil
                 super source
 
@@ -201,7 +201,7 @@ module DynamicMigrations
                 descriptions
               end
 
-              # create a temporary table in postgres to represent this validation and fetch
+              # create a temporary table in postgres to represent this trigger and fetch
               # the actual normalized check constraint directly from the database
               def normalized_action_condition
                 if action_condition.nil?

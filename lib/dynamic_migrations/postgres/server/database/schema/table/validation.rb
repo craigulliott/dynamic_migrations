@@ -37,21 +37,24 @@ module DynamicMigrations
                 raise ExpectedTableError, table unless table.is_a? Table
                 @table = table
 
-                # assert that the provided columns is an array
-                unless columns.is_a?(Array) && columns.count > 0
-                  raise ExpectedArrayOfColumnsError
-                end
-
-                @columns = {}
-                columns.each do |column|
-                  add_column column
-                end
-
                 raise ExpectedSymbolError, name unless name.is_a? Symbol
                 @name = name
 
                 raise ExpectedStringError, check_clause unless check_clause.is_a? String
                 @check_clause = check_clause.strip
+
+                # if this validation is created via configuration (apposed to being loaded) then they can be lazy loaded
+                unless from_configuration? && columns.nil?
+                  # assert that the provided columns is an array
+                  unless columns.is_a?(Array) && columns.count > 0
+                    raise ExpectedArrayOfColumnsError
+                  end
+
+                  @columns = {}
+                  columns.each do |column|
+                    add_column column
+                  end
+                end
 
                 unless description.nil?
                   raise ExpectedStringError, description unless description.is_a? String
@@ -80,11 +83,17 @@ module DynamicMigrations
 
               # return an array of this validations columns
               def columns
+                if @columns.nil?
+                  @columns = {}
+                  normalized_check_clause_and_column_names[:column_names].each do |column_name|
+                    add_column table.column(column_name)
+                  end
+                end
                 @columns.values
               end
 
               def column_names
-                @columns.keys.sort
+                columns.map(&:name)
               end
 
               def differences_descriptions other_validation
@@ -102,15 +111,19 @@ module DynamicMigrations
                 if from_database?
                   check_clause
                 else
-                  @normalized_check_clause ||= fetch_normalized_check_clause
+                  normalized_check_clause_and_column_names[:check_clause]
                 end
               end
 
               private
 
-              def fetch_normalized_check_clause
-                ncc = table.schema.database.with_connection do |connection|
-                  # wrapped in a transaction jsut in case something here fails, because
+              def normalized_check_clause_and_column_names
+                @normalized_check_clause_and_column_names ||= fetch_normalized_check_clause_and_column_names
+              end
+
+              def fetch_normalized_check_clause_and_column_names
+                result = table.schema.database.with_connection do |connection|
+                  # wrapped in a transaction just in case something here fails, because
                   # we don't want the temporary table to be persisted
                   connection.exec("BEGIN")
 
@@ -122,31 +135,46 @@ module DynamicMigrations
                     );
                   SQL
 
-                  # get the normalzed version of the constraint
+                  # get the normalized version of the constraint
                   rows = connection.exec(<<~SQL)
-                    SELECT pg_get_constraintdef(pg_constraint.oid) AS check_clause
+                    SELECT
+                      pg_get_constraintdef(pg_constraint.oid) AS check_clause,
+                      ARRAY_AGG(col.attname ORDER BY u.attposition) AS column_names
                     FROM pg_constraint
-                    WHERE conrelid = 'validation_normalized_check_clause_temp_table'::regclass;
+                    LEFT JOIN LATERAL UNNEST(pg_constraint.conkey)
+                      WITH ORDINALITY AS u(attnum, attposition)
+                      ON TRUE
+                    LEFT JOIN pg_attribute col
+                      ON
+                        (col.attrelid = pg_constraint.conrelid
+                        AND col.attnum = u.attnum)
+                    WHERE conrelid = 'validation_normalized_check_clause_temp_table'::regclass
+                    GROUP BY pg_constraint.oid;
                   SQL
 
                   # delete the temp table and close the transaction
                   connection.exec("ROLLBACK")
 
-                  # return the normalized check clause
-                  rows.first["check_clause"]
+                  rows.first
                 end
 
-                if ncc.nil?
+                if result["check_clause"].nil?
                   raise UnnormalizableCheckClauseError, "Failed to nomalize check clause `#{check_clause}`"
                 end
 
                 # extract the check clause from the result "CHECK(%check_clause%)"
-                matches = ncc.match(/\ACHECK \((?<inner_clause>.*)\)\z/)
+                matches = result["check_clause"].match(/\ACHECK \((?<inner_clause>.*)\)\z/)
                 if matches.nil?
-                  raise UnnormalizableCheckClauseError, "Unparsable normalized check_clause #{ncc}"
+                  raise UnnormalizableCheckClauseError, "Unparsable normalized check_clause #{result["check_clause"]}"
                 end
 
-                matches[:inner_clause]
+                normalized_column_names = result["column_names"].gsub(/\A\{/, "").gsub(/\}\Z/, "").split(",").map { |column_name| column_name.to_sym }
+
+                # return the normalized check clause
+                {
+                  check_clause: matches[:inner_clause],
+                  column_names: normalized_column_names
+                }
               end
 
               # used internally to set the columns from this objects initialize method

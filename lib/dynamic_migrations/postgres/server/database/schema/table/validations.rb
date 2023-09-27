@@ -42,7 +42,7 @@ module DynamicMigrations
                 if has_validation? name
                   raise(ValidationAlreadyExistsError, "Validation #{name} already exists")
                 end
-                columns = column_names.map { |column_name| column column_name }
+                columns = column_names&.map { |column_name| column column_name }
                 included_target = self
                 if included_target.is_a? Table
                   new_validation = @validations[name] = Validation.new source, included_target, columns, name, check_clause, **validation_options

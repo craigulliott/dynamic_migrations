@@ -6,7 +6,7 @@ module DynamicMigrations
           class Table
             class Validation < Source
               @columns: Hash[Symbol, Column]
-              @normalized_check_clause: String?
+              @normalized_check_clause_and_column_names: {check_clause: String, column_names: Array[Symbol]}?
 
               attr_reader table: Table
               attr_reader name: Symbol
@@ -16,7 +16,7 @@ module DynamicMigrations
               attr_reader description: String?
               attr_reader template: Symbol?
 
-              def initialize: (database_or_configuration source, Table table, Array[Column] columns, Symbol name, String check_clause, ?deferrable: bool, ?initially_deferred: bool, ?description: String?, ?template: Symbol?) -> void
+              def initialize: (database_or_configuration source, Table table, Array[Column]? columns, Symbol name, String check_clause, ?deferrable: bool, ?initially_deferred: bool, ?description: String?, ?template: Symbol?) -> void
               def columns: -> Array[Column]
               def column_names: -> Array[Symbol]
               def has_description?: -> bool
@@ -24,7 +24,9 @@ module DynamicMigrations
               def normalized_check_clause: -> String
 
               private
-              def fetch_normalized_check_clause: -> String
+
+              def normalized_check_clause_and_column_names: -> {check_clause: String, column_names: Array[Symbol]}
+              def fetch_normalized_check_clause_and_column_names: -> {check_clause: String, column_names: Array[Symbol]}
 
               def add_column: (Column column) -> void
 

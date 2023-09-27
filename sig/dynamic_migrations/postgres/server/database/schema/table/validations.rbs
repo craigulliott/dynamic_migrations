@@ -11,7 +11,7 @@ module DynamicMigrations
               def has_validation?: (Symbol name) -> bool
               def validations: -> Array[Validation]
               def validations_hash: -> Hash[Symbol, Validation]
-              def add_validation: (Symbol name, Array[Symbol] column_names, String check_clause, **untyped) -> untyped
+              def add_validation: (Symbol name, Array[Symbol]? column_names, String check_clause, **untyped) -> untyped
 
               # these come from the table object (which this module is included into)
               def source: -> database_or_configuration
