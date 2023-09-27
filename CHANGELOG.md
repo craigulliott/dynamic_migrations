@@ -1,5 +1,21 @@
 # Changelog
 
+## [3.7.0](https://github.com/craigulliott/dynamic_migrations/compare/v3.6.16...v3.7.0) (2023-09-27)
+
+
+### Features
+
+* providing access to foreign key constraints from both sides of the association ([48dcf1c](https://github.com/craigulliott/dynamic_migrations/commit/48dcf1cd4cdb23bc37da3e47b00f8007b8bc0f8a))
+
+
+### Bug Fixes
+
+* allowing foreign keys to the same table because they are valid and sometimes useful ([0566384](https://github.com/craigulliott/dynamic_migrations/commit/0566384a4cfeade757d9806059035477f7c41ee2))
+* lazy loading column names for validations when they were configured with a nil value for columns ([439200e](https://github.com/craigulliott/dynamic_migrations/commit/439200efdedf74dddc852bf9bd35e81c1f6b4336))
+* providing convenience method to retrieve columns base data type from array columns ([cd3d9bf](https://github.com/craigulliott/dynamic_migrations/commit/cd3d9bf06682335a890d9b11133d397d7bcd50af))
+* semi colon at the end of function definitions is now optional ([ca9b3aa](https://github.com/craigulliott/dynamic_migrations/commit/ca9b3aa04da23605ff61b2ec14baed927145d2c3))
+* structure loader was not identifying enums properly ([95276d3](https://github.com/craigulliott/dynamic_migrations/commit/95276d33f98f41eca9a9467bb6abeb458a37f16b))
+
 ## [3.6.16](https://github.com/craigulliott/dynamic_migrations/compare/v3.6.15...v3.6.16) (2023-09-16)
 
 
