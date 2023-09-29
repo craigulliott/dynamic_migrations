@@ -1,4 +1,8 @@
 module DynamicMigrations
   module Postgres
+    self.@remove_unused_extensions: bool?
+
+    def self.remove_unused_extensions=: (bool value) -> bool
+    def self.remove_unused_extensions?: -> bool
   end
 end

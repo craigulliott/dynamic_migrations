@@ -37,7 +37,9 @@ module DynamicMigrations
             # return a enum by its name, raises an error if the enum does not exist
             def enum enum_name
               raise ExpectedSymbolError, enum_name unless enum_name.is_a? Symbol
-              raise EnumDoesNotExistError unless has_enum? enum_name
+              unless has_enum? enum_name
+                raise EnumDoesNotExistError, "Enum `#{enum_name}` does not exist"
+              end
               @enums[enum_name]
             end
 

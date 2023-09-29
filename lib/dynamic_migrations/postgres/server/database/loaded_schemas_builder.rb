@@ -42,7 +42,9 @@ module DynamicMigrations
                 # add each table column
                 table_definition[:columns].each do |column_name, column_definition|
                   if column_definition[:is_enum]
-                    enum_schema, enum_name = column_definition[:data_type].to_s.split(".")
+                    data_type = column_definition[:data_type].to_s
+                    enum_full_name = column_definition[:is_array] ? data_type[0..-3] : data_type
+                    enum_schema, enum_name = enum_full_name.split(".")
                     enum = table.schema.database.loaded_schema(enum_schema.to_sym).enum(enum_name.to_sym)
                   else
                     enum = nil

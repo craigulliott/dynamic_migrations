@@ -18,7 +18,9 @@ module DynamicMigrations
                 # then we need to delete it
                 elsif database_extension[:exists] == true && !configuration_extension[:exists]
                   # a migration to drop the extension
-                  @generator.disable_extension extension_name
+                  if Postgres.remove_unused_extensions?
+                    @generator.disable_extension extension_name
+                  end
                 end
               end
             end

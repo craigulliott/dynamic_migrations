@@ -13,6 +13,8 @@ module DynamicMigrations
                   schemata.schema_name,
                   -- Name of the table
                   tables.table_name,
+                  -- is this a real table or a view
+                  tables.table_type,
                   -- The comment which has been added to the table (if any)
                   table_description.description AS table_description,
                   -- Name of the column
@@ -24,6 +26,8 @@ module DynamicMigrations
                   -- YES if the column is possibly nullable, NO if
                   -- it is known not nullable
                   columns.is_nullable,
+                  -- Is this column an array
+                  columns.data_type = 'ARRAY' AS is_array,
                   -- The formatted data type (such as integer, char(5) or numeric(12,2)[])
                   CASE
                   WHEN tables.table_name IS NOT NULL THEN
@@ -34,12 +38,26 @@ module DynamicMigrations
                   )
                   END AS data_type,
                   -- is this an emum
-                  EXISTS (
-                    SELECT 1
-                    FROM pg_type typ
-                      INNER JOIN pg_enum enu ON typ.oid = enu.enumtypid
-                    WHERE typ.typname = columns.udt_name
-                  ) AS is_enum,
+                  CASE
+                  WHEN columns.data_type = 'ARRAY' OR columns.data_type = 'USER-DEFINED' THEN
+                  (
+                    SELECT EXISTS (
+                      SELECT 1
+                      FROM pg_type
+                      INNER JOIN pg_enum
+                        ON pg_type.oid = pg_enum.enumtypid
+                      INNER JOIN pg_namespace
+                        ON pg_namespace.oid = pg_type.typnamespace
+                      WHERE
+                        -- when the column is an array, the udt_name is the name of the enum prefixed with an underscore
+                        (columns.data_type = 'ARRAY' AND concat('_', pg_type.typname) = columns.udt_name AND pg_namespace.nspname = columns.udt_schema)
+                        -- when the column is not an array, the udt_name is the same name as the enum
+                        OR (columns.data_type = 'USER-DEFINED' AND pg_type.typname = columns.udt_name AND pg_namespace.nspname = columns.udt_schema)
+                    )
+                  )
+                  ELSE FALSE
+                  END
+                  AS is_enum,
                   -- If data_type identifies an interval type, this column contains
                   -- the specification which fields the intervals include for this
                   -- column, e.g., YEAR TO MONTH, DAY TO SECOND, etc. If no field
@@ -55,9 +73,13 @@ module DynamicMigrations
                 LEFT JOIN pg_catalog.pg_description table_description ON table_description.objoid = pg_statio_all_tables.relid AND table_description.objsubid = 0
                 -- required for the column description/comment
                 LEFT JOIN pg_catalog.pg_description column_description ON column_description.objoid = pg_statio_all_tables.relid AND column_description.objsubid = columns.ordinal_position
-                WHERE schemata.schema_name != 'information_schema'
+                WHERE
+                  -- skip internal postgres schemas
+                  schemata.schema_name != 'information_schema'
                   AND schemata.schema_name != 'postgis'
                   AND left(schemata.schema_name, 3) != 'pg_'
+                  -- only base tables (skip views), the null check is required for the left join as the schema might be empty
+                  AND (tables IS NULL OR tables.table_type = 'BASE TABLE')
                 -- order by the schema and table names alphabetically, then by the column position in the table
                 ORDER BY schemata.schema_name, tables.table_schema, columns.ordinal_position
             SQL
@@ -109,6 +131,7 @@ module DynamicMigrations
                   column[:data_type] = row["data_type"].to_sym
                   column[:null] = row["is_nullable"] == "YES"
                   column[:is_enum] = row["is_enum"] == "t"
+                  column[:is_array] = row["is_array"] == "t"
                   column[:default] = row["column_default"]
                   column[:description] = row["column_description"]
                   column[:interval_type] = row["interval_type"].nil? ? nil : row["interval_type"].to_sym

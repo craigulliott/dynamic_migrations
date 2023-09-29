@@ -10,6 +10,8 @@ require "dynamic_migrations/expected_integer_error"
 require "dynamic_migrations/expected_boolean_error"
 require "dynamic_migrations/module_included_into_unexpected_target_error"
 
+require "dynamic_migrations/postgres"
+
 require "dynamic_migrations/postgres/server/database/connection"
 require "dynamic_migrations/postgres/server/database/structure_loader"
 require "dynamic_migrations/postgres/server/database/validations_loader"
