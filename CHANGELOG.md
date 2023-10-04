@@ -1,5 +1,19 @@
 # Changelog
 
+## [3.8.0](https://github.com/craigulliott/dynamic_migrations/compare/v3.7.0...v3.8.0) (2023-10-04)
+
+
+### Features
+
+* configuration option to skip removing unused extensions ([5d27e36](https://github.com/craigulliott/dynamic_migrations/commit/5d27e36363dcec552ed015a196fbcf660e6b038c))
+
+
+### Bug Fixes
+
+* adding a setting to allow customizing where the schema where materialized view structure caches are created ([f3a81f8](https://github.com/craigulliott/dynamic_migrations/commit/f3a81f850dacc40ee434de77bb1d3f3c14ea0872))
+* handling arrays of enums properly ([5d27e36](https://github.com/craigulliott/dynamic_migrations/commit/5d27e36363dcec552ed015a196fbcf660e6b038c))
+* skipping views when loading database tables ([5d27e36](https://github.com/craigulliott/dynamic_migrations/commit/5d27e36363dcec552ed015a196fbcf660e6b038c))
+
 ## [3.7.0](https://github.com/craigulliott/dynamic_migrations/compare/v3.6.16...v3.7.0) (2023-09-27)
 
 
