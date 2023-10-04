@@ -7,7 +7,7 @@ module DynamicMigrations
         module KeysAndUniqueConstraintsLoader
           def create_database_keys_and_unique_constraints_cache
             connection.exec(<<~SQL)
-              CREATE MATERIALIZED VIEW public.dynamic_migrations_keys_and_unique_constraints_cache as
+              CREATE MATERIALIZED VIEW #{Postgres.cache_schema_name}.dynamic_migrations_keys_and_unique_constraints_cache as
                 SELECT
                   c.conname AS constraint_name,
                   pg_get_constraintdef(c.oid, true) as constraint_definition,
@@ -92,16 +92,16 @@ module DynamicMigrations
               ORDER BY schema_name, table_name;
             SQL
             connection.exec(<<~SQL)
-              CREATE UNIQUE INDEX dynamic_migrations_keys_and_unique_constraints_cache_index ON public.dynamic_migrations_keys_and_unique_constraints_cache (schema_name, table_name, constraint_name);
+              CREATE UNIQUE INDEX dynamic_migrations_keys_and_unique_constraints_cache_index ON #{Postgres.cache_schema_name}.dynamic_migrations_keys_and_unique_constraints_cache (schema_name, table_name, constraint_name);
             SQL
             connection.exec(<<~SQL)
-              COMMENT ON MATERIALIZED VIEW public.dynamic_migrations_keys_and_unique_constraints_cache IS 'A cached representation of the database constraints. This is used by the dynamic migrations library and is created automatically and updated automatically after migrations have run.';
+              COMMENT ON MATERIALIZED VIEW #{Postgres.cache_schema_name}.dynamic_migrations_keys_and_unique_constraints_cache IS 'A cached representation of the database constraints. This is used by the dynamic migrations library and is created automatically and updated automatically after migrations have run.';
             SQL
           end
 
           def refresh_database_keys_and_unique_constraints_cache
             connection.exec(<<~SQL)
-              REFRESH MATERIALIZED VIEW public.dynamic_migrations_keys_and_unique_constraints_cache
+              REFRESH MATERIALIZED VIEW #{Postgres.cache_schema_name}.dynamic_migrations_keys_and_unique_constraints_cache
             SQL
           rescue PG::UndefinedTable
             create_database_keys_and_unique_constraints_cache
@@ -112,12 +112,12 @@ module DynamicMigrations
           def fetch_keys_and_unique_constraints
             begin
               rows = connection.exec(<<~SQL)
-                SELECT * FROM public.dynamic_migrations_keys_and_unique_constraints_cache
+                SELECT * FROM #{Postgres.cache_schema_name}.dynamic_migrations_keys_and_unique_constraints_cache
               SQL
             rescue PG::UndefinedTable
               create_database_keys_and_unique_constraints_cache
               rows = connection.exec(<<~SQL)
-                SELECT * FROM public.dynamic_migrations_keys_and_unique_constraints_cache
+                SELECT * FROM #{Postgres.cache_schema_name}.dynamic_migrations_keys_and_unique_constraints_cache
               SQL
             end
 

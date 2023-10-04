@@ -1,8 +1,12 @@
 module DynamicMigrations
   module Postgres
     self.@remove_unused_extensions: bool?
+    self.@cache_schema_name: Symbol?
 
     def self.remove_unused_extensions=: (bool value) -> bool
     def self.remove_unused_extensions?: -> bool
+
+    def self.cache_schema_name=: (Symbol value) -> Symbol
+    def self.cache_schema_name: -> Symbol
   end
 end

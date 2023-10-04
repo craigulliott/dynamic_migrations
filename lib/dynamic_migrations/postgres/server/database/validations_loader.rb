@@ -7,7 +7,7 @@ module DynamicMigrations
         module ValidationsLoader
           def create_database_validations_cache
             connection.exec(<<~SQL)
-              CREATE MATERIALIZED VIEW public.dynamic_migrations_validations_cache AS
+              CREATE MATERIALIZED VIEW #{Postgres.cache_schema_name}.dynamic_migrations_validations_cache AS
                 SELECT
                   nspname AS schema_name,
                   pg_constraint_class.relname AS table_name,
@@ -38,16 +38,16 @@ module DynamicMigrations
                     conname;
             SQL
             connection.exec(<<~SQL)
-              CREATE UNIQUE INDEX dynamic_migrations_validations_cache_index ON public.dynamic_migrations_validations_cache (schema_name, table_name, validation_name);
+              CREATE UNIQUE INDEX dynamic_migrations_validations_cache_index ON #{Postgres.cache_schema_name}.dynamic_migrations_validations_cache (schema_name, table_name, validation_name);
             SQL
             connection.exec(<<~SQL)
-              COMMENT ON MATERIALIZED VIEW public.dynamic_migrations_validations_cache IS 'A cached representation of the database validations. This is used by the dynamic migrations library and is created automatically and updated automatically after migrations have run.';
+              COMMENT ON MATERIALIZED VIEW #{Postgres.cache_schema_name}.dynamic_migrations_validations_cache IS 'A cached representation of the database validations. This is used by the dynamic migrations library and is created automatically and updated automatically after migrations have run.';
             SQL
           end
 
           def refresh_database_validations_cache
             connection.exec(<<~SQL)
-              REFRESH MATERIALIZED VIEW public.dynamic_migrations_validations_cache
+              REFRESH MATERIALIZED VIEW #{Postgres.cache_schema_name}.dynamic_migrations_validations_cache
             SQL
           rescue PG::UndefinedTable
             create_database_validations_cache
@@ -58,12 +58,12 @@ module DynamicMigrations
           def fetch_validations
             begin
               rows = connection.exec(<<~SQL)
-                SELECT * FROM public.dynamic_migrations_validations_cache
+                SELECT * FROM #{Postgres.cache_schema_name}.dynamic_migrations_validations_cache
               SQL
             rescue PG::UndefinedTable
               create_database_validations_cache
               rows = connection.exec(<<~SQL)
-                SELECT * FROM public.dynamic_migrations_validations_cache
+                SELECT * FROM #{Postgres.cache_schema_name}.dynamic_migrations_validations_cache
               SQL
             end
 

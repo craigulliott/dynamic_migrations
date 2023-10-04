@@ -7,7 +7,7 @@ module DynamicMigrations
         module StructureLoader
           def create_database_structure_cache
             connection.exec(<<~SQL)
-              CREATE MATERIALIZED VIEW public.dynamic_migrations_structure_cache AS
+              CREATE MATERIALIZED VIEW #{Postgres.cache_schema_name}.dynamic_migrations_structure_cache AS
                 SELECT
                   -- Name of the schema containing the table
                   schemata.schema_name,
@@ -84,13 +84,13 @@ module DynamicMigrations
                 ORDER BY schemata.schema_name, tables.table_schema, columns.ordinal_position
             SQL
             connection.exec(<<~SQL)
-              COMMENT ON MATERIALIZED VIEW public.dynamic_migrations_structure_cache IS 'A cached representation of the database structure. This is used by the dynamic migrations library and is created automatically and updated automatically after migrations have run.';
+              COMMENT ON MATERIALIZED VIEW #{Postgres.cache_schema_name}.dynamic_migrations_structure_cache IS 'A cached representation of the database structure. This is used by the dynamic migrations library and is created automatically and updated automatically after migrations have run.';
             SQL
           end
 
           def refresh_database_structure_cache
             connection.exec(<<~SQL)
-              REFRESH MATERIALIZED VIEW public.dynamic_migrations_structure_cache
+              REFRESH MATERIALIZED VIEW #{Postgres.cache_schema_name}.dynamic_migrations_structure_cache
             SQL
           rescue PG::UndefinedTable
             create_database_structure_cache
@@ -101,12 +101,12 @@ module DynamicMigrations
           def fetch_structure
             begin
               rows = connection.exec(<<~SQL)
-                SELECT * FROM public.dynamic_migrations_structure_cache
+                SELECT * FROM #{Postgres.cache_schema_name}.dynamic_migrations_structure_cache
               SQL
             rescue PG::UndefinedTable
               create_database_structure_cache
               rows = connection.exec(<<~SQL)
-                SELECT * FROM public.dynamic_migrations_structure_cache
+                SELECT * FROM #{Postgres.cache_schema_name}.dynamic_migrations_structure_cache
               SQL
             end
 
