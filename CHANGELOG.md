@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.8.2](https://github.com/craigulliott/dynamic_migrations/compare/v3.8.1...v3.8.2) (2023-10-06)
+
+
+### Bug Fixes
+
+* fetch_normalized_check_clause_and_column_names was using column names from the validation instead of the table it belonged to ([5157205](https://github.com/craigulliott/dynamic_migrations/commit/5157205fc52cfbf062d61054bf12c117a5df5b57))
+
 ## [3.8.1](https://github.com/craigulliott/dynamic_migrations/compare/v3.8.0...v3.8.1) (2023-10-06)
 
 
