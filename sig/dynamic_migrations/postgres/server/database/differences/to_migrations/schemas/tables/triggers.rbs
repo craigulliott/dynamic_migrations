@@ -14,6 +14,8 @@ module DynamicMigrations
                   private
                   def process_triggers: (Symbol schema_name, Symbol table_name, untyped configuration_triggers, untyped database_triggers) -> void
                   def process_trigger: (Symbol schema_name, Symbol table_name, Symbol trigger_name, untyped configuration_trigger, untyped database_trigger) -> void
+                  # this method is available on the ToMigrations class which includes this module
+                  def log: -> Logging::Logger
 
                 end
               end

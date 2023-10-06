@@ -10,12 +10,15 @@ module DynamicMigrations
               module Tables
                 module PrimaryKey
                   def process_primary_key schema_name, table_name, configuration_primary_key, database_primary_key
+                    log.info "    Processing Primary Key..."
                     configuration_primary_key_exists = configuration_primary_key && configuration_primary_key[:exists]
                     database_primary_key_exists = database_primary_key && database_primary_key[:exists]
 
                     # If the primary_key exists in the configuration but not in the database
                     # then we have to create it.
                     if configuration_primary_key_exists == true && database_primary_key_exists == false
+                      log.info "    Primary Key exists in configuration but not in the database"
+
                       # a migration to create the primary_key
                       primary_key = @database.configured_schema(schema_name).table(table_name).primary_key
                       @generator.add_primary_key primary_key
@@ -23,19 +26,26 @@ module DynamicMigrations
                     # If the schema exists in the database but not in the configuration
                     # then we need to delete it.
                     elsif configuration_primary_key_exists == false && database_primary_key_exists == true
+                      log.info "    Primary Key exists in database but not in the configuration"
+
                       # a migration to create the primary_key
                       primary_key = @database.loaded_schema(schema_name).table(table_name).primary_key
                       @generator.remove_primary_key primary_key
 
                     # If the primary_key exists in both the configuration and database representations
                     elsif configuration_primary_key_exists == true && database_primary_key_exists == true
+                      log.info "    Primary Key exists in both configuration and the database"
+
                       # If the definition (i.e. the column names) is different then we need to update the primary key.
                       if configuration_primary_key.except(:exists, :description).filter { |name, attributes| attributes[:matches] == false }.any?
+                        log.info "      Primary Key is different"
                         # recreate the primary_key
                         original_primary_key = @database.loaded_schema(schema_name).table(table_name).primary_key
                         updated_primary_key = @database.configured_schema(schema_name).table(table_name).primary_key
                         @generator.recreate_primary_key original_primary_key, updated_primary_key
                       end
+                    else
+                      log.info "    Primary Key does not exist in either configuration or database"
                     end
                   end
                 end

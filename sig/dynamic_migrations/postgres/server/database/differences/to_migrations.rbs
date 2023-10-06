@@ -8,6 +8,7 @@ module DynamicMigrations
         class Differences
           class ToMigrations
             @database: Database
+            @logger: Logging::Logger
             @differences_hash: untyped
             @generator: Generator
             @differences: Differences
@@ -30,6 +31,7 @@ module DynamicMigrations
 
             private
             def differences: -> Hash[untyped, untyped]
+            def log: -> Logging::Logger
 
             # this method comes from the Schemas module
             def process_schema: (Symbol schema_name, untyped configuration_schema, untyped database_schema) -> void

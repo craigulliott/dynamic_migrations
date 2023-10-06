@@ -13,6 +13,8 @@ module DynamicMigrations
                 private
                 def process_functions: (Symbol schema_name, untyped configuration_functions, untyped database_functions) -> void
                 def process_function: (Symbol schema_name, Symbol function_name, untyped configuration_function, untyped database_function) -> void
+                # this method is available on the ToMigrations class which includes this module
+                def log: -> Logging::Logger
 
               end
             end

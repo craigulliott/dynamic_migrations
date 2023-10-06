@@ -22,6 +22,8 @@ Gem::Specification.new do |spec|
 
   spec.add_dependency "pg", "~> 1.5"
 
+  spec.add_dependency "logging", "~> 2.3"
+
   spec.add_development_dependency "yaml", "~> 0.2"
   spec.add_development_dependency "pg_spec_helper", "~> 1.0"
 end

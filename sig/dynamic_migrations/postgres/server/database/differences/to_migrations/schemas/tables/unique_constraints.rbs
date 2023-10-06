@@ -14,6 +14,8 @@ module DynamicMigrations
                   private
                   def process_unique_constraints: (Symbol schema_name, Symbol table_name, untyped configuration_unique_constraints, untyped database_unique_constraints) -> void
                   def process_unique_constraint: (Symbol schema_name, Symbol table_name, Symbol unique_constraint_name, untyped configuration_unique_constraint, untyped database_unique_constraint) -> void
+                  # this method is available on the ToMigrations class which includes this module
+                  def log: -> Logging::Logger
 
                 end
               end

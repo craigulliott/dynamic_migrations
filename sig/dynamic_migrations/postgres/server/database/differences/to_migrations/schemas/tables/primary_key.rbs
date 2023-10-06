@@ -13,6 +13,8 @@ module DynamicMigrations
 
                   private
                   def process_primary_key: (Symbol schema_name, Symbol table_name, untyped configuration_primary_key, untyped database_primary_key) -> void
+                  # this method is available on the ToMigrations class which includes this module
+                  def log: -> Logging::Logger
 
                 end
               end

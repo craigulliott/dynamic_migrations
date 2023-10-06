@@ -4,18 +4,11 @@ module DynamicMigrations
       class Database
         class Differences
           @database: Database
+          @logger: Logging::Logger
+          self.@logger: Logging::Logger
 
           def initialize: (Database database) -> void
-          def to_h: -> {
-            configuration: {
-              schemas: Hash[Symbol, untyped],
-              extensions: Hash[Symbol, {exists: bool}]
-            },
-            database: {
-              schemas: Hash[Symbol, untyped],
-              extensions: Hash[Symbol, {exists: bool}]
-            }
-          }
+          def to_h: -> untyped
           def to_migrations: -> Hash[Symbol, Array[{name: Symbol, content: String}]]
 
           def self.compare_schemas: (Hash[Symbol, Schema] schemas, Hash[Symbol, Schema] comparison_schemas) -> Hash[Symbol, untyped]
@@ -34,7 +27,11 @@ module DynamicMigrations
           def self.compare_indexes: (Hash[Symbol, Schema::Table::Index] indexes, Hash[Symbol, Schema::Table::Index] comparison_indexes) -> Hash[Symbol, untyped]
           def self.compare_validations: (Hash[Symbol, Schema::Table::Validation] validations, Hash[Symbol, Schema::Table::Validation] comparison_validations) -> Hash[Symbol, untyped]
           def self.compare_foreign_key_constraints: (Hash[Symbol, Schema::Table::ForeignKeyConstraint] foreign_key_constraints, Hash[Symbol, Schema::Table::ForeignKeyConstraint] comparison_foreign_key_constraints) -> Hash[Symbol, untyped]
-          def self.compare_record: (Object | nil base, Object | nil comparison, Array[Symbol] method_list) -> Hash[Symbol, untyped]
+          def self.compare_record: (untyped | nil base, Object | nil comparison, Array[Symbol] method_list) -> Hash[Symbol, untyped]
+          def self.log: -> Logging::Logger
+
+          private
+          def log: -> Logging::Logger
 
           class ExpectedDatabaseError < StandardError
           end

@@ -1,6 +1,9 @@
 # frozen_string_literal: true
 
+# postgres gem
 require "pg"
+# logging gem
+require "logging"
 
 require "dynamic_migrations/version"
 require "dynamic_migrations/invalid_source_error"

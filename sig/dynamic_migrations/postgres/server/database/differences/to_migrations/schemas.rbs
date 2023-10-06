@@ -21,6 +21,9 @@ module DynamicMigrations
               # this method comes from the Tables module
               def process_tables: (Symbol schema_name, untyped configuration_tables, untyped database_tables) -> void
 
+              # this method is available on the ToMigrations class which includes this module
+              def log: -> Logging::Logger
+
             end
           end
         end

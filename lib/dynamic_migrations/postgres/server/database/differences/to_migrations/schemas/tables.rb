@@ -10,8 +10,10 @@ module DynamicMigrations
               module Tables
                 def process_tables schema_name, configuration_tables, database_tables
                   # process all the tables
+                  log.info "  Processing Tables..."
                   table_names = (configuration_tables.keys + database_tables.keys).uniq
                   table_names.each do |table_name|
+                    log.info "  Processing Table #{table_name}..."
                     process_table schema_name, table_name, configuration_tables[table_name] || {}, database_tables[table_name] || {}
                   end
                 end
@@ -20,6 +22,8 @@ module DynamicMigrations
                   # If the table exists in the configuration but not in the database
                   # then we have to create it.
                   if configuration_table[:exists] == true && !database_table[:exists]
+                    log.info "  Table `#{table_name}` exists in configuration but not in the database"
+
                     # a migration to create the table
                     table = @database.configured_schema(schema_name).table(table_name)
                     @generator.create_table table
@@ -31,6 +35,8 @@ module DynamicMigrations
                   # If the schema exists in the database but not in the configuration
                   # then we need to delete it.
                   elsif database_table[:exists] == true && !configuration_table[:exists]
+                    log.info "  Table `#{table_name}` exists in database but not in the configuration"
+
                     # we process everything else before we drop the table, because the other
                     # database objects are dependent on the table
                     process_dependents schema_name, table_name, {}, database_table
@@ -42,11 +48,15 @@ module DynamicMigrations
                   # If the table exists in both the configuration and database representations
                   # but the description is different then we need to update the description.
                   elsif configuration_table[:description][:matches] == false
+                    log.info "  Table `#{table_name}` exists in both configuration and the database"
+
                     table = @database.configured_schema(schema_name).table(table_name)
                     # if the description was removed
                     if configuration_table[:description].nil?
+                      log.info "    Table `#{table_name}` description exists in database but not in the configuration"
                       @generator.remove_table_comment table
                     else
+                      log.info "    Table `#{table_name}` description does not match"
                       @generator.set_table_comment table
                     end
 
@@ -54,6 +64,7 @@ module DynamicMigrations
                     process_dependents schema_name, table_name, configuration_table, database_table
 
                   else
+                    log.info "  Table `#{table_name}` exists in both configuration and the database"
                     # process everything else
                     process_dependents schema_name, table_name, configuration_table, database_table
 

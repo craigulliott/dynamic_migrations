@@ -14,6 +14,8 @@ module DynamicMigrations
                   private
                   def process_validations: (Symbol schema_name, Symbol table_name, untyped configuration_validations, untyped database_validations) -> void
                   def process_validation: (Symbol schema_name, Symbol table_name, Symbol validation_name, untyped configuration_validation, untyped database_validation) -> void
+                  # this method is available on the ToMigrations class which includes this module
+                  def log: -> Logging::Logger
 
                 end
               end

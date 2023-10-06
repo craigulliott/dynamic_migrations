@@ -14,6 +14,8 @@ module DynamicMigrations
                   private
                   def process_indexes: (Symbol schema_name, Symbol table_name, untyped configuration_indexes, untyped database_indexes) -> void
                   def process_index: (Symbol schema_name, Symbol table_name, Symbol index_name, untyped configuration_index, untyped database_index) -> void
+                  # this method is available on the ToMigrations class which includes this module
+                  def log: -> Logging::Logger
 
                 end
               end

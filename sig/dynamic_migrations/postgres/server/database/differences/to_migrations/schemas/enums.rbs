@@ -13,6 +13,8 @@ module DynamicMigrations
                 private
                 def process_enums: (Symbol schema_name, untyped configuration_enums, untyped database_enums) -> void
                 def process_enum: (Symbol schema_name, Symbol enum_name, untyped configuration_enum, untyped database_enum) -> void
+                # this method is available on the ToMigrations class which includes this module
+                def log: -> Logging::Logger
 
               end
             end

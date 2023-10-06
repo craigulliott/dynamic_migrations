@@ -10,6 +10,9 @@ module DynamicMigrations
             module Extensions
 
               private
+              # this method is available on the ToMigrations class which includes this module
+              def log: -> Logging::Logger
+
               def process_extension: (Symbol extension_name, untyped configuration_extension, untyped database_extension) -> void
 
 

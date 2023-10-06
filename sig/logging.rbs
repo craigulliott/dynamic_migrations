@@ -1,0 +1,11 @@
+module Logging
+  class Logger
+    def []: (Object) -> Logger
+
+    def debug: (String) -> void
+    def info: (String) -> void
+    def warn: (String) -> void
+  end
+
+  def self.logger: () -> Logger
+end

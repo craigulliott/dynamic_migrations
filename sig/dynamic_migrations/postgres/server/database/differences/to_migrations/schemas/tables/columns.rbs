@@ -14,6 +14,8 @@ module DynamicMigrations
                   private
                   def process_columns: (Symbol schema_name, Symbol table_name, untyped configuration_columns, untyped database_columns) -> void
                   def process_column: (Symbol schema_name, Symbol table_name, Symbol column_name, untyped configuration_column, untyped database_column) -> void
+                  # this method is available on the ToMigrations class which includes this module
+                  def log: -> Logging::Logger
 
                 end
               end
