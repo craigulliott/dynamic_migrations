@@ -33,19 +33,31 @@ module DynamicMigrations
             end
           end
 
+          def connected?
+            !@connection.nil?
+          end
+
           # Opens a connection to the database server, and yields the provided block
           # before automatically closing the connection again. This is useful for
           # executing one time queries against the database server.
           def with_connection &block
-            # create a temporary connection to the server
-            connect
+            # create a temporary connection to the server (unless we are already connected)
+            already_connected = connected?
+            unless already_connected
+              connect
+            end
+
             # perform work with the connection
             # todo: `yield connection` would have been preferred, but rbs/steep doesnt understand that syntax
             if block.is_a? Proc
               result = block.call connection
             end
-            # close the connection
-            disconnect
+
+            # close the connection (unless we were already connected)
+            if already_connected
+              disconnect
+            end
+
             # return whever was returned from within the block
             result
           end

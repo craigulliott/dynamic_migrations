@@ -7,6 +7,7 @@ module DynamicMigrations
 
           def connect: -> PG::Connection
           def connection: -> PG::Connection
+          def connected?: -> bool
           def disconnect: -> void
           def with_connection: -> untyped
 

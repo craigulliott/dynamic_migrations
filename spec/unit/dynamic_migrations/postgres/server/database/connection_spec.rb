@@ -50,6 +50,32 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database do
       end
     end
 
+    describe :connected? do
+      it "returns false because we are not connected" do
+        expect(database.connected?).to be false
+      end
+
+      describe "after a connection has been established" do
+        before :each do
+          database.connect
+        end
+
+        it "returns true because we are connected" do
+          expect(database.connected?).to be true
+        end
+
+        describe "after a connection has been disconnected" do
+          before :each do
+            database.disconnect
+          end
+
+          it "returns true because we are connected" do
+            expect(database.connected?).to be false
+          end
+        end
+      end
+    end
+
     describe :disconnect do
       it "raises an error" do
         expect {
@@ -83,6 +109,20 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database do
           connection = c
         end
         expect(connection).to be_a(PG::Connection)
+      end
+
+      describe "after a connection has already been established" do
+        before :each do
+          database.connect
+        end
+
+        it "yields with a connection argument" do
+          connection = nil
+          database.with_connection do |c|
+            connection = c
+          end
+          expect(connection).to be_a(PG::Connection)
+        end
       end
     end
   end
