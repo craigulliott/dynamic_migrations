@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.8.3](https://github.com/craigulliott/dynamic_migrations/compare/v3.8.2...v3.8.3) (2023-10-06)
+
+
+### Bug Fixes
+
+* adding logging ([1387a75](https://github.com/craigulliott/dynamic_migrations/commit/1387a7535db242570b2b9fa60730d6bd73edb265))
+
 ## [3.8.2](https://github.com/craigulliott/dynamic_migrations/compare/v3.8.1...v3.8.2) (2023-10-06)
 
 
