@@ -169,4 +169,15 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database::Schema::Function d
       end
     end
   end
+
+  describe :normalized_definition do
+    it "returns the expected definition" do
+      expect(function.normalized_definition).to eq(<<~SQL.strip)
+        BEGIN
+          NEW.column = 0;
+          RETURN NEW;
+        END;
+      SQL
+    end
+  end
 end

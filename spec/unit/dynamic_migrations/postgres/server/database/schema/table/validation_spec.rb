@@ -114,6 +114,19 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database::Schema::Table::Val
     it "returns the expected column_names" do
       expect(validation.column_names).to eql([:my_column])
     end
+
+    describe "when no column were added to the validation at instantiation" do
+      let(:validation) { DynamicMigrations::Postgres::Server::Database::Schema::Table::Validation.new :configuration, table, nil, :validation_name, "my_column = 'Katy'" }
+
+      before(:each) do
+        # add the column to the table
+        column
+      end
+
+      it "returns the expected column_names because it resolves them internally via the `normalized_check_clause_and_column_names` method" do
+        expect(validation.column_names).to eql([:my_column])
+      end
+    end
   end
 
   describe :name do

@@ -14,6 +14,9 @@ module DynamicMigrations
               class ExpectedArrayOfColumnsError < StandardError
               end
 
+              class ExpectedTableColumnsError < StandardError
+              end
+
               class DuplicateColumnError < StandardError
               end
 
@@ -122,6 +125,9 @@ module DynamicMigrations
               end
 
               def fetch_normalized_check_clause_and_column_names
+                if table.columns.empty?
+                  raise ExpectedTableColumnsError, "Can not normalize check clause or validation columnns because the table has no columns"
+                end
                 result = table.schema.database.with_connection do |connection|
                   # wrapped in a transaction just in case something here fails, because
                   # we don't want the temporary table to be persisted
@@ -130,7 +136,7 @@ module DynamicMigrations
                   # create the temp table and add the expected columns and constraint
                   connection.exec(<<~SQL)
                     CREATE TEMP TABLE validation_normalized_check_clause_temp_table (
-                      #{columns.map { |column| '"' + column.name.to_s + '" ' + column.temp_table_data_type.to_s }.join(", ")},
+                      #{table.columns.map { |column| '"' + column.name.to_s + '" ' + column.temp_table_data_type.to_s }.join(", ")},
                       CONSTRAINT #{name} CHECK (#{check_clause})
                     );
                   SQL
