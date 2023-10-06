@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.8.1](https://github.com/craigulliott/dynamic_migrations/compare/v3.8.0...v3.8.1) (2023-10-06)
+
+
+### Bug Fixes
+
+* reusing exiting connection when with_connection is called (it was trying to open a new connection and caused an error) ([840a5cd](https://github.com/craigulliott/dynamic_migrations/commit/840a5cda04d6bc49d73160d2bad7271780027c84))
+
 ## [3.8.0](https://github.com/craigulliott/dynamic_migrations/compare/v3.7.0...v3.8.0) (2023-10-04)
 
 
