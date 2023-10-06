@@ -16,6 +16,9 @@ module DynamicMigrations
             class ValueAlreadyExistsError < StandardError
             end
 
+            class ValueMustBeStringError < StandardError
+            end
+
             attr_reader :schema
             attr_reader :name
             attr_reader :values

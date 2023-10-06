@@ -87,6 +87,12 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database::Schema::Enum do
 
       expect(enum.values).to eql ["foo", "bar", "new_value"]
     end
+
+    it "raises an error if a symbol is provided (because it requires a String)" do
+      expect{
+        enum.add_value(:foo)
+      }.to raise_error DynamicMigrations::Postgres::Server::Database::Schema::Enum::ValueMustBeStringError
+    end
   end
 
   describe :description do
