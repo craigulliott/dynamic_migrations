@@ -13,6 +13,9 @@ module DynamicMigrations
             class ExpectedValuesError < StandardError
             end
 
+            class ValueAlreadyExistsError < StandardError
+            end
+
             attr_reader :schema
             attr_reader :name
             attr_reader :values
@@ -25,8 +28,6 @@ module DynamicMigrations
 
               @columns = []
 
-              @values = []
-
               raise ExpectedSchemaError, schema unless schema.is_a? Schema
               @schema = schema
 
@@ -36,13 +37,28 @@ module DynamicMigrations
               unless values.is_a?(Array) && values.count > 0
                 raise ExpectedValuesError, "Values are required for enums"
               end
-              @values = values
+              @values = []
+              values.each do |value|
+                add_value value
+              end
 
               unless description.nil?
                 raise ExpectedStringError, description unless description.is_a? String
                 @description = description.strip
                 @description = nil if description == ""
               end
+            end
+
+            def add_value value
+              unless value.is_a? String
+                raise ValueMustBeStringError, "Value `#{value}` must be a string"
+              end
+
+              if @values.include? value
+                raise ValueAlreadyExistsError, "Value `#{value}` already exists in enum `#{name}`"
+              end
+
+              @values << value
             end
 
             # returns true if this enum has a description, otehrwise false

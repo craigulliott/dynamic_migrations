@@ -6,7 +6,7 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database::Differences do
   let(:server) { DynamicMigrations::Postgres::Server.new pg_helper.host, pg_helper.port, pg_helper.username, pg_helper.password }
   let(:database) { DynamicMigrations::Postgres::Server::Database.new server, pg_helper.database }
 
-  let(:enum_values) { [:foo, :bar] }
+  let(:enum_values) { ["foo", "bar"] }
 
   let(:configured_schema) { database.add_configured_schema :my_schema }
   let(:configured_enum) { configured_schema.add_enum :my_enum, enum_values }
@@ -59,8 +59,8 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database::Differences do
               exists: true,
               values: {
                 value: [
-                  :foo,
-                  :bar
+                  "foo",
+                  "bar"
                 ],
                 matches: false
               },
@@ -86,8 +86,8 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database::Differences do
               exists: true,
               values: {
                 value: [
-                  :foo,
-                  :bar
+                  "foo",
+                  "bar"
                 ],
                 matches: true
               },
@@ -105,8 +105,8 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database::Differences do
 
         before(:each) do
           different_enum_values = [
-            :foo,
-            :baz
+            "foo",
+            "baz"
           ]
 
           comparison.add_enum :enum_name, different_enum_values, description: "this enum has a description"
@@ -118,8 +118,8 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database::Differences do
               exists: true,
               values: {
                 value: [
-                  :foo,
-                  :bar
+                  "foo",
+                  "bar"
                 ],
                 matches: false
               },

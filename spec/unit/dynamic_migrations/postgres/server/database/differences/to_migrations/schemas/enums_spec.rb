@@ -6,7 +6,7 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database::Differences::ToMig
   let(:database) { DynamicMigrations::Postgres::Server::Database.new server, pg_helper.database }
   let(:differences) { DynamicMigrations::Postgres::Server::Database::Differences.new database }
   let(:to_migrations) { DynamicMigrations::Postgres::Server::Database::Differences::ToMigrations.new database, differences }
-  let(:enum_values) { [:foo, :bar] }
+  let(:enum_values) { ["foo", "bar"] }
 
   describe :Enums do
     describe :migrations do
@@ -44,7 +44,7 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database::Differences::ToMig
 
           describe "when the loaded database has the same enum but missing enum values" do
             before(:each) do
-              loaded_schema.add_enum :my_enum, enum_values - [:foo]
+              loaded_schema.add_enum :my_enum, enum_values - ["foo"]
             end
 
             it "returns the migration to update the enum" do
@@ -124,7 +124,7 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database::Differences::ToMig
 
           describe "when the loaded schema has the same enum but a different description and values" do
             before(:each) do
-              loaded_schema.add_enum :my_enum, enum_values - [:bar], description: "Different description of my enum"
+              loaded_schema.add_enum :my_enum, enum_values - ["bar"], description: "Different description of my enum"
             end
 
             it "returns the migration to update the description" do

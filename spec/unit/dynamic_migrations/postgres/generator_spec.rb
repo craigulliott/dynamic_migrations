@@ -262,7 +262,7 @@ RSpec.describe DynamicMigrations::Postgres::Generator do
       let(:schema2_table2) { schema2.add_table :my_other_table, description: "Comment for this table" }
 
       let(:enum) { schema2.add_enum :my_enum, enum_values, description: "Comment for this enum" }
-      let(:enum_values) { [:foo, :bar] }
+      let(:enum_values) { ["foo", "bar"] }
 
       let(:function) { schema2.add_function :my_function, function_definition, description: "Comment for this function" }
       let(:function_definition) {

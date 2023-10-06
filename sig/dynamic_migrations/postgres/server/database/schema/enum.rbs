@@ -16,12 +16,19 @@ module DynamicMigrations
             def full_name: -> Symbol
             def has_description?: -> bool
             def add_column: (Schema::Table::Column column) -> void
+            def add_value: (String value) -> void
             def differences_descriptions: (Enum other_enum) -> Array[String]
 
             class ExpectedSchemaError < StandardError
             end
 
             class ExpectedValuesError < StandardError
+            end
+
+            class ValueAlreadyExistsError < StandardError
+            end
+
+            class ValueMustBeStringError < StandardError
             end
           end
         end

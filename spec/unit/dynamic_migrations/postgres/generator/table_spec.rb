@@ -10,7 +10,7 @@ RSpec.describe DynamicMigrations::Postgres::Generator do
     let(:schema) { DynamicMigrations::Postgres::Server::Database::Schema.new :configuration, database, :my_schema }
     let(:table) { DynamicMigrations::Postgres::Server::Database::Schema::Table.new :configuration, schema, :my_table, description: "Comment for this table" }
     let(:enum) { DynamicMigrations::Postgres::Server::Database::Schema::Enum.new :configuration, schema, :my_enum, enum_values }
-    let(:enum_values) { [:foo, :bar] }
+    let(:enum_values) { ["foo", "bar"] }
 
     describe :create_table do
       describe "for a table with no columns" do

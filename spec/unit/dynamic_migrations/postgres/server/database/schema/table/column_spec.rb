@@ -8,7 +8,7 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database::Schema::Table::Col
   let(:enum) { DynamicMigrations::Postgres::Server::Database::Schema::Enum.new :configuration, schema, :my_enum, enum_values }
   let(:table) { DynamicMigrations::Postgres::Server::Database::Schema::Table.new :configuration, schema, :my_table }
   let(:column) { DynamicMigrations::Postgres::Server::Database::Schema::Table::Column.new :configuration, table, :my_column, :boolean }
-  let(:enum_values) { [:foo, :bar] }
+  let(:enum_values) { ["foo", "bar"] }
 
   describe :initialize do
     it "instantiates a new column without raising an error" do

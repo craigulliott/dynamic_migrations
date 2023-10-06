@@ -7,7 +7,7 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database::Schema::Enum do
   let(:schema) { DynamicMigrations::Postgres::Server::Database::Schema.new :configuration, database, :my_schema }
   let(:enum) { DynamicMigrations::Postgres::Server::Database::Schema::Enum.new :configuration, schema, :my_enum, enum_values }
   let(:table) { DynamicMigrations::Postgres::Server::Database::Schema::Table.new :configuration, schema, :my_table }
-  let(:enum_values) { [:foo, :bar] }
+  let(:enum_values) { ["foo", "bar"] }
 
   describe :initialize do
     it "instantiates a new enum without raising an error" do
@@ -75,7 +75,17 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database::Schema::Enum do
 
   describe :values do
     it "returns the expected values" do
-      expect(enum.values).to eql [:foo, :bar]
+      expect(enum.values).to eql ["foo", "bar"]
+    end
+  end
+
+  describe :add_value do
+    it "adds a new value" do
+      expect(enum.values).to eql ["foo", "bar"]
+
+      enum.add_value("new_value")
+
+      expect(enum.values).to eql ["foo", "bar", "new_value"]
     end
   end
 
@@ -117,13 +127,13 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database::Schema::Enum do
   describe :differences_descriptions do
     describe "when compared to a enum which has different values" do
       let(:different_enum) {
-        DynamicMigrations::Postgres::Server::Database::Schema::Enum.new :configuration, schema, :my_enum, [:a, :b]
+        DynamicMigrations::Postgres::Server::Database::Schema::Enum.new :configuration, schema, :my_enum, ["a", "b"]
       }
 
       it "returns the expected array which describes the differences" do
         expect(enum.differences_descriptions(different_enum)).to eql([
           <<~CHANGES.strip
-            values changed from `[:foo, :bar]` to `[:a, :b]`
+            values changed from `["foo", "bar"]` to `["a", "b"]`
           CHANGES
         ])
       end
