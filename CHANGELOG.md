@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.8.4](https://github.com/craigulliott/dynamic_migrations/compare/v3.8.3...v3.8.4) (2023-10-06)
+
+
+### Bug Fixes
+
+* asserting that enum values must be unique strings, and adding ability to add additional enum values ([5cf6093](https://github.com/craigulliott/dynamic_migrations/commit/5cf6093eed96387042f70987c3999b40e4041b76))
+
 ## [3.8.3](https://github.com/craigulliott/dynamic_migrations/compare/v3.8.2...v3.8.3) (2023-10-06)
 
 
