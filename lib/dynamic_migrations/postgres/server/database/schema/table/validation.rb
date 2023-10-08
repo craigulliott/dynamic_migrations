@@ -134,9 +134,16 @@ module DynamicMigrations
 
                   temp_enums = table.create_temp_table(connection, "validation_normalized_check_clause_temp_table")
 
+                  temp_check_clause = check_clause
+                  # string replace any real enum names with their temp enum names
+                  temp_enums.each do |temp_enum_name, enum|
+                    temp_check_clause.gsub!("::#{enum.name}", "::#{temp_enum_name}")
+                    temp_check_clause.gsub!("::#{enum.full_name}", "::#{temp_enum_name}")
+                  end
+
                   connection.exec(<<~SQL)
                     ALTER TABLE validation_normalized_check_clause_temp_table
-                      ADD CONSTRAINT #{name} CHECK (#{check_clause})
+                      ADD CONSTRAINT #{name} CHECK (#{temp_check_clause})
                   SQL
 
                   # get the normalized version of the constraint

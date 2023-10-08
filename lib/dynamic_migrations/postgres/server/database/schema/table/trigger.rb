@@ -224,6 +224,13 @@ module DynamicMigrations
                       $$ BEGIN END $$;
                     SQL
 
+                    temp_action_condition = action_condition
+                    # string replace any real enum names with their temp enum names
+                    temp_enums.each do |temp_enum_name, enum|
+                      temp_action_condition.gsub!("::#{enum.name}", "::#{temp_enum_name}")
+                      temp_action_condition.gsub!("::#{enum.full_name}", "::#{temp_enum_name}")
+                    end
+
                     # create a temporary trigger, from which we will fetch the normalized action condition
                     connection.exec(<<~SQL)
                       CREATE TRIGGER trigger_normalized_action_condition_temp_trigger
