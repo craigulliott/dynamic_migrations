@@ -93,6 +93,12 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database::Schema::Enum do
         enum.add_value(:foo)
       }.to raise_error DynamicMigrations::Postgres::Server::Database::Schema::Enum::ValueMustBeStringError
     end
+
+    it "raises an error if the value is too long" do
+      expect {
+        enum.add_value("a" * 64)
+      }.to raise_error DynamicMigrations::Postgres::Server::Database::Schema::Enum::EnumValueTooLongError
+    end
   end
 
   describe :description do

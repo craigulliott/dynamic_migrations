@@ -19,6 +19,9 @@ module DynamicMigrations
             class ValueMustBeStringError < StandardError
             end
 
+            class EnumValueTooLongError < StandardError
+            end
+
             attr_reader :schema
             attr_reader :name
             attr_reader :values
@@ -59,6 +62,10 @@ module DynamicMigrations
 
               if @values.include? value
                 raise ValueAlreadyExistsError, "Value `#{value}` already exists in enum `#{name}`"
+              end
+
+              if value.length > 63
+                raise EnumValueTooLongError, "Value `#{value}` must be less than 64 characters"
               end
 
               @values << value

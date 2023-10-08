@@ -116,7 +116,60 @@ module DynamicMigrations
               end
 
               # in case any of the columnbs are citext columns
-              connection.exec("CREATE EXTENSION IF NOT EXISTS citext;")
+              # in case any of the columns use the citext data type
+              required_extensions = []
+              if columns.any? { |column| column.data_type.start_with? "citext" }
+                required_extensions << "citext"
+              end
+              if columns.any? { |column| column.data_type.start_with? "postgis" }
+                required_extensions << "postgis"
+              end
+
+              required_extensions.each do |extension_name|
+                extension_result = connection.exec(<<~SQL)
+                  SELECT
+                    (
+                      SELECT 1
+                      FROM pg_available_extensions
+                      WHERE name = '#{extension_name}'
+                    ) as is_available,
+                    (
+                      SELECT 1
+                      FROM pg_extension
+                      WHERE extname = '#{extension_name}'
+                    ) as is_installed
+                SQL
+                unless extension_result.first["is_installed"]
+                  detail = if extension_result.first["is_available"]
+                    <<~DETAIL
+                      The `#{extension_name}` extension is available for installation,
+                      but has not been installed for this database.
+                    DETAIL
+                  else
+                    <<~DETAIL
+                      The `#{extension_name}` extension is not installed, and does not
+                      appear to be available for installation.
+                    DETAIL
+                  end
+                  raise MissingExtensionError, <<~ERROR.gsub!("\n", " ")
+                    This table uses the `#{extension_name}` data type. #{detail}
+                    Add the extension, then generate and run the migrations which will
+                    enable the extension for your database before defining validations
+                    or triggers which rely on it.
+
+                    Note, the `#{extension_name}` extension is required even for defining
+                    some validations and triggers. This library needs to connect to postgres
+                    and gererate normalized versions of validation check clauses and trigger
+                    action conditions before it can even compare them to validations or triggers
+                    which may or may not already exist in the database.
+                  ERROR
+                end
+              end
+
+              # if any of the columns require postgis
+              if required_extensions.include? "postgis"
+                connection.exec("SET search_path TO public,postgis;")
+              end
 
               # note, this is not actually a TEMP TABLE, it is created within a transaction
               # and rolled back.

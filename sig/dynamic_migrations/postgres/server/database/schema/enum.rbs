@@ -30,6 +30,9 @@ module DynamicMigrations
 
             class ValueMustBeStringError < StandardError
             end
+
+            class EnumValueTooLongError < StandardError
+            end
           end
         end
       end
