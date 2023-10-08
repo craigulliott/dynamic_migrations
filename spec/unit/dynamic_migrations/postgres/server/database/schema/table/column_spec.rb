@@ -74,16 +74,6 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database::Schema::Table::Col
     end
   end
 
-  describe :temp_table_data_type do
-    describe "when an enum data type was provided at initialization" do
-      let(:enum_column) { DynamicMigrations::Postgres::Server::Database::Schema::Table::Column.new :configuration, table, :my_column, :"my_schema.my_enum", enum: enum, description: "a valid description of my column" }
-
-      it "returns the expected temp_table_data_type" do
-        expect(enum_column.temp_table_data_type).to eq(:text)
-      end
-    end
-  end
-
   describe :array? do
     it "returns false because this data type is not an array" do
       expect(column.array?).to be false

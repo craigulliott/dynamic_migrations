@@ -128,17 +128,15 @@ module DynamicMigrations
                 if table.columns.empty?
                   raise ExpectedTableColumnsError, "Can not normalize check clause or validation columnns because the table has no columns"
                 end
-                result = table.schema.database.with_connection do |connection|
-                  # wrapped in a transaction just in case something here fails, because
-                  # we don't want the temporary table to be persisted
+                table.schema.database.with_connection do |connection|
+                  # wrapped in a transaction so we can rollback the creation of the table and any enums
                   connection.exec("BEGIN")
 
-                  # create the temp table and add the expected columns and constraint
+                  temp_enums = table.create_temp_table(connection, "validation_normalized_check_clause_temp_table")
+
                   connection.exec(<<~SQL)
-                    CREATE TEMP TABLE validation_normalized_check_clause_temp_table (
-                      #{table.columns.map { |column| '"' + column.name.to_s + '" ' + column.temp_table_data_type.to_s }.join(", ")},
-                      CONSTRAINT #{name} CHECK (#{check_clause})
-                    );
+                    ALTER TABLE validation_normalized_check_clause_temp_table
+                      ADD CONSTRAINT #{name} CHECK (#{check_clause})
                   SQL
 
                   # get the normalized version of the constraint
@@ -158,29 +156,37 @@ module DynamicMigrations
                     GROUP BY pg_constraint.oid;
                   SQL
 
-                  # delete the temp table and close the transaction
+                  # delete the table and any temporary enums
                   connection.exec("ROLLBACK")
 
-                  rows.first
+                  check_clause_result = rows.first["check_clause"]
+                  column_names_string = rows.first["column_names"]
+
+                  if check_clause_result.nil?
+                    raise UnnormalizableCheckClauseError, "Failed to nomalize check clause `#{check_clause_result}`"
+                  end
+
+                  # extract the check clause from the result "CHECK(%check_clause%)"
+                  matches = check_clause_result.match(/\ACHECK \((?<inner_clause>.*)\)\z/)
+                  if matches.nil?
+                    raise UnnormalizableCheckClauseError, "Unparsable normalized check_clause #{check_clause_result}"
+                  end
+                  check_clause_result = matches[:inner_clause]
+
+                  # string replace any enum names with their real enum names
+                  temp_enums.each do |temp_enum_name, enum|
+                    real_enum_name = (enum.schema == table.schema) ? enum.name : enum.full_name
+                    check_clause_result.gsub!("::#{temp_enum_name}", "::#{real_enum_name}")
+                  end
+
+                  column_names_result = column_names_string.gsub(/\A\{/, "").gsub(/\}\Z/, "").split(",").map { |column_name| column_name.to_sym }
+
+                  # return the normalized check clause
+                  {
+                    check_clause: check_clause_result,
+                    column_names: column_names_result
+                  }
                 end
-
-                if result["check_clause"].nil?
-                  raise UnnormalizableCheckClauseError, "Failed to nomalize check clause `#{check_clause}`"
-                end
-
-                # extract the check clause from the result "CHECK(%check_clause%)"
-                matches = result["check_clause"].match(/\ACHECK \((?<inner_clause>.*)\)\z/)
-                if matches.nil?
-                  raise UnnormalizableCheckClauseError, "Unparsable normalized check_clause #{result["check_clause"]}"
-                end
-
-                normalized_column_names = result["column_names"].gsub(/\A\{/, "").gsub(/\}\Z/, "").split(",").map { |column_name| column_name.to_sym }
-
-                # return the normalized check clause
-                {
-                  check_clause: matches[:inner_clause],
-                  column_names: normalized_column_names
-                }
               end
 
               # used internally to set the columns from this objects initialize method

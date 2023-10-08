@@ -202,7 +202,7 @@ module DynamicMigrations
               end
 
               # create a temporary table in postgres to represent this trigger and fetch
-              # the actual normalized check constraint directly from the database
+              # the actual normalized action_condition directly from the database
               def normalized_action_condition
                 if action_condition.nil?
                   nil
@@ -215,12 +215,8 @@ module DynamicMigrations
                     # we don't want the function, temporary table or trigger to be persisted
                     connection.exec("BEGIN")
 
-                    # create the temp table and add the expected columns and constraint
-                    connection.exec(<<~SQL)
-                      CREATE TEMP TABLE trigger_normalized_action_condition_temp_table (
-                        #{table.columns.map { |column| '"' + column.name.to_s + '" ' + column.temp_table_data_type.to_s }.join(", ")}
-                      );
-                    SQL
+                    # create the temp table and add the expected columns
+                    temp_enums = table.create_temp_table(connection, "trigger_normalized_action_condition_temp_table")
 
                     # create a temporary function to trigger (triggers require a function)
                     connection.exec(<<~SQL)
@@ -253,7 +249,15 @@ module DynamicMigrations
                     connection.exec("ROLLBACK")
 
                     # return the normalized action condition
-                    rows.first["action_condition"]
+                    action_condition_result = rows.first["action_condition"]
+
+                    # string replace any enum names with their real enum names
+                    temp_enums.each do |temp_enum_name, enum|
+                      real_enum_name = (enum.schema == table.schema) ? enum.name : enum.full_name
+                      action_condition_result.gsub!("::#{temp_enum_name}", "::#{real_enum_name}")
+                    end
+
+                    action_condition_result
                   end
 
                   if ac.nil?

@@ -82,19 +82,6 @@ module DynamicMigrations
               def base_data_type
                 array? ? @data_type[0..-3]&.to_sym : @data_type
               end
-
-              # sometimes this system makes temporary tables in order to fetch the normalized
-              # version of constraint check clauses, function definitions or trigger action conditions
-              # because certain data types might not yet exist, we need to use alternative types
-              def temp_table_data_type
-                if enum
-                  :text
-                elsif @data_type == :citext || @data_type == :"citext[]"
-                  :text
-                else
-                  @data_type
-                end
-              end
             end
           end
         end

@@ -129,4 +129,34 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database::Schema::Table do
       end
     end
   end
+
+  describe :create_temp_table do
+    let(:connection) { database.connect }
+
+    # this method is usually called from witin a validation or trigger, which
+    # create a transaction and pass the connection object to this method
+    # adding our own transaction here so that if this spec fails, we don't
+    # leave the temporary table or any temporary enums behind
+    before(:each) do
+      connection.exec("BEGIN")
+    end
+
+    after(:each) do
+      connection.exec("ROLLBACK")
+    end
+
+    subject {
+      table.create_temp_table connection, "temp_table_name"
+    }
+
+    it "creates the requested table" do
+      subject
+      expect(connection.exec(<<~SQL).first['exists']).to eq("1")
+        SELECT 1 as exists
+        FROM   pg_tables
+        WHERE  tablename  = 'temp_table_name'
+      SQL
+    end
+
+  end
 end

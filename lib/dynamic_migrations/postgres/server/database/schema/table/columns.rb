@@ -18,7 +18,9 @@ module DynamicMigrations
               # error if the column does not exist
               def column name
                 raise ExpectedSymbolError, name unless name.is_a? Symbol
-                raise ColumnDoesNotExistError, name unless has_column? name
+                unless has_column? name
+                  raise ColumnDoesNotExistError, "column `#{name}` does not exist within table `#{self.name}`"
+                end
                 @columns[name]
               end
 
@@ -40,7 +42,7 @@ module DynamicMigrations
               # adds a new column to this table, and returns it
               def add_column name, data_type, **column_options
                 if has_column? name
-                  raise(DuplicateColumnError, "Column #{name} already exists")
+                  raise DuplicateColumnError, "Column `#{name}` already exists"
                 end
                 included_target = self
                 if included_target.is_a? Table

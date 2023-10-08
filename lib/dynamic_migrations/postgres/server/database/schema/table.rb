@@ -78,6 +78,56 @@ module DynamicMigrations
               end
               pk
             end
+
+            # Used within validations and triggers when normalizing check clauses and other
+            # SQL statements which require a table to process the SQL.
+            #
+            # This method returns a hash representation of any temporary enums created to satisfy
+            # the columns in the table
+            def create_temp_table connection, temp_table_name
+              # create the temp table and add the expected columns
+
+              # if any of the columns are enums, then we need to create a temporary enum type for them.
+              # we cant just create temporary columns as text fields because postgres may automatically
+              # add casts to those columns, which would result in a different normalized check clause
+              temp_enums = {}
+
+              # an array of sql column definitions for within the create table SQL
+              # we process each column individually like this so that we can create temporary enums for
+              # any enum columns
+              columns_sql = columns.map do |column|
+                enum = column.enum
+                if enum
+                  # create the temporary enum type
+                  temp_enum_name = "#{temp_table_name}_enum_#{temp_enums.count}"
+                  connection.exec(<<~SQL)
+                    CREATE TYPE #{temp_enum_name} as ENUM ('#{enum.values.join("','")}');
+                  SQL
+                  temp_enums[temp_enum_name] = enum
+
+                  # return the column definition used within the CREATE TABLE SQL
+                  data_type = column.array? ? "#{temp_enum_name}[]" : temp_enum_name
+                  "\"#{column.name}\" #{data_type}"
+
+                else
+                  # return the column definition used within the CREATE TABLE SQL
+                  "\"#{column.name}\" #{column.data_type}"
+                end
+              end
+
+              # in case any of the columnbs are citext columns
+              connection.exec("CREATE EXTENSION IF NOT EXISTS citext;")
+
+              # note, this is not actually a TEMP TABLE, it is created within a transaction
+              # and rolled back.
+              connection.exec(<<~SQL)
+                CREATE TABLE #{temp_table_name} (
+                  #{columns_sql.join(", ")}
+                );
+              SQL
+
+              temp_enums
+            end
           end
         end
       end

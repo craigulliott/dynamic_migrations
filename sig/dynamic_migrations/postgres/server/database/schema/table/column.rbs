@@ -19,7 +19,6 @@ module DynamicMigrations
               def has_description?: -> bool
               def array?: -> bool
               def enum?: -> bool
-              def temp_table_data_type: -> Symbol
               # untyped because we cant specify this logic in rbs yet (compiler is concerned this might be nil)
               def base_data_type: -> untyped
 

@@ -22,7 +22,7 @@ module DynamicMigrations
             def add_primary_key: (Symbol name, Array[Symbol] column_names, **untyped) -> untyped
             def has_primary_key?: -> bool
             def primary_key: -> PrimaryKey
-
+            def create_temp_table: (PG::Connection connection, String table_name) -> Hash[String, Enum]
             class ExpectedSchemaError < StandardError
             end
 
