@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.8.6](https://github.com/craigulliott/dynamic_migrations/compare/v3.8.5...v3.8.6) (2023-10-08)
+
+
+### Bug Fixes
+
+* replacing enum casts with the temporary enums when normalizing check clause and action conditions ([0cb67fc](https://github.com/craigulliott/dynamic_migrations/commit/0cb67fcff4d7833ec1dd60453526b1bc3dbe45ee))
+
 ## [3.8.5](https://github.com/craigulliott/dynamic_migrations/compare/v3.8.4...v3.8.5) (2023-10-08)
 
 
