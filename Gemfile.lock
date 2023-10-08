@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    dynamic_migrations (3.8.5)
+    dynamic_migrations (3.8.6)
       logging (~> 2.3)
       pg (~> 1.5)
 
