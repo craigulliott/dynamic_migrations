@@ -151,12 +151,11 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database::Schema::Table do
 
     it "creates the requested table" do
       subject
-      expect(connection.exec(<<~SQL).first['exists']).to eq("1")
+      expect(connection.exec(<<~SQL).first["exists"]).to eq("1")
         SELECT 1 as exists
         FROM   pg_tables
         WHERE  tablename  = 'temp_table_name'
       SQL
     end
-
   end
 end

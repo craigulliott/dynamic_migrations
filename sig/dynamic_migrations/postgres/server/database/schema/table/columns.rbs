@@ -15,6 +15,7 @@ module DynamicMigrations
 
               # these come from the table object (which this module is included into)
               def source: -> database_or_configuration
+              def name: -> String
 
               class ColumnDoesNotExistError < StandardError
               end
