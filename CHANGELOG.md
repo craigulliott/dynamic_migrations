@@ -1,5 +1,13 @@
 # Changelog
 
+## [3.8.5](https://github.com/craigulliott/dynamic_migrations/compare/v3.8.4...v3.8.5) (2023-10-08)
+
+
+### Bug Fixes
+
+* missing error class ([761e478](https://github.com/craigulliott/dynamic_migrations/commit/761e478fbd9234014751d853da3dde35d2043a7e))
+* normalized validation check constraint and trigger action condition now work with enum columns ([a657dd6](https://github.com/craigulliott/dynamic_migrations/commit/a657dd66f3bb3e140672db89224b0b562bb91ef0))
+
 ## [3.8.4](https://github.com/craigulliott/dynamic_migrations/compare/v3.8.3...v3.8.4) (2023-10-06)
 
 
