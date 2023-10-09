@@ -1,5 +1,20 @@
 # Changelog
 
+## [3.8.7](https://github.com/craigulliott/dynamic_migrations/compare/v3.8.6...v3.8.7) (2023-10-09)
+
+
+### Bug Fixes
+
+* added detection of missing extensions and better error messages when normalizing check_constrains and action_conditions ([d82ff57](https://github.com/craigulliott/dynamic_migrations/commit/d82ff57f5b51c8636e87b40b8d6b016d11e6c72a))
+* added enum value length validation ([d82ff57](https://github.com/craigulliott/dynamic_migrations/commit/d82ff57f5b51c8636e87b40b8d6b016d11e6c72a))
+* also drastic performance improvement of migration circular dependency resolution ([2915b8f](https://github.com/craigulliott/dynamic_migrations/commit/2915b8f28c9202bd18f221cfafa2c4352a80fd2c))
+* fixed regex for validating name within migration fragment (it was not allowing a single letter followed by an underscore) ([9b73eca](https://github.com/craigulliott/dynamic_migrations/commit/9b73ecac03816cc74f9b0d23084d0cfb09701012))
+* migration generation now finds and resolves circular dependencies which exist through N migrations (it used to only resolve immediate circular dependencies) ([2915b8f](https://github.com/craigulliott/dynamic_migrations/commit/2915b8f28c9202bd18f221cfafa2c4352a80fd2c))
+* providing the table dependency to all enum and function migrations if there is only one table which they rely on ([3d3708d](https://github.com/craigulliott/dynamic_migrations/commit/3d3708dfb7bdd2a83a477087ac22fd540ae1f881))
+* reducing some log messages from info level to debug level ([cdf1200](https://github.com/craigulliott/dynamic_migrations/commit/cdf12000186a9e373d5085f83d2fb197c7796c6c))
+* table migrations now allow enum related fragments ([b894bf1](https://github.com/craigulliott/dynamic_migrations/commit/b894bf14743c51b505693818407ba6bfb3f31571))
+* updating log level for some log entries ([456a90e](https://github.com/craigulliott/dynamic_migrations/commit/456a90e7fe6da78667a84928b75217f89c344f35))
+
 ## [3.8.6](https://github.com/craigulliott/dynamic_migrations/compare/v3.8.5...v3.8.6) (2023-10-08)
 
 
