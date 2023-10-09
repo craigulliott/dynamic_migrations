@@ -51,7 +51,7 @@ GEM
       ast (~> 2.4.1)
       racc
     pg (1.5.4)
-    pg_spec_helper (1.9.11)
+    pg_spec_helper (1.9.12)
       pg (~> 1.5)
     racc (1.7.1)
     rainbow (3.1.1)
