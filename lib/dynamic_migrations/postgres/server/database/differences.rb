@@ -53,7 +53,7 @@ module DynamicMigrations
           end
 
           def self.compare_extensions extensions, comparison_extensions
-            log.debug "Comparing Extensions"
+            log.info "Comparing Extensions"
 
             result = {}
             # the extensions
@@ -76,7 +76,7 @@ module DynamicMigrations
           end
 
           def self.compare_schemas schemas, comparison_schemas
-            log.debug "Comparing Schemas"
+            log.info "Comparing Schemas"
 
             result = {}
             # the base schemas
@@ -101,7 +101,7 @@ module DynamicMigrations
           def self.compare_schema schema, comparison_schema
             raise SchemaRequiredError if schema.nil?
 
-            log.debug "Comparing Schema `#{schema.name}`"
+            log.info "Comparing Schema `#{schema.name}`"
 
             comparison_tables = comparison_schema.nil? ? {} : comparison_schema.tables_hash
             comparison_functions = comparison_schema.nil? ? {} : comparison_schema.functions_hash
