@@ -89,7 +89,13 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database::Schema::Table::Uni
     it "raises an error if providing something other than a symbol for the unique_constraint name" do
       expect {
         DynamicMigrations::Postgres::Server::Database::Schema::Table::UniqueConstraint.new :configuration, table, [column], "invalid unique_constraint name"
-      }.to raise_error DynamicMigrations::ExpectedSymbolError
+      }.to raise_error DynamicMigrations::Postgres::Server::Database::Schema::Table::UniqueConstraint::InvalidNameError
+    end
+
+    it "raises an error if providing a unique_constraint name which is too long" do
+      expect {
+        DynamicMigrations::Postgres::Server::Database::Schema::Table::UniqueConstraint.new :configuration, table, [column], :this_name_is_too_long_because_it_must_be_under_sixty_four_characters
+      }.to raise_error DynamicMigrations::Postgres::Server::Database::Schema::Table::UniqueConstraint::InvalidNameError
     end
   end
 

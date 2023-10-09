@@ -88,7 +88,13 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database::Schema::Table::Val
     it "raises an error if providing something other than a symbol for the validation name" do
       expect {
         DynamicMigrations::Postgres::Server::Database::Schema::Table::Validation.new :configuration, table, [column], "invalid validation name", "my_column = 'Katy'"
-      }.to raise_error DynamicMigrations::ExpectedSymbolError
+      }.to raise_error DynamicMigrations::Postgres::Server::Database::Schema::Table::Validation::InvalidNameError
+    end
+
+    it "raises an error if providing a validation name which is too long" do
+      expect {
+        DynamicMigrations::Postgres::Server::Database::Schema::Table::Validation.new :configuration, table, [column], :this_name_is_too_long_because_it_must_be_under_sixty_four_characters, "my_column = 'Katy'"
+      }.to raise_error DynamicMigrations::Postgres::Server::Database::Schema::Table::Validation::InvalidNameError
     end
 
     it "raises an error if providing something other than a string for the sql check_clause" do

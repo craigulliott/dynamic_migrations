@@ -60,7 +60,13 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database::Schema::Table::Tri
     it "raises an error if providing something other than a symbol for the trigger name" do
       expect {
         table.add_trigger "invalid trigger name", event_manipulation: :insert, action_order: nil, action_condition: nil, parameters: [], action_orientation: :row, action_timing: :before, function: function
-      }.to raise_error DynamicMigrations::ExpectedSymbolError
+      }.to raise_error DynamicMigrations::Postgres::Server::Database::Schema::Table::Trigger::InvalidNameError
+    end
+
+    it "raises an error if providing a trigger name which is too long" do
+      expect {
+        table.add_trigger :this_name_is_too_long_because_it_must_be_under_sixty_four_characters, event_manipulation: :insert, action_order: nil, action_condition: nil, parameters: [], action_orientation: :row, action_timing: :before, function: function
+      }.to raise_error DynamicMigrations::Postgres::Server::Database::Schema::Table::Trigger::InvalidNameError
     end
 
     it "raises an error if providing an unexpected value for the event_manipulation" do

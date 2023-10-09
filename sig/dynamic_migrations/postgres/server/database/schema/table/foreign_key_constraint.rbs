@@ -43,6 +43,9 @@ module DynamicMigrations
 
               class UnexpectedReferentialActionError < StandardError
               end
+
+              class InvalidNameError < StandardError
+              end
             end
           end
         end

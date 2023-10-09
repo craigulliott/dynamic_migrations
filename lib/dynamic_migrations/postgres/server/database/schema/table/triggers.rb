@@ -17,14 +17,14 @@ module DynamicMigrations
               # returns the trigger object for the provided trigger name, and raises an
               # error if the trigger does not exist
               def trigger name
-                raise ExpectedSymbolError, name unless name.is_a? Symbol
+                raise Trigger::InvalidNameError, name unless name.is_a? Symbol
                 raise TriggerDoesNotExistError unless has_trigger? name
                 @triggers[name]
               end
 
               # returns true if this table has a trigger with the provided name, otherwise false
               def has_trigger? name
-                raise ExpectedSymbolError, name unless name.is_a? Symbol
+                raise Trigger::InvalidNameError, name unless name.is_a? Symbol
                 @triggers.key? name
               end
 

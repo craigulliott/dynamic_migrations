@@ -50,6 +50,9 @@ module DynamicMigrations
 
               class UnnormalizableCheckClauseError < StandardError
               end
+
+              class InvalidNameError < StandardError
+              end
             end
           end
         end

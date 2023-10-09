@@ -27,6 +27,9 @@ module DynamicMigrations
 
               class UnexpectedEnumError < StandardError
               end
+
+              class InvalidNameError < StandardError
+              end
             end
           end
         end

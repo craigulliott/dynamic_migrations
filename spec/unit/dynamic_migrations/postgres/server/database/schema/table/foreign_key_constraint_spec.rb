@@ -97,7 +97,13 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database::Schema::Table::For
       it "raises an error if providing something other than a symbol for the foreign_key_constraint name" do
         expect {
           DynamicMigrations::Postgres::Server::Database::Schema::Table::ForeignKeyConstraint.new :configuration, table, [column], foreign_table, [foreign_column], "invalid foreign_key_constraint name"
-        }.to raise_error DynamicMigrations::ExpectedSymbolError
+        }.to raise_error DynamicMigrations::Postgres::Server::Database::Schema::Table::ForeignKeyConstraint::InvalidNameError
+      end
+
+      it "raises an error if providing a foreign_key_constraint name which is too long" do
+        expect {
+          DynamicMigrations::Postgres::Server::Database::Schema::Table::ForeignKeyConstraint.new :configuration, table, [column], foreign_table, [foreign_column], :this_name_is_too_long_because_it_must_be_under_sixty_four_characters
+        }.to raise_error DynamicMigrations::Postgres::Server::Database::Schema::Table::ForeignKeyConstraint::InvalidNameError
       end
     end
 
@@ -135,7 +141,7 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database::Schema::Table::For
       it "raises an error if providing something other than a symbol for the foreign_key_constraint name" do
         expect {
           DynamicMigrations::Postgres::Server::Database::Schema::Table::ForeignKeyConstraint.new :configuration, table, [column], foreign_table, [foreign_column], "invalid foreign_key_constraint name"
-        }.to raise_error DynamicMigrations::ExpectedSymbolError
+        }.to raise_error DynamicMigrations::Postgres::Server::Database::Schema::Table::ForeignKeyConstraint::InvalidNameError
       end
     end
   end

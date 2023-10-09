@@ -26,6 +26,9 @@ module DynamicMigrations
               class UnnormalizableCheckClauseError < StandardError
               end
 
+              class InvalidNameError < StandardError
+              end
+
               attr_reader :table
               attr_reader :name
               attr_reader :check_clause
@@ -40,7 +43,8 @@ module DynamicMigrations
                 raise ExpectedTableError, table unless table.is_a? Table
                 @table = table
 
-                raise ExpectedSymbolError, name unless name.is_a? Symbol
+                raise InvalidNameError, "Unexpected name `#{name}`. Name should be a Symbol" unless name.is_a? Symbol
+                raise InvalidNameError, "The name `#{name}` is too long. Names must be less than 64 characters" unless name.length < 64
                 @name = name
 
                 raise ExpectedStringError, check_clause unless check_clause.is_a? String

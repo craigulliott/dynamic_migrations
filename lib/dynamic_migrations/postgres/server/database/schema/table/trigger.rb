@@ -41,6 +41,9 @@ module DynamicMigrations
               class UnnormalizableActionConditionError < StandardError
               end
 
+              class InvalidNameError < StandardError
+              end
+
               attr_reader :table
               attr_reader :name
               attr_reader :event_manipulation
@@ -63,9 +66,8 @@ module DynamicMigrations
                 end
                 @table = table
 
-                unless name.is_a? Symbol
-                  raise ExpectedSymbolError, name
-                end
+                raise InvalidNameError, "Unexpected name `#{name}`. Name should be a Symbol" unless name.is_a? Symbol
+                raise InvalidNameError, "The name `#{name}` is too long. Names must be less than 64 characters" unless name.length < 64
                 @name = name
 
                 unless [:before, :after].include? action_timing

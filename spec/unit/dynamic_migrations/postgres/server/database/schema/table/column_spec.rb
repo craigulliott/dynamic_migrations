@@ -26,7 +26,13 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database::Schema::Table::Col
     it "raises an error if providing an invalid column name" do
       expect {
         DynamicMigrations::Postgres::Server::Database::Schema::Table::Column.new :configuration, table, "my_column", :integer
-      }.to raise_error DynamicMigrations::ExpectedSymbolError
+      }.to raise_error DynamicMigrations::Postgres::Server::Database::Schema::Table::Column::InvalidNameError
+    end
+
+    it "raises an error if providing a column name which is too long" do
+      expect {
+        DynamicMigrations::Postgres::Server::Database::Schema::Table::Column.new :configuration, table, :this_name_is_too_long_because_it_must_be_under_sixty_four_characters, :integer
+      }.to raise_error DynamicMigrations::Postgres::Server::Database::Schema::Table::Column::InvalidNameError
     end
 
     it "raises an error if providing a string instead of a symbol for the data type" do

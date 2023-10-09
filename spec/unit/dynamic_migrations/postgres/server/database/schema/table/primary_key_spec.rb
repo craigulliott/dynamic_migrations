@@ -63,7 +63,13 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database::Schema::Table::Pri
     it "raises an error if providing something other than a symbol for the primary_key name" do
       expect {
         DynamicMigrations::Postgres::Server::Database::Schema::Table::PrimaryKey.new :configuration, table, [column], "invalid index name"
-      }.to raise_error DynamicMigrations::ExpectedSymbolError
+      }.to raise_error DynamicMigrations::Postgres::Server::Database::Schema::Table::PrimaryKey::InvalidNameError
+    end
+
+    it "raises an error if providing a primary_key name which is too long" do
+      expect {
+        DynamicMigrations::Postgres::Server::Database::Schema::Table::PrimaryKey.new :configuration, table, [column], :this_name_is_too_long_because_it_must_be_under_sixty_four_characters
+      }.to raise_error DynamicMigrations::Postgres::Server::Database::Schema::Table::PrimaryKey::InvalidNameError
     end
   end
 

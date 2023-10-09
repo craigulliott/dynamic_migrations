@@ -31,6 +31,9 @@ module DynamicMigrations
 
               class DuplicateColumnError < StandardError
               end
+
+              class InvalidNameError < StandardError
+              end
             end
           end
         end

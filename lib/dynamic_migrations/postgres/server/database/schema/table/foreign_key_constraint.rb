@@ -20,6 +20,9 @@ module DynamicMigrations
               class UnexpectedReferentialActionError < StandardError
               end
 
+              class InvalidNameError < StandardError
+              end
+
               attr_reader :table
               attr_reader :foreign_table
               attr_reader :name
@@ -64,7 +67,8 @@ module DynamicMigrations
                   add_column column, true
                 end
 
-                raise ExpectedSymbolError, name unless name.is_a? Symbol
+                raise InvalidNameError, "Unexpected name `#{name}`. Name should be a Symbol" unless name.is_a? Symbol
+                raise InvalidNameError, "The name `#{name}` is too long. Names must be less than 64 characters" unless name.length < 64
                 @name = name
 
                 unless description.nil?
