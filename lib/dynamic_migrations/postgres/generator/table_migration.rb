@@ -15,6 +15,8 @@ module DynamicMigrations
         add_structure_template [:drop_table], "Remove Tables"
         add_structure_template [:create_table], "Create Table"
         add_structure_template [:remove_table_comment, :set_table_comment], "Tables"
+        add_structure_template [:remove_enum_comment, :drop_enum], "Drop Enums"
+        add_structure_template [:create_enum, :add_enum_values, :set_enum_comment], "Enums"
         add_structure_template [:add_column], "Additional Columns"
         add_structure_template [:change_column, :remove_column_comment, :set_column_comment], "Update Columns"
         add_structure_template [:add_primary_key, :set_primary_key_comment, :remove_primary_key_comment], "Primary Key"
