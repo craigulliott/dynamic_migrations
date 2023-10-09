@@ -33,18 +33,18 @@ module DynamicMigrations
           # return a hash representing any differenced betweek the loaded and configured
           # versions of the current database
           def to_h
-            log.info "Building differences between configured and loaded database structure..."
+            log.info "Building differences between configured and loaded database structure"
 
             # build progressively, so we can add logging around the two different opperations
             results = {}
 
-            log.info "Comparing configured database structure to loaded database structure..."
+            log.info "Comparing configured database structure to loaded database structure"
             results[:configuration] = {
               schemas: self.class.compare_schemas(@database.configured_schemas_hash, @database.loaded_schemas_hash),
               extensions: self.class.compare_extensions(@database.configured_extensions, @database.loaded_extensions)
             }
 
-            log.info "Comparing loaded database structure to configured database structure..."
+            log.info "Comparing loaded database structure to configured database structure"
             results[:database] = {
               schemas: self.class.compare_schemas(@database.loaded_schemas_hash, @database.configured_schemas_hash),
               extensions: self.class.compare_extensions(@database.loaded_extensions, @database.configured_extensions)
@@ -53,7 +53,7 @@ module DynamicMigrations
           end
 
           def self.compare_extensions extensions, comparison_extensions
-            log.info "Comparing Extensions..."
+            log.debug "Comparing Extensions"
 
             result = {}
             # the extensions
@@ -76,7 +76,7 @@ module DynamicMigrations
           end
 
           def self.compare_schemas schemas, comparison_schemas
-            log.info "Comparing Schemas..."
+            log.debug "Comparing Schemas"
 
             result = {}
             # the base schemas
@@ -101,7 +101,7 @@ module DynamicMigrations
           def self.compare_schema schema, comparison_schema
             raise SchemaRequiredError if schema.nil?
 
-            log.info "Comparing Schema `#{schema.name}`"
+            log.debug "Comparing Schema `#{schema.name}`"
 
             comparison_tables = comparison_schema.nil? ? {} : comparison_schema.tables_hash
             comparison_functions = comparison_schema.nil? ? {} : comparison_schema.functions_hash
@@ -118,7 +118,7 @@ module DynamicMigrations
           # an object which represents the provided `tables` and any differences
           # between it and the `comparison_tables`
           def self.compare_tables tables, comparison_tables
-            log.info "Comparing Tables..."
+            log.debug "Comparing Tables"
 
             result = {}
             # the base tables
@@ -143,7 +143,7 @@ module DynamicMigrations
           def self.compare_table table, comparison_table
             raise TableRequiredError if table.nil?
 
-            log.info "Comparing Table `#{table.name}`"
+            log.debug "Comparing Table `#{table.name}`"
 
             primary_key = table.has_primary_key? ? table.primary_key : nil
             if comparison_table
@@ -187,7 +187,7 @@ module DynamicMigrations
           # an object which represents the provided `functions` and any differences
           # between it and the `comparison_functions`
           def self.compare_functions functions, comparison_functions
-            log.info "Comparing Functions..."
+            log.debug "Comparing Functions"
 
             result = {}
             # the base functions
@@ -212,7 +212,7 @@ module DynamicMigrations
           # an object which represents the provided `enums` and any differences
           # between it and the `comparison_enums`
           def self.compare_enums enums, comparison_enums
-            log.info "Comparing Enums..."
+            log.debug "Comparing Enums"
 
             result = {}
             # the base enums
@@ -237,7 +237,7 @@ module DynamicMigrations
           # an object which represents the provided `columns` and any differences
           # between it and the `comparison_columns`
           def self.compare_columns columns, comparison_columns
-            log.info "Comparing Columns..."
+            log.debug "Comparing Columns"
 
             result = {}
             # the base columns
@@ -266,7 +266,7 @@ module DynamicMigrations
           # an object which represents the provided `triggers` and any differences
           # between it and the `comparison_triggers`
           def self.compare_triggers triggers, comparison_triggers
-            log.info "Comparing Triggers..."
+            log.debug "Comparing Triggers"
 
             result = {}
             # the base triggers
@@ -299,7 +299,7 @@ module DynamicMigrations
           # an object which represents the provided `unique_constraints` and any differences
           # between it and the `comparison_unique_constraints`
           def self.compare_unique_constraints unique_constraints, comparison_unique_constraints
-            log.info "Comparing Unique Constraints..."
+            log.debug "Comparing Unique Constraints"
 
             result = {}
             # the base unique_constraints
@@ -327,7 +327,7 @@ module DynamicMigrations
           # an object which represents the provided `indexes` and any differences
           # between it and the `comparison_indexes`
           def self.compare_indexes indexes, comparison_indexes
-            log.info "Comparing Indexes..."
+            log.debug "Comparing Indexes"
 
             result = {}
             # the base indexes
@@ -358,7 +358,7 @@ module DynamicMigrations
           # an object which represents the provided `validations` and any differences
           # between it and the `comparison_validations`
           def self.compare_validations validations, comparison_validations
-            log.info "Comparing Validations..."
+            log.debug "Comparing Validations"
 
             result = {}
             # the base validations
@@ -387,7 +387,7 @@ module DynamicMigrations
           # an object which represents the provided `foreign_key_constraints` and any differences
           # between it and the `comparison_foreign_key_constraints`
           def self.compare_foreign_key_constraints foreign_key_constraints, comparison_foreign_key_constraints
-            log.info "Comparing Foreign Key Constraints..."
+            log.debug "Comparing Foreign Key Constraints"
 
             result = {}
             # the base foreign_key_constraints
@@ -428,11 +428,11 @@ module DynamicMigrations
             else
               type = base.class.name.split("::").last
               name = base.is_a?(Schema::Table::PrimaryKey) ? nil : base.name
-              log.info "  Comparing #{type} `#{name}`"
+              log.debug "  Comparing #{type} `#{name}`"
 
               result = {}
               method_list.each do |method_name|
-                log.info "    Comparing `#{method_name}`"
+                log.debug "    Comparing `#{method_name}`"
 
                 matches = (comparison && comparison.send(method_name) == base.send(method_name)) || false
                 result[method_name] = {

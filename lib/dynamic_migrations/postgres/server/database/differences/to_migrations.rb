@@ -40,19 +40,19 @@ module DynamicMigrations
 
             def migrations
               # process all the extensions
-              log.info "Processing Extensions..."
+              log.debug "Processing Extensions"
               extension_names = differences[:configuration][:extensions].keys
               extension_names.each do |extension_name|
-                log.info "Processing Extension `#{extension_name}`..."
+                log.debug "Processing Extension `#{extension_name}`"
                 process_extension extension_name, differences[:configuration][:extensions][extension_name], differences[:database][:extensions][extension_name]
               end
 
               # process all the schemas (we can fetch the schema names from either the
               # configuration or the database object)
-              log.info "Processing Schemas..."
+              log.debug "Processing Schemas"
               schema_names = differences[:configuration][:schemas].keys
               schema_names.each do |schema_name|
-                log.info "Processing Schema `#{schema_name}`..."
+                log.debug "Processing Schema `#{schema_name}`"
                 process_schema schema_name, differences[:configuration][:schemas][schema_name], differences[:database][:schemas][schema_name]
               end
 
