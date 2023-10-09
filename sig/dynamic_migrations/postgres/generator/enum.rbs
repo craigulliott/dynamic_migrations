@@ -10,6 +10,8 @@ module DynamicMigrations
         def drop_enum: (Server::Database::Schema::Enum enum, ?String? code_comment) -> Fragment
         def set_enum_comment: (Server::Database::Schema::Enum enum, ?String? code_comment) -> Fragment
         def remove_enum_comment: (Server::Database::Schema::Enum enum, ?String? code_comment) -> Fragment
+        def optional_enum_table: (Postgres::Server::Database::Schema::Enum enum) -> Server::Database::Schema::Table?
+
         # these come from the generator object (which this module is included into)
         def add_fragment: (migration_method: Symbol, object: untyped, migration: String, ?schema: Server::Database::Schema?, ?table: Server::Database::Schema::Table?, ?code_comment: String?, ?dependent_table: Server::Database::Schema::Table?, ?dependent_function: Server::Database::Schema::Function?, ?dependent_enum: Server::Database::Schema::Enum?) -> Fragment
         def indent: (String migration, ?Integer levels) -> String

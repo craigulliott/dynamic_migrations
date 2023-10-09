@@ -95,5 +95,54 @@ RSpec.describe DynamicMigrations::Postgres::Generator do
         end
       end
     end
+
+    describe :optional_function_table do
+      describe "for simple function not associated to any triggers" do
+        let(:function) { schema.add_function :my_function, function_definition, description: "My function comment" }
+
+        it "should return nil" do
+          expect(generator.optional_function_table(function)).to be_nil
+        end
+      end
+
+      describe "for simple function not associated to a trigger" do
+        let(:table) { DynamicMigrations::Postgres::Server::Database::Schema::Table.new :configuration, schema, :my_table, description: "Comment for this table" }
+        let(:function) { schema.add_function :my_function, function_definition, description: "My function comment" }
+        let(:trigger) { table.add_trigger :my_trigger, event_manipulation: :insert, action_order: nil, action_condition: nil, parameters: ["true"], action_orientation: :statement, action_timing: :before, function: function, description: "Comment for this trigger" }
+
+        before(:each) do
+          trigger
+        end
+
+        it "should return the table" do
+          expect(generator.optional_function_table(function)).to eq function.triggers.first.table
+        end
+
+        describe "when the function is associated to another trigger on the same table" do
+          let(:trigger2) { table.add_trigger :my_trigger2, event_manipulation: :insert, action_order: nil, action_condition: nil, parameters: ["true"], action_orientation: :statement, action_timing: :before, function: function, description: "Comment for this trigger" }
+
+          before(:each) do
+            trigger2
+          end
+
+          it "should return the table" do
+            expect(generator.optional_function_table(function)).to eq function.triggers.first.table
+          end
+        end
+
+        describe "when the function is associated to another trigger on a different table" do
+          let(:table2) { DynamicMigrations::Postgres::Server::Database::Schema::Table.new :configuration, schema, :my_table2, description: "Comment for this table" }
+          let(:trigger2) { table2.add_trigger :my_trigger2, event_manipulation: :insert, action_order: nil, action_condition: nil, parameters: ["true"], action_orientation: :statement, action_timing: :before, function: function, description: "Comment for this trigger" }
+
+          before(:each) do
+            trigger2
+          end
+
+          it "should return the table" do
+            expect(generator.optional_function_table(function)).to be_nil
+          end
+        end
+      end
+    end
   end
 end

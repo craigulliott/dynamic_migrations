@@ -21,16 +21,8 @@ module DynamicMigrations
 
           fn_sql = function.definition.strip
 
-          # we only provide a table if the function has a single trigger and they
-          # are in the same schema, otherwise we can't reliable handle dependencies
-          # so the function will be created in the schema's migration
-          function_table = nil
-          if function.triggers.count == 1 && function.schema == function.triggers.first&.table&.schema
-            function_table = function.triggers.first&.table
-          end
-
           add_fragment schema: function.schema,
-            table: function_table,
+            table: optional_function_table(function),
             migration_method: :create_function,
             object: function,
             code_comment: code_comment,
@@ -47,7 +39,7 @@ module DynamicMigrations
           fn_sql = function.definition.strip
 
           add_fragment schema: function.schema,
-            table: function.triggers.first&.table,
+            table: optional_function_table(function),
             migration_method: :update_function,
             object: function,
             code_comment: code_comment,
@@ -62,7 +54,7 @@ module DynamicMigrations
 
         def drop_function function, code_comment = nil
           add_fragment schema: function.schema,
-            table: function.triggers.first&.table,
+            table: optional_function_table(function),
             migration_method: :drop_function,
             object: function,
             code_comment: code_comment,
@@ -74,7 +66,7 @@ module DynamicMigrations
         # add a comment to a function
         def set_function_comment function, code_comment = nil
           add_fragment schema: function.schema,
-            table: function.triggers.first&.table,
+            table: optional_function_table(function),
             migration_method: :set_function_comment,
             object: function,
             code_comment: code_comment,
@@ -88,13 +80,21 @@ module DynamicMigrations
         # remove the comment from a function
         def remove_function_comment function, code_comment = nil
           add_fragment schema: function.schema,
-            table: function.triggers.first&.table,
+            table: optional_function_table(function),
             migration_method: :remove_function_comment,
             object: function,
             code_comment: code_comment,
             migration: <<~RUBY
               remove_function_comment :#{function.name}
             RUBY
+        end
+
+        # we only provide a table to these migration fragments if the function applies only to one table
+        # and that take is in the same schema as the function
+        def optional_function_table function
+          # all the tables which use this function
+          tables = function.triggers.map(&:table).uniq
+          (tables.count == 1 && tables.first&.schema == function.schema) ? tables.first : nil
         end
       end
     end

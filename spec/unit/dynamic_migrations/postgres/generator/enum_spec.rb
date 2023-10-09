@@ -79,5 +79,54 @@ RSpec.describe DynamicMigrations::Postgres::Generator do
         end
       end
     end
+
+    describe :optional_enum_table do
+      describe "for simple enum not associated to any columns" do
+        let(:enum) { schema.add_enum :my_enum, enum_values, description: "My enum comment" }
+
+        it "should return nil" do
+          expect(generator.optional_enum_table(enum)).to be_nil
+        end
+      end
+
+      describe "for simple enum not associated to a column" do
+        let(:table) { DynamicMigrations::Postgres::Server::Database::Schema::Table.new :configuration, schema, :my_table, description: "Comment for this table" }
+        let(:enum) { schema.add_enum :my_enum, enum_values, description: "My enum comment" }
+        let(:column) { table.add_column :my_column, enum.full_name, enum: enum, null: false, description: "Comment for this column" }
+
+        before(:each) do
+          column
+        end
+
+        it "should return the table" do
+          expect(generator.optional_enum_table(enum)).to eq enum.columns.first.table
+        end
+
+        describe "when the enum is associated to another column in the same table" do
+          let(:column2) { table.add_column :my_column2, enum.full_name, enum: enum, null: false, description: "Comment for this column" }
+
+          before(:each) do
+            column2
+          end
+
+          it "should return the table" do
+            expect(generator.optional_enum_table(enum)).to eq enum.columns.first.table
+          end
+        end
+
+        describe "when the enum is associated to another column in a different table" do
+          let(:table2) { DynamicMigrations::Postgres::Server::Database::Schema::Table.new :configuration, schema, :my_table2, description: "Comment for this table" }
+          let(:column2) { table2.add_column :my_column2, enum.full_name, enum: enum, null: false, description: "Comment for this column" }
+
+          before(:each) do
+            column2
+          end
+
+          it "should return the table" do
+            expect(generator.optional_enum_table(enum)).to be_nil
+          end
+        end
+      end
+    end
   end
 end
