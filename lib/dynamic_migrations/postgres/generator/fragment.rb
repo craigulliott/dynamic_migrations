@@ -15,7 +15,7 @@ module DynamicMigrations
         attr_reader :dependency_enum_name
 
         def initialize schema_name, table_name, migration_method, object_name, code_comment, content
-          valid_name_regex = /\A[a-z][a-z0-9]+(_[a-z0-9]+)*\z/
+          valid_name_regex = /\A[a-z][a-z0-9]*(_[a-z0-9]+)*\z/
 
           unless schema_name.nil? || (schema_name.to_s.match valid_name_regex)
             raise InvalidNameError, "Invalid schema name `#{schema_name}`, must only be lowercase letters, numbers and underscores"
