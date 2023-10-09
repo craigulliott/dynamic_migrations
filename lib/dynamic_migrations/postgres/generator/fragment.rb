@@ -5,6 +5,9 @@ module DynamicMigrations
         class InvalidNameError < StandardError
         end
 
+        class ContentRequiredError < StandardError
+        end
+
         attr_reader :schema_name
         attr_reader :table_name
         attr_reader :migration_method
@@ -33,8 +36,12 @@ module DynamicMigrations
           @object_name = object_name
 
           @migration_method = migration_method
-          @code_comment = code_comment
-          @content = content
+          @code_comment = code_comment&.freeze
+
+          if content.nil?
+            raise ContentRequiredError, "Content is required for a fragment"
+          end
+          @content = content.freeze
         end
 
         # Returns a string representation of the fragment for use in the final

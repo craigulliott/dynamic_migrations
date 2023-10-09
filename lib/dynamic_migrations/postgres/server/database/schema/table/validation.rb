@@ -48,7 +48,7 @@ module DynamicMigrations
                 @name = name
 
                 raise ExpectedStringError, check_clause unless check_clause.is_a? String
-                @check_clause = check_clause.strip
+                @check_clause = check_clause.strip.freeze
 
                 # if this validation is created via configuration (apposed to being loaded) then they can be lazy loaded
                 unless from_configuration? && columns.nil?
@@ -65,7 +65,7 @@ module DynamicMigrations
 
                 unless description.nil?
                   raise ExpectedStringError, description unless description.is_a? String
-                  @description = description.strip
+                  @description = description.strip.freeze
                   @description = nil if description == ""
                 end
 
@@ -138,7 +138,7 @@ module DynamicMigrations
 
                   temp_enums = table.create_temp_table(connection, "validation_normalized_check_clause_temp_table")
 
-                  temp_check_clause = check_clause
+                  temp_check_clause = check_clause.dup
                   # string replace any real enum names with their temp enum names
                   temp_enums.each do |temp_enum_name, enum|
                     temp_check_clause.gsub!("::#{enum.name}", "::#{temp_enum_name}")

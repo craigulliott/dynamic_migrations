@@ -37,11 +37,11 @@ module DynamicMigrations
               unless definition.is_a?(String) && definition.strip != "" && definition.strip.end_with?("END;", "END")
                 raise ExpectedDefinitionError, "Definition must be a string, and end with `END;`. Definition provided:\n#{definition}"
               end
-              @definition = definition.strip
+              @definition = definition.strip.freeze
 
               unless description.nil?
                 raise ExpectedStringError, description unless description.is_a? String
-                @description = description.strip
+                @description = description.strip.freeze
                 @description = nil if description == ""
               end
             end

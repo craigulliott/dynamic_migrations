@@ -10,7 +10,7 @@ module DynamicMigrations
 
         def initialize validation, code_comment
           @validation = validation
-          @code_comment = code_comment
+          @code_comment = code_comment&.freeze
         end
 
         private

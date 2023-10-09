@@ -40,6 +40,9 @@ module DynamicMigrations
 
         class InvalidNameError < StandardError
         end
+
+        class ContentRequiredError < StandardError
+        end
       end
     end
   end

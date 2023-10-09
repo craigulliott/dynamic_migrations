@@ -65,7 +65,7 @@ module DynamicMigrations
 
                 unless description.nil?
                   raise ExpectedStringError, description unless description.is_a? String
-                  @description = description.strip
+                  @description = description.strip.freeze
                   @description = nil if description == ""
                 end
 
@@ -74,7 +74,7 @@ module DynamicMigrations
 
                 unless where.nil?
                   raise ExpectedStringError, where unless where.is_a? String
-                  @where = where
+                  @where = where.freeze
                 end
 
                 raise UnexpectedIndexTypeError, type unless INDEX_TYPES.include?(type)

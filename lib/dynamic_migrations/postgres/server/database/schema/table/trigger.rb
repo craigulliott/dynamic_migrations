@@ -95,12 +95,12 @@ module DynamicMigrations
                 unless action_condition.nil? || action_condition.is_a?(String)
                   raise ExpectedStringError, action_condition
                 end
-                @action_condition = action_condition&.strip
+                @action_condition = action_condition&.strip&.freeze
 
                 unless parameters.is_a?(Array) && parameters.all? { |p| p.is_a? String }
                   raise UnexpectedParametersError, "unexpected parameters `#{parameters}`, currently only an array of strings is supported"
                 end
-                @parameters = parameters
+                @parameters = parameters.map(&:freeze)
 
                 unless [:row, :statement].include? action_orientation
                   raise UnexpectedActionOrientationError, action_orientation
@@ -130,7 +130,7 @@ module DynamicMigrations
 
                 unless description.nil?
                   raise ExpectedStringError, description unless description.is_a? String
-                  @description = description.strip
+                  @description = description.strip.freeze
                   @description = nil if description == ""
                 end
 
@@ -168,7 +168,7 @@ module DynamicMigrations
                 unless new_action_condition.nil? || new_action_condition.is_a?(String)
                   raise ExpectedStringError, new_action_condition
                 end
-                @action_condition = new_action_condition&.strip
+                @action_condition = new_action_condition&.strip&.freeze
               end
 
               def add_parameter new_parameter
@@ -226,7 +226,7 @@ module DynamicMigrations
                       $$ BEGIN END $$;
                     SQL
 
-                    temp_action_condition = action_condition
+                    temp_action_condition = action_condition.dup
                     # string replace any real enum names with their temp enum names
                     temp_enums.each do |temp_enum_name, enum|
                       temp_action_condition.gsub!("::#{enum.name}", "::#{temp_enum_name}")

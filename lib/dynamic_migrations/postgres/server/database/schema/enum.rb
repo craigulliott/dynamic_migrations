@@ -50,7 +50,7 @@ module DynamicMigrations
 
               unless description.nil?
                 raise ExpectedStringError, description unless description.is_a? String
-                @description = description.strip
+                @description = description.strip.freeze
                 @description = nil if description == ""
               end
             end
@@ -68,7 +68,7 @@ module DynamicMigrations
                 raise EnumValueTooLongError, "Value `#{value}` must be less than 64 characters"
               end
 
-              @values << value
+              @values << value.freeze
             end
 
             # returns true if this enum has a description, otehrwise false
