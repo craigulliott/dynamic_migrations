@@ -68,25 +68,35 @@ module DynamicMigrations
         end
 
         def to_s
+          # because calling these methods will rise an error if there are no
+          # fragments, and this method is primarily used for debugging
+          if @fragments.any?
+            tds = table_dependencies
+            eds = enum_dependencies
+            fds = function_dependencies
+          else
+            tds = []
+            eds = []
+            fds = []
+          end
           <<~PREVIEW.strip
             # Migration content preview
             # -------------------------
-            # Schema: #{@schema_name}
-            # Table: #{@table_name}
+            # Schema:#{@schema_name ? " #{@schema_name}" : ""}
+            # Table:#{@table_name ? " #{@table_name}" : ""}
 
-            # Table Dependencies (count: #{table_dependencies.count}):
-            #   #{table_dependencies.map { |d| "Schema: `#{d[:schema_name]}` Table: `#{d[:table_name]}`" }.join("\n#   ")}
+            # Table Dependencies (count: #{tds.count}):
+            #{(tds.any? ? "#   " : "") + tds.map { |d| "Schema: `#{d[:schema_name]}` Table: `#{d[:table_name]}`" }.join("\n#   ")}
 
-            # Enum Dependencies (count: #{enum_dependencies.count}):
-            #   #{enum_dependencies.map { |d| "Schema: `#{d[:schema_name]}` Enum: `#{d[:enum_name]}`" }.join("\n#   ")}
+            # Enum Dependencies (count: #{eds.count}):
+            #{(eds.any? ? "#   " : "") + eds.map { |d| "Schema: `#{d[:schema_name]}` Enum: `#{d[:enum_name]}`" }.join("\n#   ")}
 
-            # Function Dependencies (count: #{function_dependencies.count}):
-            #   #{function_dependencies.map { |d| "Schema: `#{d[:schema_name]}` Function: `#{d[:function_name]}`" }.join("\n#   ")}
+            # Function Dependencies (count: #{fds.count}):
+            #{(fds.any? ? "#   " : "") + fds.map { |d| "Schema: `#{d[:schema_name]}` Function: `#{d[:function_name]}`" }.join("\n#   ")}
 
-            # Fragment Count:
-            # Fragments (count: #{fragments.count}):
+            # Fragments (count: #{@fragments.count}):
 
-            #{fragments.map(&:to_s).join("\n\n")}
+            #{@fragments.map(&:to_s).join("\n\n")}
           PREVIEW
         end
 

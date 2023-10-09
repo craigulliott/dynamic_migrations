@@ -144,6 +144,32 @@ RSpec.describe DynamicMigrations::Postgres::Generator::Migration do
       end
     end
 
+    describe :fragments_with_table_dependency_count do
+      describe "For a migration which has fragments" do
+        let(:fragment_without_dependency) { DynamicMigrations::Postgres::Generator::Fragment.new nil, nil, :my_method, :my_object, "my comment", "my content" }
+        let(:fragment_with_dependency) {
+          frag = DynamicMigrations::Postgres::Generator::Fragment.new nil, nil, :my_method, :my_object, "my comment", "my content"
+          frag.set_dependent_table :my_schema, :my_table
+          frag
+        }
+        let(:fragment_with_different_dependency) {
+          frag = DynamicMigrations::Postgres::Generator::Fragment.new nil, nil, :my_method, :my_object, "my comment", "my content"
+          frag.set_dependent_table :my_schema, :different_table
+          frag
+        }
+
+        before(:each) do
+          migration.add_fragment fragment_without_dependency
+          migration.add_fragment fragment_with_dependency
+          migration.add_fragment fragment_with_different_dependency
+        end
+
+        it "returns the number of fragments which have a dependency on the provided table" do
+          expect(migration.fragments_with_table_dependency_count(:my_schema, :my_table)).to eql 1
+        end
+      end
+    end
+
     describe :extract_fragments_with_table_dependency do
       describe "For a migration which has fragments" do
         let(:fragment_without_dependency) { DynamicMigrations::Postgres::Generator::Fragment.new nil, nil, :my_method, :my_object, "my comment", "my content" }
@@ -174,6 +200,59 @@ RSpec.describe DynamicMigrations::Postgres::Generator::Migration do
           migration.extract_fragments_with_table_dependency(:my_schema, :my_table)
 
           expect(migration.fragments).to eql [fragment_without_dependency, fragment_with_different_dependency]
+        end
+      end
+    end
+
+    describe :to_s do
+      it "returns the expected string (this is really just used for debug purposes)" do
+        expect(migration.to_s).to eq <<~PREVIEW.strip
+          # Migration content preview
+          # -------------------------
+          # Schema:
+          # Table:
+
+          # Table Dependencies (count: 0):
+
+
+          # Enum Dependencies (count: 0):
+
+
+          # Function Dependencies (count: 0):
+
+
+          # Fragments (count: 0):
+        PREVIEW
+      end
+
+      describe "after a fragment has been added" do
+        let(:fragment) { DynamicMigrations::Postgres::Generator::Fragment.new nil, nil, :my_method, :my_object, "my comment", "my content" }
+
+        before(:each) do
+          migration.add_fragment fragment
+        end
+
+        it "returns the expected string (this is really just used for debug purposes)" do
+          expect(migration.to_s).to eq <<~RUBY.strip
+            # Migration content preview
+            # -------------------------
+            # Schema:
+            # Table:
+
+            # Table Dependencies (count: 0):
+
+
+            # Enum Dependencies (count: 0):
+
+
+            # Function Dependencies (count: 0):
+
+
+            # Fragments (count: 1):
+
+            # my comment
+            my content
+          RUBY
         end
       end
     end
