@@ -22,6 +22,7 @@ module DynamicMigrations
         def enum_dependencies: -> Array[{schema_name: Symbol, enum_name: Symbol}]
         def function_dependencies: -> Array[{schema_name: Symbol, function_name: Symbol}]
 
+        def fragments_with_table_dependency_count: (Symbol schema_name, Symbol table_name) -> Integer
         def extract_fragments_with_table_dependency: (Symbol schema_name, Symbol table_name) -> Array[Fragment]
 
         def content: -> String

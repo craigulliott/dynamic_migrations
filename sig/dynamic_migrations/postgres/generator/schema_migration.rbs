@@ -5,6 +5,8 @@ module DynamicMigrations
   module Postgres
     class Generator
       class SchemaMigration < Migration
+        def schema_name: -> Symbol
+
         def initialize: (Symbol schema_name) -> void
 
       end

@@ -31,6 +31,9 @@ module DynamicMigrations
 
             class PrimaryKeyAlreadyExistsError < StandardError
             end
+
+            class MissingExtensionError < StandardError
+            end
           end
         end
       end

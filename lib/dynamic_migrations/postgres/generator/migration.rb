@@ -67,6 +67,29 @@ module DynamicMigrations
           @structure_templates = []
         end
 
+        def to_s
+          <<~PREVIEW.strip
+            # Migration content preview
+            # -------------------------
+            # Schema: #{@schema_name}
+            # Table: #{@table_name}
+
+            # Table Dependencies (count: #{table_dependencies.count}):
+            #   #{table_dependencies.map { |d| "Schema: `#{d[:schema_name]}` Table: `#{d[:table_name]}`" }.join("\n#   ")}
+
+            # Enum Dependencies (count: #{enum_dependencies.count}):
+            #   #{enum_dependencies.map { |d| "Schema: `#{d[:schema_name]}` Enum: `#{d[:enum_name]}`" }.join("\n#   ")}
+
+            # Function Dependencies (count: #{function_dependencies.count}):
+            #   #{function_dependencies.map { |d| "Schema: `#{d[:schema_name]}` Function: `#{d[:function_name]}`" }.join("\n#   ")}
+
+            # Fragment Count:
+            # Fragments (count: #{fragments.count}):
+
+            #{fragments.map(&:to_s).join("\n\n")}
+          PREVIEW
+        end
+
         # Add a migration fragment to this migration, if the migration is not
         # configured (via a structure template) to handle the method_name of the
         # fragment, then am error is raised. An error will also be raised if the
@@ -95,32 +118,37 @@ module DynamicMigrations
 
         # Return an array of table dependencies for this migration, this array comes from
         # combining any table dependencies from each fragment.
-        # Will raise an error if no fragments have been provided.
+        # Will raise an error if no fragments are available.
         def table_dependencies
           raise NoFragmentsError if fragments.empty?
-          @fragments.map(&:table_dependency).compact
+          @fragments.map(&:table_dependency).compact.uniq
         end
 
         # Return an array of function dependencies for this migration, this array comes from
         # combining any function dependencies from each fragment.
-        # Will raise an error if no fragments have been provided.
+        # Will raise an error if no fragments are available.
         def function_dependencies
           raise NoFragmentsError if fragments.empty?
-          @fragments.map(&:function_dependency).compact
+          @fragments.map(&:function_dependency).compact.uniq
         end
 
         # Return an array of enum dependencies for this migration, this array comes from
         # combining any enum dependencies from each fragment.
-        # Will raise an error if no fragments have been provided.
+        # Will raise an error if no fragments are available.
         def enum_dependencies
           raise NoFragmentsError if fragments.empty?
-          @fragments.map(&:enum_dependency).compact
+          @fragments.map(&:enum_dependency).compact.uniq
+        end
+
+        # returns the number of fragment within this migration which have the provided dependency
+        def fragments_with_table_dependency_count schema_name, table_name
+          @fragments.count { |f| f.is_dependent_on_table? schema_name, table_name }
         end
 
         # removes and returns any fragments which have a dependency on the table with the
         # provided schema_name and table_name, this is used for extracting fragments which
         # cause circular dependencies so they can be placed into their own migrations
-        def extract_fragments_with_dependency schema_name, table_name
+        def extract_fragments_with_table_dependency schema_name, table_name
           results = @fragments.filter { |f| f.is_dependent_on_table? schema_name, table_name }
           # remove any of these from the internal array of fragments
           @fragments.filter! { |f| !f.is_dependent_on_table?(schema_name, table_name) }

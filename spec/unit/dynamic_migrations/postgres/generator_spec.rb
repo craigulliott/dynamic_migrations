@@ -9,7 +9,9 @@ RSpec.describe DynamicMigrations::Postgres::Generator do
 
   let(:schema) { database.add_configured_schema :my_schema }
   let(:table) { schema.add_table :my_table, description: "Comment for this table" }
-  let(:table2) { schema.add_table :my_other_table, description: "Comment for this table" }
+  let(:table2) { schema.add_table :my_second_table, description: "Comment for this table" }
+  let(:table3) { schema.add_table :my_third_table, description: "Comment for this table" }
+  let(:table4) { schema.add_table :my_fourth_table, description: "Comment for this table" }
 
   describe :migrations do
     describe "for a table with uuid primary key, timestamps, and two other colums" do
@@ -90,7 +92,7 @@ RSpec.describe DynamicMigrations::Postgres::Generator do
           },
           {
             schema_name: :my_schema,
-            name: :create_my_other_table,
+            name: :create_my_second_table,
             content: <<~RUBY.strip
               #
               # Create Table
@@ -98,7 +100,7 @@ RSpec.describe DynamicMigrations::Postgres::Generator do
               table_comment = <<~COMMENT
                 Comment for this table
               COMMENT
-              create_table :my_other_table, id: :integer, comment: table_comment do |t|
+              create_table :my_second_table, id: :integer, comment: table_comment do |t|
                 t.column :table_id, :integer, null: false, comment: <<~COMMENT
                   Comment for this column
                 COMMENT
@@ -107,7 +109,7 @@ RSpec.describe DynamicMigrations::Postgres::Generator do
               #
               # Update Columns
               #
-              set_column_comment :my_other_table, :id, <<~COMMENT
+              set_column_comment :my_second_table, :id, <<~COMMENT
                 Comment for this column
               COMMENT
             RUBY
@@ -117,7 +119,7 @@ RSpec.describe DynamicMigrations::Postgres::Generator do
 
       describe "when table has a foreign key to table2" do
         before(:each) do
-          foreign_key_constraint = table.add_foreign_key_constraint(:foreign_key_constraint_name, [:table_id], :my_schema, :my_other_table, [:id])
+          foreign_key_constraint = table.add_foreign_key_constraint(:foreign_key_constraint_name, [:table_id], :my_schema, :my_second_table, [:id])
           generator.add_foreign_key_constraint(foreign_key_constraint)
         end
 
@@ -125,7 +127,7 @@ RSpec.describe DynamicMigrations::Postgres::Generator do
           expect(generator.migrations).to eql([
             {
               schema_name: :my_schema,
-              name: :create_my_other_table,
+              name: :create_my_second_table,
               content: <<~RUBY.strip
                 #
                 # Create Table
@@ -133,7 +135,7 @@ RSpec.describe DynamicMigrations::Postgres::Generator do
                 table_comment = <<~COMMENT
                   Comment for this table
                 COMMENT
-                create_table :my_other_table, id: :integer, comment: table_comment do |t|
+                create_table :my_second_table, id: :integer, comment: table_comment do |t|
                   t.column :table_id, :integer, null: false, comment: <<~COMMENT
                     Comment for this column
                   COMMENT
@@ -142,7 +144,7 @@ RSpec.describe DynamicMigrations::Postgres::Generator do
                 #
                 # Update Columns
                 #
-                set_column_comment :my_other_table, :id, <<~COMMENT
+                set_column_comment :my_second_table, :id, <<~COMMENT
                   Comment for this column
                 COMMENT
               RUBY
@@ -173,7 +175,7 @@ RSpec.describe DynamicMigrations::Postgres::Generator do
                 #
                 # Foreign Keys
                 #
-                add_foreign_key :my_table, :table_id, :my_other_table, :id, name: :foreign_key_constraint_name
+                add_foreign_key :my_table, :table_id, :my_second_table, :id, name: :foreign_key_constraint_name
               RUBY
             }
           ])
@@ -213,7 +215,7 @@ RSpec.describe DynamicMigrations::Postgres::Generator do
               },
               {
                 schema_name: :my_schema,
-                name: :create_my_other_table,
+                name: :create_my_second_table,
                 content: <<~RUBY.strip
                   #
                   # Create Table
@@ -221,7 +223,7 @@ RSpec.describe DynamicMigrations::Postgres::Generator do
                   table_comment = <<~COMMENT
                     Comment for this table
                   COMMENT
-                  create_table :my_other_table, id: :integer, comment: table_comment do |t|
+                  create_table :my_second_table, id: :integer, comment: table_comment do |t|
                     t.column :table_id, :integer, null: false, comment: <<~COMMENT
                       Comment for this column
                     COMMENT
@@ -230,14 +232,14 @@ RSpec.describe DynamicMigrations::Postgres::Generator do
                   #
                   # Update Columns
                   #
-                  set_column_comment :my_other_table, :id, <<~COMMENT
+                  set_column_comment :my_second_table, :id, <<~COMMENT
                     Comment for this column
                   COMMENT
 
                   #
                   # Foreign Keys
                   #
-                  add_foreign_key :my_other_table, :table_id, :my_table, :id, name: :foreign_key_constraint2_name
+                  add_foreign_key :my_second_table, :table_id, :my_table, :id, name: :foreign_key_constraint2_name
                 RUBY
               },
               {
@@ -247,10 +249,161 @@ RSpec.describe DynamicMigrations::Postgres::Generator do
                   #
                   # Foreign Keys
                   #
-                  add_foreign_key :my_table, :table_id, :my_other_table, :id, name: :foreign_key_constraint_name
+                  add_foreign_key :my_table, :table_id, :my_second_table, :id, name: :foreign_key_constraint_name
                 RUBY
               }
             ])
+          end
+        end
+
+        describe "when there is a third and fourth table" do
+          before(:each) do
+            table3.add_column :id, :integer, null: false, description: "Comment for this column"
+            table3.add_column :table_id, :integer, null: false, description: "Comment for this column"
+            generator.create_table(table3)
+
+            table4.add_column :id, :integer, null: false, description: "Comment for this column"
+            table4.add_column :table_id, :integer, null: false, description: "Comment for this column"
+            generator.create_table(table4)
+          end
+
+          describe "when foreign key constraints exist between table1 -> table2 -> table3 -> table4 and back to table1 (a circular dependency with 4 tables)" do
+            before(:each) do
+              foreign_key_constraint2 = table2.add_foreign_key_constraint(:foreign_key_constraint2_name, [:table_id], :my_schema, :my_third_table, [:id])
+              generator.add_foreign_key_constraint(foreign_key_constraint2)
+
+              foreign_key_constraint3 = table3.add_foreign_key_constraint(:foreign_key_constraint3_name, [:table_id], :my_schema, :my_fourth_table, [:id])
+              generator.add_foreign_key_constraint(foreign_key_constraint3)
+
+              foreign_key_constraint4 = table4.add_foreign_key_constraint(:foreign_key_constraint4_name, [:table_id], :my_schema, :my_table, [:id])
+              generator.add_foreign_key_constraint(foreign_key_constraint4)
+            end
+
+            it "should return the expected ruby syntax to create two tables (note that the migrations are now in the opposite order to the previous test)" do
+              expect(generator.migrations).to eql([
+                {
+                  schema_name: :my_schema,
+                  name: :create_my_table,
+                  content: <<~RUBY.strip
+                    #
+                    # Create Table
+                    #
+                    table_comment = <<~COMMENT
+                      Comment for this table
+                    COMMENT
+                    create_table :my_table, id: :integer, comment: table_comment do |t|
+                      t.column :table_id, :integer, null: false, comment: <<~COMMENT
+                        Comment for this column
+                      COMMENT
+                    end
+
+                    #
+                    # Update Columns
+                    #
+                    set_column_comment :my_table, :id, <<~COMMENT
+                      Comment for this column
+                    COMMENT
+                  RUBY
+                },
+                {
+                  schema_name: :my_schema,
+                  name: :create_my_fourth_table,
+                  content: <<~RUBY.strip
+                    #
+                    # Create Table
+                    #
+                    table_comment = <<~COMMENT
+                      Comment for this table
+                    COMMENT
+                    create_table :my_fourth_table, id: :integer, comment: table_comment do |t|
+                      t.column :table_id, :integer, null: false, comment: <<~COMMENT
+                        Comment for this column
+                      COMMENT
+                    end
+
+                    #
+                    # Update Columns
+                    #
+                    set_column_comment :my_fourth_table, :id, <<~COMMENT
+                      Comment for this column
+                    COMMENT
+
+                    #
+                    # Foreign Keys
+                    #
+                    add_foreign_key :my_fourth_table, :table_id, :my_table, :id, name: :foreign_key_constraint4_name
+                  RUBY
+                },
+                {
+                  schema_name: :my_schema,
+                  name: :create_my_third_table,
+                  content: <<~RUBY.strip
+                    #
+                    # Create Table
+                    #
+                    table_comment = <<~COMMENT
+                      Comment for this table
+                    COMMENT
+                    create_table :my_third_table, id: :integer, comment: table_comment do |t|
+                      t.column :table_id, :integer, null: false, comment: <<~COMMENT
+                        Comment for this column
+                      COMMENT
+                    end
+
+                    #
+                    # Update Columns
+                    #
+                    set_column_comment :my_third_table, :id, <<~COMMENT
+                      Comment for this column
+                    COMMENT
+
+                    #
+                    # Foreign Keys
+                    #
+                    add_foreign_key :my_third_table, :table_id, :my_fourth_table, :id, name: :foreign_key_constraint3_name
+                  RUBY
+                },
+                {
+                  schema_name: :my_schema,
+                  name: :create_my_second_table,
+                  content: <<~RUBY.strip
+                    #
+                    # Create Table
+                    #
+                    table_comment = <<~COMMENT
+                      Comment for this table
+                    COMMENT
+                    create_table :my_second_table, id: :integer, comment: table_comment do |t|
+                      t.column :table_id, :integer, null: false, comment: <<~COMMENT
+                        Comment for this column
+                      COMMENT
+                    end
+
+                    #
+                    # Update Columns
+                    #
+                    set_column_comment :my_second_table, :id, <<~COMMENT
+                      Comment for this column
+                    COMMENT
+
+                    #
+                    # Foreign Keys
+                    #
+                    add_foreign_key :my_second_table, :table_id, :my_third_table, :id, name: :foreign_key_constraint2_name
+                  RUBY
+                },
+                {
+                  schema_name: :my_schema,
+                  name: :changes_for_my_table,
+                  content: <<~RUBY.strip
+                    #
+                    # Foreign Keys
+                    #
+                    add_foreign_key :my_table, :table_id, :my_second_table, :id, name: :foreign_key_constraint_name
+                  RUBY
+                }
+              ])
+            end
           end
         end
       end
@@ -259,7 +412,7 @@ RSpec.describe DynamicMigrations::Postgres::Generator do
     describe "for two schemas and tables with cross schema dependencies" do
       let(:schema2) { database.add_configured_schema :my_other_schema }
       let(:schema2_table) { schema2.add_table :my_table, description: "Comment for this table" }
-      let(:schema2_table2) { schema2.add_table :my_other_table, description: "Comment for this table" }
+      let(:schema2_table2) { schema2.add_table :my_second_table, description: "Comment for this table" }
 
       let(:enum) { schema2.add_enum :my_enum, enum_values, description: "Comment for this enum" }
       let(:enum_values) { ["foo", "bar"] }

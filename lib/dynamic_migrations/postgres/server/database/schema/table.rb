@@ -16,6 +16,9 @@ module DynamicMigrations
             class PrimaryKeyAlreadyExistsError < StandardError
             end
 
+            class MissingExtensionError < StandardError
+            end
+
             include Columns
             include Validations
             include Indexes
@@ -139,8 +142,12 @@ module DynamicMigrations
                       WHERE extname = '#{extension_name}'
                     ) as is_installed
                 SQL
-                unless extension_result.first["is_installed"]
-                  detail = if extension_result.first["is_available"]
+
+                row = extension_result.first
+                raise MissingExtensionError, "unexpected error" if row.nil?
+
+                unless row["is_installed"]
+                  detail = if row["is_available"]
                     <<~DETAIL
                       The `#{extension_name}` extension is available for installation,
                       but has not been installed for this database.
@@ -151,7 +158,7 @@ module DynamicMigrations
                       appear to be available for installation.
                     DETAIL
                   end
-                  raise MissingExtensionError, <<~ERROR.gsub!("\n", " ")
+                  raise MissingExtensionError, <<~ERROR.tr!("\n", " ")
                     This table uses the `#{extension_name}` data type. #{detail}
                     Add the extension, then generate and run the migrations which will
                     enable the extension for your database before defining validations

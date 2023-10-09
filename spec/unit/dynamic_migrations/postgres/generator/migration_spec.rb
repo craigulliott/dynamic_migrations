@@ -144,7 +144,7 @@ RSpec.describe DynamicMigrations::Postgres::Generator::Migration do
       end
     end
 
-    describe :extract_fragments_with_dependency do
+    describe :extract_fragments_with_table_dependency do
       describe "For a migration which has fragments" do
         let(:fragment_without_dependency) { DynamicMigrations::Postgres::Generator::Fragment.new nil, nil, :my_method, :my_object, "my comment", "my content" }
         let(:fragment_with_dependency) {
@@ -165,13 +165,13 @@ RSpec.describe DynamicMigrations::Postgres::Generator::Migration do
         end
 
         it "returns the fragments which have a dependency on the provided table" do
-          expect(migration.extract_fragments_with_dependency(:my_schema, :my_table)).to eql [fragment_with_dependency]
+          expect(migration.extract_fragments_with_table_dependency(:my_schema, :my_table)).to eql [fragment_with_dependency]
         end
 
         it "removes the fragments which have a dependency on the provided table" do
           expect(migration.fragments).to eql [fragment_without_dependency, fragment_with_dependency, fragment_with_different_dependency]
 
-          migration.extract_fragments_with_dependency(:my_schema, :my_table)
+          migration.extract_fragments_with_table_dependency(:my_schema, :my_table)
 
           expect(migration.fragments).to eql [fragment_without_dependency, fragment_with_different_dependency]
         end
