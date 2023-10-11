@@ -29,32 +29,6 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database::Schema::Table::Val
       end
     end
 
-    describe "providing an optional deferrable value" do
-      it "does not raise an error" do
-        expect {
-          DynamicMigrations::Postgres::Server::Database::Schema::Table::Validation.new :configuration, table, [column], :validation_name, "my_column = 'Katy'", deferrable: true
-        }.to_not raise_error
-      end
-
-      it "returns the expected value via a getter of the same name" do
-        validation = DynamicMigrations::Postgres::Server::Database::Schema::Table::Validation.new :configuration, table, [column], :validation_name, "my_column = 'Katy'", deferrable: true
-        expect(validation.deferrable).to be true
-      end
-    end
-
-    describe "providing an optional initially_deferred value" do
-      it "does not raise an error" do
-        expect {
-          DynamicMigrations::Postgres::Server::Database::Schema::Table::Validation.new :configuration, table, [column], :validation_name, "my_column = 'Katy'", initially_deferred: true
-        }.to_not raise_error
-      end
-
-      it "returns the expected value via a getter of the same name" do
-        validation = DynamicMigrations::Postgres::Server::Database::Schema::Table::Validation.new :configuration, table, [column], :validation_name, "my_column = 'Katy'", initially_deferred: true
-        expect(validation.initially_deferred).to be true
-      end
-    end
-
     it "raises an error if providing an invalid table" do
       expect {
         DynamicMigrations::Postgres::Server::Database::Schema::Table::Validation.new :configuration, :not_a_table, [column], :validation_name, "my_column = 'Katy'"
@@ -174,18 +148,6 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database::Schema::Table::Val
       it "returns the expected check_clause" do
         expect(validation.normalized_check_clause).to eq("(my_column = 'foo'::my_enum)")
       end
-    end
-  end
-
-  describe :deferrable do
-    it "returns the expected deferrable" do
-      expect(validation.deferrable).to eq(false)
-    end
-  end
-
-  describe :initially_deferred do
-    it "returns the expected initially_deferred" do
-      expect(validation.initially_deferred).to eq(false)
     end
   end
 

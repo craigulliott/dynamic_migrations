@@ -86,9 +86,7 @@ module DynamicMigrations
               table[validation_name] = {
                 columns: row["columns"].gsub(/\A\{/, "").gsub(/\}\Z/, "").split(",").map { |column_name| column_name.to_sym },
                 check_clause: check_clause,
-                description: row["description"],
-                deferrable: row["deferrable"] == "TRUE",
-                initially_deferred: row["initially_deferred"] == "TRUE"
+                description: row["description"]
               }
             end
             schemas

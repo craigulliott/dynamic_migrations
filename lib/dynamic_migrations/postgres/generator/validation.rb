@@ -38,9 +38,7 @@ module DynamicMigrations
           else
 
             options = {
-              name: ":#{validation.name}",
-              deferrable: validation.deferrable,
-              initially_deferred: validation.initially_deferred
+              name: ":#{validation.name}"
             }
 
             if validation.description.nil?

@@ -32,13 +32,11 @@ module DynamicMigrations
               attr_reader :table
               attr_reader :name
               attr_reader :check_clause
-              attr_reader :deferrable
-              attr_reader :initially_deferred
               attr_reader :description
               attr_reader :template
 
               # initialize a new object to represent a validation in a postgres table
-              def initialize source, table, columns, name, check_clause, description: nil, deferrable: false, initially_deferred: false, template: nil
+              def initialize source, table, columns, name, check_clause, description: nil, template: nil
                 super source
                 raise ExpectedTableError, table unless table.is_a? Table
                 @table = table
@@ -69,12 +67,6 @@ module DynamicMigrations
                   @description = nil if description == ""
                 end
 
-                raise ExpectedBooleanError, deferrable unless [true, false].include?(deferrable)
-                @deferrable = deferrable
-
-                raise ExpectedBooleanError, initially_deferred unless [true, false].include?(initially_deferred)
-                @initially_deferred = initially_deferred
-
                 unless template.nil?
                   unless Generator::Validation.has_template? template
                     raise UnexpectedTemplateError, "Unrecognised template #{template}"
@@ -100,14 +92,12 @@ module DynamicMigrations
               end
 
               def column_names
-                columns.map(&:name)
+                columns.map(&:name).sort
               end
 
               def differences_descriptions other_validation
                 method_differences_descriptions other_validation, [
-                  :normalized_check_clause,
-                  :deferrable,
-                  :initially_deferred
+                  :normalized_check_clause
                 ]
               end
 

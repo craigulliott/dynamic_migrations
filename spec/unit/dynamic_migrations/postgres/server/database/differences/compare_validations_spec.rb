@@ -68,14 +68,6 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database::Differences do
               description: {
                 value: nil,
                 matches: false
-              },
-              deferrable: {
-                value: false,
-                matches: false
-              },
-              initially_deferred: {
-                value: false,
-                matches: false
               }
             }
           })
@@ -105,14 +97,6 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database::Differences do
               description: {
                 value: nil,
                 matches: true
-              },
-              deferrable: {
-                value: false,
-                matches: true
-              },
-              initially_deferred: {
-                value: false,
-                matches: true
               }
             }
           })
@@ -141,14 +125,6 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database::Differences do
               },
               column_names: {
                 value: [:column_name],
-                matches: true
-              },
-              deferrable: {
-                value: false,
-                matches: true
-              },
-              initially_deferred: {
-                value: false,
                 matches: true
               }
             }

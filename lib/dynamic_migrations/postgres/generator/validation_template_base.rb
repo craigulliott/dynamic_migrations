@@ -15,12 +15,6 @@ module DynamicMigrations
 
         private
 
-        def assert_not_deferred!
-          if @validation.initially_deferred || @validation.deferrable
-            raise TemplateError, "#{self.class.name} validation template requires constraints to be are not deferrable"
-          end
-        end
-
         def assert_column_count! count = 1
           if @validation.columns.count != count
             raise TemplateError, "#{self.class.name} validation template requires a validation with only #{count} column"

@@ -37,7 +37,7 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database::Differences::ToMig
                   #
                   # Validations
                   #
-                  add_validation :my_table, name: :my_validation, deferrable: false, initially_deferred: false do
+                  add_validation :my_table, name: :my_validation do
                     <<~SQL
                       (my_column > 0)
                     SQL
@@ -70,7 +70,7 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database::Differences::ToMig
                     # Validations
                     #
                     # Recreating this validation
-                    add_validation :my_table, name: :my_validation, deferrable: false, initially_deferred: false do
+                    add_validation :my_table, name: :my_validation do
                       <<~SQL
                         (my_column > 0)
                       SQL
@@ -109,7 +109,7 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database::Differences::ToMig
                   my_validation_comment = <<~COMMENT
                     Description of my validation
                   COMMENT
-                  add_validation :my_table, name: :my_validation, deferrable: false, initially_deferred: false, comment: my_validation_comment do
+                  add_validation :my_table, name: :my_validation, comment: my_validation_comment do
                     <<~SQL
                       (my_column > 0)
                     SQL

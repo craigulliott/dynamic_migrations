@@ -15,7 +15,6 @@ module DynamicMigrations
         def fragment_arguments: -> {schema: Postgres::Server::Database::Schema, table: Postgres::Server::Database::Schema::Table, migration_method: Symbol, object: untyped, code_comment: String?, migration: String, dependent_function: Postgres::Server::Database::Schema::Function?}
 
         private
-        def assert_not_deferred!: -> void
         def assert_column_count!: (?Integer count) -> void
         def first_column: -> Postgres::Server::Database::Schema::Table::Column
         def value_from_check_clause: (Regexp regex) -> untyped

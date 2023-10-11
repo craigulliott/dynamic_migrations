@@ -367,9 +367,7 @@ module DynamicMigrations
               result[name] = compare_record validation, comparison_validations[name], [
                 :normalized_check_clause,
                 :column_names,
-                :description,
-                :deferrable,
-                :initially_deferred
+                :description
               ]
             end
             # look for any validations in the comparison list which were not in the base list
@@ -435,6 +433,13 @@ module DynamicMigrations
                 log.debug "    Comparing `#{method_name}`"
 
                 matches = (comparison && comparison.send(method_name) == base.send(method_name)) || false
+
+                unless matches
+                  log.debug "      Values are different"
+                  log.debug "        Base Value:  `#{base.send(method_name)}`"
+                  log.debug "        Other Value: `#{comparison.nil? ? "nil" : comparison.send(method_name)}`"
+                end
+
                 result[method_name] = {
                   value: base.send(method_name),
                   matches: matches

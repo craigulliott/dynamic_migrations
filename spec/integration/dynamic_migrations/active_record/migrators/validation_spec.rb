@@ -41,54 +41,8 @@ RSpec.describe DynamicMigrations::ActiveRecord::Migrators do
             expect(migration).to executed_sql <<~SQL
               ALTER TABLE my_table
                 ADD CONSTRAINT my_validation
-                  CHECK (my_column > 0)
-                  NOT DEFERRABLE;
+                  CHECK (my_column > 0);
             SQL
-          end
-
-          it "generates the expected sql for an initially_deferred simple check constraint" do
-            migration.add_validation(:my_table, name: :my_validation, initially_deferred: true, deferrable: true) do
-              <<~SQL
-                my_column > 0
-              SQL
-            end
-
-            expect(migration).to executed_sql <<~SQL
-              ALTER TABLE my_table
-                ADD CONSTRAINT my_validation
-                  CHECK (my_column > 0)
-                  DEFERRABLE INITIALLY DEFERRED;
-            SQL
-          end
-
-          it "generates the expected sql for an initially_deferred simple check constraint with a comment" do
-            migration.add_validation(:my_table, name: :my_validation, initially_deferred: true, deferrable: true, comment: "my comment") do
-              <<~SQL
-                my_column > 0
-              SQL
-            end
-
-            expected_sql = []
-            expected_sql << <<~SQL
-              ALTER TABLE my_table
-                ADD CONSTRAINT my_validation
-                  CHECK (my_column > 0)
-                  DEFERRABLE INITIALLY DEFERRED;
-            SQL
-            expected_sql << <<~SQL
-              COMMENT ON CONSTRAINT my_validation ON my_schema.my_table IS 'my comment';
-            SQL
-            expect(migration).to executed_sql expected_sql
-          end
-
-          it "raises an error if an invalid combination of initially_deferred and deferrable is provided" do
-            expect {
-              migration.add_validation(:my_table, name: :my_validation, initially_deferred: true, deferrable: false) do
-                <<~SQL
-                  my_column > 0
-                SQL
-              end
-            }.to raise_error DynamicMigrations::ActiveRecord::Migrators::DeferrableOptionsError
           end
         end
 

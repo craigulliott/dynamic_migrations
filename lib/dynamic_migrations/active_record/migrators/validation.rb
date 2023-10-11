@@ -3,7 +3,7 @@ module DynamicMigrations
     module Migrators
       module Validation
         # this exists because because the standard rails migration does not support deffered constraints
-        def add_validation table_name, name:, initially_deferred: false, deferrable: false, comment: nil, &block
+        def add_validation table_name, name:, comment: nil, &block
           unless block
             raise MissingFunctionBlockError, "create_function requires a block"
           end
@@ -12,28 +12,10 @@ module DynamicMigrations
             sql = block.call.strip
           end
 
-          if initially_deferred == true && deferrable == false
-            raise DeferrableOptionsError, "A constraint can only be initially deferred if it is also deferrable"
-          end
-
-          # allow it to be deferred, and defer it by default
-          deferrable_sql = if initially_deferred
-            "DEFERRABLE INITIALLY DEFERRED"
-
-          # allow it to be deferred, but do not deferr by default
-          elsif deferrable
-            "DEFERRABLE INITIALLY IMMEDIATE"
-
-          # it can not be deferred (this is the default)
-          else
-            "NOT DEFERRABLE"
-          end
-
           execute <<~SQL
             ALTER TABLE #{table_name}
               ADD CONSTRAINT #{name}
-                CHECK (#{sql})
-                #{deferrable_sql};
+                CHECK (#{sql});
           SQL
 
           if comment.is_a? String

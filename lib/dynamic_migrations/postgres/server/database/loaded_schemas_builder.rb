@@ -60,7 +60,7 @@ module DynamicMigrations
 
                 # add any validations
                 table_validations&.each do |validation_name, validation_definition|
-                  table.add_validation validation_name, validation_definition[:columns], validation_definition[:check_clause], description: validation_definition[:description], deferrable: validation_definition[:deferrable], initially_deferred: validation_definition[:initially_deferred]
+                  table.add_validation validation_name, validation_definition[:columns], validation_definition[:check_clause], description: validation_definition[:description]
                 end
               end
             end

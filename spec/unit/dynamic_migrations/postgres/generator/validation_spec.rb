@@ -17,7 +17,7 @@ RSpec.describe DynamicMigrations::Postgres::Generator do
 
         it "should return the expected ruby syntax to add a validation" do
           expect(generator.add_validation(validation).to_s).to eq <<~RUBY.strip
-            add_validation :my_table, name: :validation_name, deferrable: false, initially_deferred: false do
+            add_validation :my_table, name: :validation_name do
               <<~SQL
                 my_column > 0
               SQL
@@ -34,7 +34,7 @@ RSpec.describe DynamicMigrations::Postgres::Generator do
             validation_name_comment = <<~COMMENT
               My validation
             COMMENT
-            add_validation :my_table, name: :validation_name, deferrable: false, initially_deferred: false, comment: validation_name_comment do
+            add_validation :my_table, name: :validation_name, comment: validation_name_comment do
               <<~SQL
                 my_column > 0
               SQL
@@ -48,7 +48,6 @@ RSpec.describe DynamicMigrations::Postgres::Generator do
           Class.new(DynamicMigrations::Postgres::Generator::ValidationTemplateBase) do
             warn "not tested"
             def fragment_arguments
-              assert_not_deferred!
               assert_column_count! 1
 
               column_name = first_column.name
@@ -111,7 +110,7 @@ RSpec.describe DynamicMigrations::Postgres::Generator do
           RUBY
           re_add = <<~RUBY.strip
             # Recreating this validation
-            add_validation :my_table, name: :validation_name, deferrable: false, initially_deferred: false do
+            add_validation :my_table, name: :validation_name do
               <<~SQL
                 my_column > 100
               SQL
