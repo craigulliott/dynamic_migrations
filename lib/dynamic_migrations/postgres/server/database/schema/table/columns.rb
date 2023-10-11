@@ -50,12 +50,6 @@ module DynamicMigrations
                 else
                   raise ModuleIncludedIntoUnexpectedTargetError, included_target
                 end
-                # sort the hash so that the columns are in alphabetical order by name
-                sorted_columns = {}
-                @columns.keys.sort.each do |name|
-                  sorted_columns[name] = @columns[name]
-                end
-                @columns = sorted_columns
                 # return the new column
                 new_column
               end

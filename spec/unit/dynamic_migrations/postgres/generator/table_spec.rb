@@ -100,10 +100,10 @@ RSpec.describe DynamicMigrations::Postgres::Generator do
                 Comment for this table
               COMMENT
               create_table :my_table, id: false, comment: table_comment do |t|
-                t.column :bar, :varchar, null: false, default: "foo", comment: <<~COMMENT
+                t.column :foo, :varchar, null: false, default: "foo", comment: <<~COMMENT
                   Comment for this column
                 COMMENT
-                t.column :foo, :varchar, null: false, default: "foo", comment: <<~COMMENT
+                t.column :bar, :varchar, null: false, default: "foo", comment: <<~COMMENT
                   Comment for this column
                 COMMENT
               end
