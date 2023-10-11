@@ -54,7 +54,7 @@ module DynamicMigrations
             end
 
             # close the connection (unless we were already connected)
-            if already_connected
+            unless already_connected
               disconnect
             end
 
