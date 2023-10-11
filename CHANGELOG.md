@@ -1,5 +1,17 @@
 # Changelog
 
+## [3.8.8](https://github.com/craigulliott/dynamic_migrations/compare/v3.8.7...v3.8.8) (2023-10-11)
+
+
+### Bug Fixes
+
+* adding a specific error type for invalid names ([12df7bd](https://github.com/craigulliott/dynamic_migrations/commit/12df7bddcb947d3ab5b1b00eebefdda0a3ce15ac))
+* fixed bug where check_clause and action_condition were being modified, also freezing strings to prevent similar bugs in the future ([dc1191b](https://github.com/craigulliott/dynamic_migrations/commit/dc1191b7e219b73da8469742259686721265a2a7))
+* removed arbitrary column name sorting, as we want migrations to create columns in the order they were added ([e9a515e](https://github.com/craigulliott/dynamic_migrations/commit/e9a515eb9dbf16ef5a5e77ca0084a6514690530b))
+* removing deferrable and initially deferred from check constraints because postgres doesn't support them ([945aef2](https://github.com/craigulliott/dynamic_migrations/commit/945aef2419fd5f55a0551929244f3f9b0a29a905))
+* should not have assumed enums in the same schema use their short name, enums are always referenced by their full name (including schema) ([a9863ba](https://github.com/craigulliott/dynamic_migrations/commit/a9863ba49727e5016c8eae74f5f2a6e7ab8c1042))
+* we were not resolving the correct deferred and initially_deferred values when loading existing database structure ([02c539a](https://github.com/craigulliott/dynamic_migrations/commit/02c539a8ea153cde6d06f6be6d8fdb0aaf851f40))
+
 ## [3.8.7](https://github.com/craigulliott/dynamic_migrations/compare/v3.8.6...v3.8.7) (2023-10-09)
 
 
