@@ -152,8 +152,8 @@ module DynamicMigrations
                 on_delete = nil
               end
 
-              deferrable = row["deferrable"] == "TRUE"
-              initially_deferred = row["initially_deferred"] == "TRUE"
+              deferrable = row["deferrable"] == "t"
+              initially_deferred = row["initially_deferred"] == "t"
 
               index_type = if row["index_type"].nil?
                 nil
