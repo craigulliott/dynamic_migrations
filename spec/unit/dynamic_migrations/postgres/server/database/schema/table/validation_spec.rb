@@ -135,7 +135,7 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database::Schema::Table::Val
       let(:validation) { DynamicMigrations::Postgres::Server::Database::Schema::Table::Validation.new :configuration, table, [enum_column], :validation_name, "my_column = 'foo'" }
 
       it "returns the expected check_clause" do
-        expect(validation.normalized_check_clause).to eq("(my_column = 'foo'::my_enum)")
+        expect(validation.normalized_check_clause).to eq("(my_column = 'foo'::my_schema.my_enum)")
       end
     end
 
@@ -146,7 +146,7 @@ RSpec.describe DynamicMigrations::Postgres::Server::Database::Schema::Table::Val
       let(:validation) { DynamicMigrations::Postgres::Server::Database::Schema::Table::Validation.new :configuration, table, [enum_column], :validation_name, "my_column = 'foo'::my_enum" }
 
       it "returns the expected check_clause" do
-        expect(validation.normalized_check_clause).to eq("(my_column = 'foo'::my_enum)")
+        expect(validation.normalized_check_clause).to eq("(my_column = 'foo'::my_schema.my_enum)")
       end
     end
   end

@@ -176,8 +176,7 @@ module DynamicMigrations
 
                   # string replace any enum names with their real enum names
                   temp_enums.each do |temp_enum_name, enum|
-                    real_enum_name = (enum.schema == table.schema) ? enum.name : enum.full_name
-                    check_clause_result.gsub!("::#{temp_enum_name}", "::#{real_enum_name}")
+                    check_clause_result.gsub!("::#{temp_enum_name}", "::#{enum.full_name}")
                   end
 
                   column_names_result = column_names_string.gsub(/\A\{/, "").gsub(/\}\Z/, "").split(",").map { |column_name| column_name.to_sym }
