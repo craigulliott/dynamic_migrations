@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.8.9](https://github.com/craigulliott/dynamic_migrations/compare/v3.8.8...v3.8.9) (2023-10-11)
+
+
+### Bug Fixes
+
+* was closing the database connection on the wrong condition ([a48046b](https://github.com/craigulliott/dynamic_migrations/commit/a48046b75880900449dc253f29306a41cce98967))
+
 ## [3.8.8](https://github.com/craigulliott/dynamic_migrations/compare/v3.8.7...v3.8.8) (2023-10-11)
 
 
